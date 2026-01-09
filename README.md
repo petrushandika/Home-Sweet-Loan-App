@@ -291,30 +291,34 @@ Aplikasi ini menyediakan platform yang user-friendly untuk:
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                         Frontend                             │
-│  - Next.js 15 (App Router) with TypeScript                  │
-│  - TailwindCSS for styling                                   │
-│  - Shadcn/ui component library                               │
-│  - Recharts for data visualization                           │
-│  - Zod for schema validation                                 │
-│  - React Hook Form for form handling                         │
+│  - Next.js 16.0 RC (App Router + Turbopack)                 │
+│  - React 19 + TypeScript 5.7                                 │
+│  - TailwindCSS 4.0 (Native CSS, Rust-based)                  │
+│  - Shadcn/ui + Shadcn Charts (Dashboard-ready)               │
+│  - Zod 3.24 for schema validation                            │
+│  - React Hook Form 7.54 for forms                            │
+│  - Zustand 5.0 + TanStack Query 5.x                          │
 └─────────────────────────────────────────────────────────────┘
                             │
                             ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                         Backend                              │
-│  - NestJS with TypeScript                                    │
-│  - Prisma ORM                                                │
-│  - PostgreSQL database                                       │
-│  - JWT authentication                                        │
-│  - Class-validator for validation                            │
+│  - NestJS 11.0 + Node.js 23 (Latest)                         │
+│  - TypeScript 5.7                                            │
+│  - Prisma 7.0 Beta (TypedSQL, 30% faster)                    │
+│  - PostgreSQL 17.x                                           │
+│  - JWT + Passport for authentication                         │
+│  - Class-validator 0.14 + Class-transformer 0.5              │
 └─────────────────────────────────────────────────────────────┘
                             │
                             ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                       Deployment                             │
-│  - Frontend: Vercel                                          │
-│  - Backend: Railway / Render / AWS                           │
-│  - Database: Supabase / Railway / Neon                       │
+│  - Frontend: Vercel (Edge Runtime)                           │
+│  - Backend: Railway / Render                                 │
+│  - Database: Neon (Serverless PostgreSQL 17)                 │
+│  - Package Manager: npm 10.x                                 │
+│  - Linter: Biome (100x faster than ESLint)                   │
 └─────────────────────────────────────────────────────────────┘
 ```
 

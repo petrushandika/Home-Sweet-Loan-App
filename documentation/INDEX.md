@@ -206,7 +206,24 @@
 
 ---
 
-## 🗺️ Documentation Roadmap
+### 10. [TECH_STACK.md](./TECH_STACK.md) - Technology Stack Reference
+
+**Untuk**: Developers, DevOps  
+**Isi**:
+
+- � Complete tech stack with latest stable versions
+- 🔄 Version compatibility matrix
+- 📊 Performance benchmarks (Turbopack vs Webpack)
+- 🚀 Installation commands (pnpm-based)
+- 🔄 Migration guides (v14→v15, Prisma 5→6, etc)
+- ⚠️ What NOT to use (experimental features)
+- 📚 Official documentation links
+
+**Baca ini untuk**: Understanding exact versions, compatibility, and setup
+
+---
+
+## �🗺️ Documentation Roadmap
 
 ### Phase 1 - MVP (Current)
 
@@ -220,6 +237,7 @@
 - ✅ USER_GUIDE.md
 - ✅ API.md
 - ✅ ROADMAP.md
+- ✅ TECH_STACK.md
 
 ### Phase 2 - Enhanced
 
@@ -276,18 +294,28 @@
 
 ## 🎯 Key Decisions Summary
 
-### Tech Stack (Final)
+### Tech Stack (Latest Stable + Cutting Edge)
 
 ```
-Frontend:  Next.js 15 + TypeScript + TailwindCSS + Shadcn/ui
-Backend:   NestJS + TypeScript
-Database:  PostgreSQL + Prisma ORM
-Validation: Zod (Frontend) + Class-validator (Backend)
-Charts:    Recharts
-State:     Zustand + React Query
+Frontend:  Next.js 16.0 RC + React 19 + TypeScript 5.7
+           TailwindCSS 4.0 + Shadcn/ui + Shadcn Charts
+Backend:   NestJS 11.0 + Node.js 23 + TypeScript 5.7
+Database:  PostgreSQL 17.x + Prisma 7.0 Beta
+Validation: Zod 3.24 (Frontend) + Class-validator 0.14 (Backend)
+Charts:    Shadcn Charts (Recharts wrapper, dashboard-ready)
+State:     Zustand 5.0 + TanStack Query 5.x
 Auth:      NextAuth.js v5
 Deploy:    Vercel (Frontend) + Railway (Backend) + Neon (DB)
+Tools:     npm 10.x, Turbopack, Biome, Vitest 2.x, Playwright 1.49
 ```
+
+**Key Features**:
+
+- ✅ Next.js 16 RC with React 19 Compiler (auto-memoization)
+- ✅ Prisma 7 Beta with TypedSQL (30% faster queries)
+- ✅ Shadcn Charts (perfect for dashboard templates)
+- ✅ Biome (100x faster than ESLint+Prettier)
+- ✅ npm (universal, built-in with Node.js)
 
 ### Color Theme
 
@@ -383,7 +411,8 @@ c:\Project\Home-Sweet-Loan-App\
     ├── DESIGN_SYSTEM.md
     ├── USER_GUIDE.md
     ├── API.md
-    └── ROADMAP.md
+    ├── ROADMAP.md
+    └── TECH_STACK.md
 ```
 
 ---
@@ -403,6 +432,7 @@ Before starting development, ensure you've read:
 - [ ] PRD.md - Feature requirements
 - [ ] MVP.md - Scope & timeline
 - [ ] TECHNICAL_SPEC.md - Architecture
+- [ ] TECH_STACK.md - Latest versions & compatibility
 
 ### Reference When Needed
 
