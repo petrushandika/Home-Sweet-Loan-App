@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
-import { ShieldCheck } from "lucide-react"
 import Link from "next/link"
 import { toast } from "sonner"
 
@@ -101,10 +100,6 @@ export default function LoginPage() {
         </CardContent>
       </Card>
       
-      <div className="mt-6 flex items-center justify-center gap-3 opacity-60">
-         <ShieldCheck className="w-4 h-4 text-emerald-600" />
-         <span className="text-xs font-bold text-slate-400">Secure AES-256 Encryption</span>
-      </div>
     </div>
   )
 }

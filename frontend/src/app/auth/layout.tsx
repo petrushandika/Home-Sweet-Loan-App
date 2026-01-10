@@ -25,7 +25,7 @@ export default function AuthLayout({
   const page = getContent()
 
   return (
-    <div className="min-h-screen w-full bg-white flex flex-col items-center justify-center p-6 md:p-10 relative selection:bg-emerald-100 selection:text-emerald-900 border-none">
+    <div className="min-h-screen w-full bg-white flex flex-col items-center justify-center p-4 sm:p-6 md:p-10 relative selection:bg-emerald-100 selection:text-emerald-900 border-none">
 
       {/* Background Decorative Gradients - Subtle */}
       <div className="absolute top-0 right-0 -mr-40 -mt-20 w-[600px] h-[600px] bg-emerald-50 rounded-full blur-[100px] opacity-40 -z-10" />
@@ -33,7 +33,7 @@ export default function AuthLayout({
       
       <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center relative z-10">
         {/* Left Side: Branding & Dynamic Heading */}
-        <div className="flex flex-col justify-center py-4 space-y-10 animate-smooth-in">
+        <div className="flex flex-col justify-center py-4 space-y-8 sm:space-y-10 animate-smooth-in">
           <div className="space-y-10">
             <Link href="/" className="inline-block group">
               <span className="text-3xl font-black tracking-tighter text-slate-900 group-hover:text-emerald-600 transition-colors">
@@ -41,15 +41,15 @@ export default function AuthLayout({
               </span>
             </Link>
             
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <div className="space-y-2">
-                <p className="text-emerald-600 font-black uppercase tracking-[0.3em] text-[10px] italic">{page.title}</p>
-                <h1 className="text-5xl xl:text-6xl font-black text-slate-900 tracking-tighter leading-[0.9] italic">
+                <p className="text-emerald-600 font-black uppercase tracking-[0.3em] text-[9px] sm:text-[10px] italic">{page.title}</p>
+                <h1 className="text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-black text-slate-900 tracking-tighter leading-[0.95] md:leading-[0.9] italic">
                    Master Your <br/>
                    <span className="text-emerald-600 underline underline-offset-8 decoration-emerald-100 decoration-4">Financial</span> Destiny.
                 </h1>
               </div>
-              <p className="text-lg text-slate-500 font-medium leading-relaxed max-w-md">
+              <p className="text-base sm:text-lg text-slate-500 font-medium leading-relaxed max-w-md">
                 {page.desc}
               </p>
             </div>
@@ -75,9 +75,13 @@ export default function AuthLayout({
           <div className="pt-10 border-t border-slate-100 flex flex-wrap items-center gap-6 justify-between">
              <div className="flex items-center gap-4">
                 <div className="flex -space-x-2">
-                    {[1,2,3].map(i => (
-                      <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-slate-50 flex items-center justify-center shadow-sm overflow-hidden">
-                         <Users className="w-4 h-4 text-slate-300" />
+                    {[
+                      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&h=100&q=80",
+                      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&h=100&q=80",
+                      "https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&w=100&h=100&q=80"
+                    ].map((src, i) => (
+                      <div key={i} className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-white bg-slate-50 flex items-center justify-center shadow-sm overflow-hidden hover:scale-110 transition-transform cursor-pointer">
+                         <img src={src} alt="User" className="w-full h-full object-cover" />
                       </div>
                     ))}
                 </div>

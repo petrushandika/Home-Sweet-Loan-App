@@ -3,7 +3,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Mail, RefreshCcw, ShieldCheck } from "lucide-react"
+import { Mail, RefreshCcw } from "lucide-react"
 import { toast } from "sonner"
 import { useState } from "react"
 import Link from "next/link"
@@ -52,10 +52,6 @@ export default function VerifyEmailPage() {
         </CardContent>
       </Card>
       
-      <div className="mt-6 flex items-center justify-center gap-3 opacity-60">
-         <ShieldCheck className="w-4 h-4 text-emerald-600" />
-         <span className="text-xs font-bold text-slate-400">Secure Comm Pipeline Active</span>
-      </div>
     </div>
   )
 }
