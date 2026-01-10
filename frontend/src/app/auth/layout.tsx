@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { CheckCircle2, Star, Users, TrendingUp } from "lucide-react"
+import { CheckCircle2, Star } from "lucide-react"
 
 export default function AuthLayout({
   children,
@@ -24,15 +24,15 @@ export default function AuthLayout({
   const page = getContent()
 
   return (
-    <div className="min-h-screen w-full bg-white dark:bg-slate-950 flex flex-col items-center justify-center p-4 sm:p-6 md:p-10 relative selection:bg-emerald-100 dark:selection:bg-emerald-900/40 selection:text-emerald-900 dark:selection:text-emerald-100 border-none transition-colors duration-300">
+    <div className="min-h-screen w-full bg-white dark:bg-slate-950 flex flex-col lg:flex-row items-center justify-center p-4 sm:p-6 md:p-10 relative selection:bg-emerald-100 dark:selection:bg-emerald-900/40 selection:text-emerald-900 dark:selection:text-emerald-100 border-none transition-colors duration-300">
 
       {/* Background Decorative Gradients - Subtle */}
       <div className="absolute top-0 right-0 -mr-40 -mt-20 w-[600px] h-[600px] bg-emerald-50 dark:bg-emerald-900/5 rounded-full blur-[100px] opacity-40 -z-10 transition-colors" />
       <div className="absolute bottom-0 left-0 -ml-40 -mb-20 w-[600px] h-[600px] bg-blue-50 dark:bg-blue-900/5 rounded-full blur-[100px] opacity-40 -z-10 transition-colors" />
       
       <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center relative z-10">
-        {/* Left Side: Branding & Dynamic Heading */}
-        <div className="flex flex-col justify-center py-4 space-y-8 sm:space-y-10 animate-smooth-in">
+        {/* Left Side: Branding & Dynamic Heading - Hidden on Mobile */}
+        <div className="hidden lg:flex flex-col justify-center py-4 space-y-8 sm:space-y-10 animate-smooth-in">
           <div className="space-y-10">
             <Link href="/" className="inline-block group">
               <span className="text-3xl font-black tracking-tighter text-slate-900 dark:text-white group-hover:text-emerald-600 transition-colors">
@@ -96,9 +96,19 @@ export default function AuthLayout({
 
         {/* Right Side: Centered Form Card */}
         <div className="flex flex-col items-center justify-center relative w-full lg:pt-2">
-            {/* Mobile-only page header */}
-            <div className="lg:hidden mb-6 text-center w-full">
-              <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight uppercase">{page.title}</h2>
+            {/* Mobile-only branding and title */}
+            <div className="lg:hidden mb-8 text-center w-full space-y-4">
+              <Link href="/" className="inline-block">
+                <span className="text-2xl font-black tracking-tighter text-slate-900 dark:text-white">
+                  Home Sweet <span className="text-emerald-600">Loan</span>
+                </span>
+              </Link>
+              <div>
+                <p className="text-emerald-600 dark:text-emerald-400 font-black uppercase tracking-[0.3em] text-[9px] italic mb-2">{page.title}</p>
+                <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+                  Master Your <span className="text-emerald-600">Financial</span> Destiny
+                </h2>
+              </div>
             </div>
             <div className="w-full max-w-md animate-smooth-in">
                 {children}

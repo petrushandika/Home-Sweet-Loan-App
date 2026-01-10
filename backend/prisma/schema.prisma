@@ -1,0 +1,169 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+}
+
+// ============================================
+// USER MANAGEMENT
+// ============================================
+
+model User {
+    id        String   @id @default(uuid())
+    email     String   @unique
+    password  String
+    name      String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    // Relations
+    setupConfig  SetupConfig?
+    budgets      Budget[]
+    spending     Spending[]
+    assets       Asset[]
+    userSettings UserSettings?
+
+    @@map("users")
+}
+
+// ============================================
+// SETUP CONFIGURATION
+// ============================================
+
+model SetupConfig {
+    id     String @id @default(uuid())
+    userId String @unique
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    // Account Summary (JSON array of strings)
+    accountSummary String[] // ["BCA", "Gopay", "Permata"]
+
+    // Income Sources (JSON array of strings)
+    incomeSources String[] // ["Monthly Salary", "Bonus"]
+
+    // Expense Categories
+    needs   String[] // ["Home Rent", "Course", "Utilities"]
+    wants   String[] // ["Shopping", "Entertainment"]
+    savings String[] // ["General Savings", "Emergency Funds"]
+
+    // Account Assets
+    accountAssets String[] // ["General Savings", "Bibit", "BPJS"]
+
+    // Payday Date (1-31)
+    paydayDate Int @default(1)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@map("setup_configs")
+}
+
+// ============================================
+// BUDGETS
+// ============================================
+
+model Budget {
+    id     String @id @default(uuid())
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    // Year-Month format: "2026-01"
+    yearMonth String
+
+    // Income (JSON object)
+    // { "Monthly Salary": 6430000, "Bonus": 0 }
+    income Json @default("{}")
+
+    // Savings (JSON object)
+    // { "General Savings": 500000, "Emergency Funds": 300000 }
+    savingsAllocation Json @default("{}")
+
+    // Expenses (JSON object)
+    // { "Home Rent": 1700000, "Course": 150000 }
+    expenses Json @default("{}")
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@unique([userId, yearMonth])
+    @@index([userId, yearMonth])
+    @@map("budgets")
+}
+
+// ============================================
+// SPENDING TRACKER
+// ============================================
+
+model Spending {
+    id     String @id @default(uuid())
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    date        DateTime
+    description String
+    category    String
+    amount      Decimal  @db.Decimal(15, 2)
+    checked     Boolean  @default(false)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([userId, date])
+    @@index([userId, category])
+    @@map("spending")
+}
+
+// ============================================
+// ASSETS MANAGEMENT
+// ============================================
+
+enum AssetType {
+    LIQUID
+    NON_LIQUID
+}
+
+model Asset {
+    id     String @id @default(uuid())
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    type        AssetType
+    description String
+    value       Decimal   @db.Decimal(15, 2)
+    account     String
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([userId, type])
+    @@map("assets")
+}
+
+// ============================================
+// USER SETTINGS
+// ============================================
+
+model UserSettings {
+    id     String @id @default(uuid())
+    userId String @unique
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    // Assets target
+    assetsTarget Decimal @default(0) @db.Decimal(15, 2)
+
+    // Currency (default: IDR)
+    currency String @default("IDR")
+
+    // Preferences (JSON)
+    preferences Json @default("{}")
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@map("user_settings")
+}

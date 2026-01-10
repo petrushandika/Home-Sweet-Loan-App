@@ -2,12 +2,17 @@
 
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { Facebook, Twitter, Instagram, Linkedin, Github, LayoutDashboard, ArrowUp } from "lucide-react"
+import { Facebook, Twitter, Instagram, Linkedin, Github, LayoutDashboard, ArrowUp, Menu } from "lucide-react"
 import { useState, useEffect } from "react"
 import { BrandGate } from "@/components/brand-gate"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { LanguageToggle } from "@/components/language-toggle"
 import { useLanguageStore, translations } from "@/store/use-language-store"
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet"
 
 export default function MainLayout({
   children,
@@ -16,6 +21,7 @@ export default function MainLayout({
 }) {
   const { language } = useLanguageStore()
   const [mounted, setMounted] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   
   // Wait for mounting to avoid hydration mismatch with zustand storage
   useEffect(() => {
@@ -38,6 +44,13 @@ export default function MainLayout({
 
   if (!mounted) return <BrandGate>{children}</BrandGate>
 
+  const navLinks = [
+    { name: t.nav.partners, href: "#partners" },
+    { name: t.nav.features, href: "#features" },
+    { name: t.nav.platform, href: "#platform" },
+    { name: t.nav.testimonials, href: "#testimonials" }
+  ]
+
   return (
     <BrandGate
       fixed={
@@ -59,13 +72,9 @@ export default function MainLayout({
               </span>
             </Link>
 
+            {/* Desktop Navigation */}
             <nav className="hidden xl:flex items-center gap-10">
-              {[
-                { name: t.nav.partners, href: "#partners" },
-                { name: t.nav.features, href: "#features" },
-                { name: t.nav.platform, href: "#platform" },
-                { name: t.nav.testimonials, href: "#testimonials" }
-              ].map((item) => (
+              {navLinks.map((item) => (
                 <Link 
                   key={item.name} 
                   href={item.href} 
@@ -98,8 +107,8 @@ export default function MainLayout({
                       </div>
                       <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-white dark:border-slate-950 rounded-full" />
                    </Link>
-                   <Link href="/dashboard">
-                      <Button className="hidden sm:flex rounded-full px-6 bg-slate-900 dark:bg-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 text-white font-black shadow-lg transition-all hover:scale-105 active:scale-95 items-center gap-2 border-none">
+                   <Link href="/dashboard" className="hidden sm:block">
+                      <Button className="rounded-full px-6 bg-slate-900 dark:bg-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 text-white font-black shadow-lg transition-all hover:scale-105 active:scale-95 flex items-center gap-2 border-none">
                         <LayoutDashboard className="w-4 h-4 text-emerald-400" />
                         {t.nav.dashboard}
                       </Button>
@@ -110,13 +119,60 @@ export default function MainLayout({
                    <Link href="/auth/login" className="hidden sm:block text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-emerald-600 px-4 transition-colors">
                       {t.nav.signIn}
                    </Link>
-                   <Link href="/auth/register">
+                   <Link href="/auth/register" className="hidden sm:block">
                       <Button className="rounded-full px-6 sm:px-8 bg-emerald-600 hover:bg-emerald-700 text-white font-black shadow-lg shadow-emerald-100 dark:shadow-none transition-all hover:scale-105 active:scale-95 border-none">
                         {t.nav.getStarted}
                       </Button>
                    </Link>
                  </>
                )}
+
+               {/* Mobile Menu */}
+               <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+                 <SheetTrigger asChild>
+                   <Button variant="ghost" size="icon" className="xl:hidden hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800">
+                     <Menu className="w-6 h-6 text-slate-900 dark:text-white" />
+                   </Button>
+                 </SheetTrigger>
+                 <SheetContent side="right" className="w-80 sm:w-96 dark:bg-slate-950 dark:border-slate-800">
+                   <nav className="flex flex-col gap-6 mt-8">
+                     <div className="space-y-1">
+                       {navLinks.map((item) => (
+                         <Link
+                           key={item.name}
+                           href={item.href}
+                           onClick={() => setMobileMenuOpen(false)}
+                           className="block py-3 px-4 text-base font-bold text-slate-600 dark:text-slate-400 hover:text-emerald-600 hover:bg-slate-50 dark:hover:bg-slate-900 rounded-xl transition-colors uppercase tracking-widest"
+                         >
+                           {item.name}
+                         </Link>
+                       ))}
+                     </div>
+                     
+                     <div className="pt-6 border-t border-slate-200 dark:border-slate-800 space-y-4">
+                       <div className="flex items-center gap-3">
+                         <LanguageToggle />
+                         <ThemeToggle />
+                       </div>
+                       
+                       {!isLoggedIn && (
+                         <div className="flex flex-col gap-3 pt-4">
+                           <Link href="/auth/login" onClick={() => setMobileMenuOpen(false)}>
+                             <Button variant="outline" className="w-full rounded-full border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-bold h-12">
+                               {t.nav.signIn}
+                             </Button>
+                           </Link>
+                           <Link href="/auth/register" onClick={() => setMobileMenuOpen(false)}>
+                             <Button className="w-full rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-black shadow-lg h-12 border-none">
+                               {t.nav.getStarted}
+                             </Button>
+                           </Link>
+                         </div>
+                       )}
+                     </div>
+                   </nav>
+                 </SheetContent>
+               </Sheet>
             </div>
           </div>
         </header>
