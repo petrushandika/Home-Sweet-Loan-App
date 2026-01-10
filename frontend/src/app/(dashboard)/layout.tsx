@@ -53,7 +53,7 @@ export default function DashboardLayout({
                  </Button>
                </SheetTrigger>
                <SheetContent side="left" className="p-0 w-72">
-                 <Sidebar className="w-full border-none" />
+                 <Sidebar className="w-full border-none" onItemClick={() => setOpen(false)} />
                </SheetContent>
              </Sheet>
 

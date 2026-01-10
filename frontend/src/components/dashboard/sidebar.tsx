@@ -47,11 +47,11 @@ const items = [
   },
 ]
 
-export function Sidebar({ className }: { className?: string }) {
+export function Sidebar({ className, onItemClick }: { className?: string, onItemClick?: () => void }) {
   const pathname = usePathname()
 
   return (
-    <div className={cn("flex flex-col h-full w-64 bg-sidebar border-r border-slate-200", className)}>
+    <div className={cn("flex flex-col h-full w-64 bg-sidebar border-r border-slate-200 overflow-y-auto no-scrollbar", className)}>
       <div className="p-8">
         <span className="text-2xl font-black tracking-tighter text-gradient-money">
           Home Sweet Loan
@@ -64,6 +64,7 @@ export function Sidebar({ className }: { className?: string }) {
             <Link
               key={item.href}
               href={item.href}
+              onClick={onItemClick}
               className={cn(
                 "group flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 border border-transparent",
                 isActive
