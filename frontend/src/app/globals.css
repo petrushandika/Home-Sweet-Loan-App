@@ -133,9 +133,45 @@
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground selection:bg-primary/20;
+  html {
+    scroll-behavior: smooth;
+    @apply emerald-scrollbar;
   }
+  body {
+    @apply bg-background text-foreground selection:bg-primary/20 antialiased;
+  }
+}
+
+/* Base interactive smoothness */
+a, button, div, span, input, select {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Custom Smooth Transitions */
+:root {
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-smooth: cubic-bezier(0.42, 0, 0.58, 1);
+}
+
+.animate-smooth-in {
+  animation: smooth-in 0.5s var(--ease-expo) forwards;
+}
+
+@keyframes smooth-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bottom-sheet-handle {
+  @apply w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-4;
 }
 
 /* Updated Utility Classes */
@@ -155,4 +191,41 @@
   background: linear-gradient(135deg, #059669 0%, #10b981 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+@utility no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
+}
+
+@utility emerald-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #10b981 #f8fafc;
+  
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f8fafc;
+    border-radius: 10px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #10b981;
+    border-radius: 10px;
+    border: 2px solid #f8fafc;
+  }
+  
+  &::-webkit-scrollbar-thumb:hover {
+    background: #059669;
+  }
+}
+
+/* Override Radix/Shadcn defaults for smoothness */
+[data-state="open"] {
+  transition-timing-function: var(--ease-expo) !important;
 }

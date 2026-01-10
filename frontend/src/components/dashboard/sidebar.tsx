@@ -57,7 +57,7 @@ export function Sidebar({ className }: { className?: string }) {
           Home Sweet Loan
         </span>
       </div>
-      <nav className="flex-1 px-4 space-y-2">
+      <nav className="flex-1 px-4 space-y-2 overflow-y-auto emerald-scrollbar">
         {items.map((item) => {
           const isActive = pathname === item.href
           return (

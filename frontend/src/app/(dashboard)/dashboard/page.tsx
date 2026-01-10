@@ -22,7 +22,8 @@ import {
   Download,
   PiggyBank,
   Plus,
-  ArrowRight
+  ArrowRight,
+  CalendarIcon
 } from "lucide-react"
 import { 
   Bar, 
@@ -37,6 +38,18 @@ import {
   ChartTooltipContent 
 } from "@/components/ui/chart"
 import { cn } from "@/lib/utils"
+import { ResponsiveModal } from "@/components/responsive-modal"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import Link from "next/link"
+import { toast } from "sonner"
 
 const chartData = [
   { month: "Jan", income: 12500000, expenses: 4200000 },
@@ -59,6 +72,12 @@ const chartConfig = {
 } satisfies ChartConfig
 
 export default function DashboardPage() {
+  const handleExport = () => {
+    toast.success("Exporting data...", {
+      description: "Your financial data is being prepared for download."
+    })
+  }
+
   return (
     <div className="space-y-10 pb-10">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -69,12 +88,60 @@ export default function DashboardPage() {
           <p className="text-slate-500 font-medium mt-2">Welcome back, Pandawa! Here's what's happening today.</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-3">
-          <Button variant="outline" className="w-full sm:w-auto rounded-full px-6 border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700 font-semibold shadow-sm">
+          <Button 
+            onClick={handleExport}
+            variant="outline" 
+            className="w-full sm:w-auto rounded-full px-6 border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700 font-semibold shadow-sm cursor-pointer"
+          >
             <Download className="mr-2 h-4 w-4" /> Export Data
           </Button>
-          <Button className="w-full sm:w-auto rounded-full px-6 bg-linear-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-bold shadow-sm">
-            <Plus className="mr-2 h-4 w-4" /> Add Transaction
-          </Button>
+          
+          <ResponsiveModal
+            title="Add Transaction"
+            description="Capture your spending or income quickly."
+            trigger={
+              <Button className="w-full sm:w-auto rounded-full px-6 bg-linear-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-bold shadow-sm transition-all hover:scale-105 active:scale-95">
+                <Plus className="mr-2 h-4 w-4" /> Add Transaction
+              </Button>
+            }
+          >
+            <div className="grid gap-5">
+              <div className="grid gap-2">
+                <Label htmlFor="desc" className="text-slate-700 font-bold ml-1">Description</Label>
+                <Input id="desc" placeholder="e.g. Cinema Tickets" className="rounded-2xl border-slate-200 focus-visible:ring-emerald-500 h-11" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="amount" className="text-slate-700 font-bold ml-1">Amount (Rp)</Label>
+                  <Input id="amount" type="number" placeholder="50.000" className="rounded-2xl border-slate-200 focus-visible:ring-emerald-500 h-11" />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="category" className="text-slate-700 font-bold ml-1">Category</Label>
+                  <Select>
+                    <SelectTrigger className="rounded-2xl border-slate-200 focus:ring-emerald-500 h-11">
+                      <SelectValue placeholder="Category" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-2xl border-slate-200">
+                      <SelectItem value="food">Food & Drinks</SelectItem>
+                      <SelectItem value="transport">Transport</SelectItem>
+                      <SelectItem value="needs">Needs (Fixed)</SelectItem>
+                      <SelectItem value="wants">Wants (Flex)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="date" className="text-slate-700 font-bold ml-1">Date</Label>
+                <div className="relative">
+                  <CalendarIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                  <Input id="date" type="date" className="rounded-2xl border-slate-200 focus-visible:ring-emerald-500 pl-11 h-11" defaultValue={new Date().toISOString().split('T')[0]} />
+                </div>
+              </div>
+              <Button type="submit" className="w-full rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-12 mt-2">
+                Complete Transaction
+              </Button>
+            </div>
+          </ResponsiveModal>
         </div>
       </div>
 
@@ -165,9 +232,11 @@ export default function DashboardPage() {
           <CardHeader className="p-6 md:p-8 pb-4">
             <div className="flex items-center justify-between">
               <CardTitle className="text-2xl font-bold text-slate-800">Recent Activity</CardTitle>
-              <Button variant="ghost" size="sm" className="rounded-full text-emerald-600 font-bold hover:bg-emerald-50 border border-transparent hover:border-emerald-100">
-                View All <ArrowRight className="ml-2 w-4 h-4" />
-              </Button>
+              <Link href="/spending">
+                <Button variant="ghost" size="sm" className="rounded-full text-emerald-600 font-bold hover:bg-emerald-50 border border-transparent hover:border-emerald-100 cursor-pointer">
+                  View All <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
+              </Link>
             </div>
           </CardHeader>
           <CardContent className="p-6 md:p-8 pt-0 space-y-6">

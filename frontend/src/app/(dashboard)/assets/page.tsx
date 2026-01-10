@@ -3,10 +3,26 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Plus, PiggyBank, Landmark, Briefcase, TrendingUp } from "lucide-react"
+import { Plus, PiggyBank, Landmark, Briefcase, TrendingUp, Info } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { ResponsiveModal } from "@/components/responsive-modal"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select"
+import { toast } from "sonner"
 
 export default function AssetsPage() {
+  const handleRegister = () => {
+    toast.success("Asset Registered", {
+      description: "Successfully added new item to your wealth portfolio."
+    })
+  }
   return (
     <div className="space-y-10 pb-10">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -16,9 +32,51 @@ export default function AssetsPage() {
           </h1>
           <p className="text-slate-500 font-medium mt-2">Monitor your long-term wealth and portfolio growth.</p>
         </div>
-        <Button className="w-full sm:w-auto rounded-full px-6 bg-linear-to-r from-emerald-600 to-emerald-700 text-white font-bold shadow-sm">
-          <Plus className="mr-2 h-4 w-4" /> Add Asset
-        </Button>
+        
+        <ResponsiveModal
+          title="New Asset"
+          description="Add a new item to your wealth portfolio."
+          trigger={
+            <Button className="w-full sm:w-auto rounded-full px-6 bg-linear-to-r from-emerald-600 to-emerald-700 text-white font-bold shadow-sm transition-all hover:scale-105 active:scale-95">
+              <Plus className="mr-2 h-4 w-4" /> Add Asset
+            </Button>
+          }
+        >
+          <div className="grid gap-6">
+            <div className="grid gap-2">
+              <Label htmlFor="asset-name" className="text-slate-700 font-bold ml-1">Asset Name</Label>
+              <Input id="asset-name" placeholder="e.g. Emergency Fund, Stocks" className="rounded-2xl border-slate-200 focus-visible:ring-emerald-500 h-11" />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="asset-type" className="text-slate-700 font-bold ml-1">Asset Type</Label>
+              <Select>
+                <SelectTrigger className="rounded-2xl border-slate-200 focus:ring-emerald-500 h-11">
+                  <SelectValue placeholder="Select type" />
+                </SelectTrigger>
+                <SelectContent className="rounded-2xl border-slate-200">
+                  <SelectItem value="liquid">Liquid (Cash/Bank)</SelectItem>
+                  <SelectItem value="investment">Investment (Stocks/Crypto)</SelectItem>
+                  <SelectItem value="property">Property / Physical</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="asset-value" className="text-slate-700 font-bold ml-1">Current Value</Label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">Rp</span>
+                <Input id="asset-value" placeholder="0" className="rounded-2xl border-slate-200 focus-visible:ring-emerald-500 pl-11 h-11" />
+              </div>
+            </div>
+            <Button 
+              onClick={handleRegister}
+              type="submit" 
+              className="w-full rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-12 mt-2 shadow-lg shadow-emerald-100 cursor-pointer transition-all active:scale-95"
+            >
+              Register Asset
+            </Button>
+          </div>
+        </ResponsiveModal>
       </div>
 
       <div className="grid gap-6 grid-cols-1 md:grid-cols-3">
@@ -40,8 +98,10 @@ export default function AssetsPage() {
           </div>
         </CardHeader>
         <CardContent className="p-6 md:p-10 pt-6">
-           <div className="h-96 flex items-center justify-center border-2 border-dashed border-slate-100 rounded-3xl text-sm text-slate-400 font-medium italic bg-slate-50/50">
-             Asset Portfolio Details Table Placeholder
+           <div className="h-96 flex flex-col items-center justify-center border-2 border-dashed border-slate-100 rounded-3xl text-sm text-slate-400 font-medium italic bg-slate-50/50">
+             <Info className="w-12 h-12 mb-4 opacity-20" />
+             <p>Register your first asset to see the breakdown.</p>
+             <Button variant="outline" className="mt-4 rounded-xl border-slate-200 text-slate-600 font-bold">Quick Guide</Button>
            </div>
         </CardContent>
       </Card>
