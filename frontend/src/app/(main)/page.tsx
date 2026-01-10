@@ -7,7 +7,7 @@ import {
   PlatformSection, 
   TestimonialsPlaceholder, 
   CTASection 
-} from "@/components/landing/LandingSections"
+} from "@/components/landing/landing-sections"
 
 export default function LandingPage() {
   return (

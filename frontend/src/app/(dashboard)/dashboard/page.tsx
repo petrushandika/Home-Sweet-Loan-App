@@ -1,4 +1,3 @@
-
 "use client"
 
 import { 
@@ -50,6 +49,7 @@ import {
 } from "@/components/ui/select"
 import Link from "next/link"
 import { toast } from "sonner"
+import { useLanguageStore, translations } from "@/store/use-language-store"
 
 const chartData = [
   { month: "Jan", income: 12500000, expenses: 4200000 },
@@ -72,9 +72,12 @@ const chartConfig = {
 } satisfies ChartConfig
 
 export default function DashboardPage() {
+  const { language } = useLanguageStore()
+  const t = translations[language].dashboard.summary
+
   const handleExport = () => {
-    toast.success("Exporting data...", {
-      description: "Your financial data is being prepared for download."
+    toast.success(t.toastTitle, {
+      description: t.toastDesc
     })
   }
 
@@ -82,46 +85,47 @@ export default function DashboardPage() {
     <div className="space-y-10 pb-10">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-black tracking-tight text-slate-900">
-            Financial <span className="text-gradient-money">Summary</span>
-          </h1>
-          <p className="text-slate-500 font-medium mt-2">Welcome back, Pandawa! Here's what's happening today.</p>
+          <h1 
+            className="text-4xl font-black tracking-tight text-slate-900 dark:text-white"
+            dangerouslySetInnerHTML={{ __html: t.title }}
+          />
+          <p className="text-slate-500 dark:text-slate-400 font-medium mt-2">{t.welcome}</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-3">
           <Button 
             onClick={handleExport}
             variant="outline" 
-            className="w-full sm:w-auto rounded-full px-6 border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700 font-semibold shadow-sm cursor-pointer"
+            className="w-full sm:w-auto rounded-full px-6 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 text-slate-700 dark:text-slate-300 font-semibold shadow-sm cursor-pointer"
           >
-            <Download className="mr-2 h-4 w-4" /> Export Data
+            <Download className="mr-2 h-4 w-4" /> {t.exportBtn}
           </Button>
           
           <ResponsiveModal
-            title="Add Transaction"
-            description="Capture your spending or income quickly."
+            title={t.modalTitle}
+            description={t.modalDesc}
             trigger={
-              <Button className="w-full sm:w-auto rounded-full px-6 bg-linear-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-bold shadow-sm transition-all hover:scale-105 active:scale-95">
-                <Plus className="mr-2 h-4 w-4" /> Add Transaction
+              <Button className="w-full sm:w-auto rounded-full px-6 bg-linear-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-bold shadow-sm transition-all hover:scale-105 active:scale-95 border-none">
+                <Plus className="mr-2 h-4 w-4" /> {t.addBtn}
               </Button>
             }
           >
             <div className="grid gap-5">
               <div className="grid gap-2">
-                <Label htmlFor="desc" className="text-slate-700 font-bold ml-1">Description</Label>
-                <Input id="desc" placeholder="e.g. Cinema Tickets" className="rounded-2xl border-slate-200 focus-visible:ring-emerald-500 h-11" />
+                <Label htmlFor="desc" className="text-slate-700 dark:text-slate-300 font-bold ml-1">{t.descLabel}</Label>
+                <Input id="desc" placeholder="e.g. Cinema Tickets" className="rounded-2xl border-slate-200 dark:border-slate-800 dark:bg-slate-900 focus-visible:ring-emerald-500 h-11" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="amount" className="text-slate-700 font-bold ml-1">Amount (Rp)</Label>
-                  <Input id="amount" type="number" placeholder="50.000" className="rounded-2xl border-slate-200 focus-visible:ring-emerald-500 h-11" />
+                  <Label htmlFor="amount" className="text-slate-700 dark:text-slate-300 font-bold ml-1">{t.amountLabel}</Label>
+                  <Input id="amount" type="number" placeholder="50.000" className="rounded-2xl border-slate-200 dark:border-slate-800 dark:bg-slate-900 focus-visible:ring-emerald-500 h-11" />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="category" className="text-slate-700 font-bold ml-1">Category</Label>
+                  <Label htmlFor="category" className="text-slate-700 dark:text-slate-300 font-bold ml-1">{t.catLabel}</Label>
                   <Select>
-                    <SelectTrigger className="rounded-2xl border-slate-200 focus:ring-emerald-500 h-11">
+                    <SelectTrigger className="rounded-2xl border-slate-200 dark:border-slate-800 dark:bg-slate-900 focus:ring-emerald-500 h-11">
                       <SelectValue placeholder="Category" />
                     </SelectTrigger>
-                    <SelectContent className="rounded-2xl border-slate-200">
+                    <SelectContent className="rounded-2xl border-slate-200 dark:border-slate-800 dark:bg-slate-900">
                       <SelectItem value="food">Food & Drinks</SelectItem>
                       <SelectItem value="transport">Transport</SelectItem>
                       <SelectItem value="needs">Needs (Fixed)</SelectItem>
@@ -131,14 +135,14 @@ export default function DashboardPage() {
                 </div>
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="date" className="text-slate-700 font-bold ml-1">Date</Label>
+                <Label htmlFor="date" className="text-slate-700 dark:text-slate-300 font-bold ml-1">{t.dateLabel}</Label>
                 <div className="relative">
                   <CalendarIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
-                  <Input id="date" type="date" className="rounded-2xl border-slate-200 focus-visible:ring-emerald-500 pl-11 h-11" defaultValue={new Date().toISOString().split('T')[0]} />
+                  <Input id="date" type="date" className="rounded-2xl border-slate-200 dark:border-slate-800 dark:bg-slate-900 focus-visible:ring-emerald-500 pl-11 h-11" defaultValue={new Date().toISOString().split('T')[0]} />
                 </div>
               </div>
-              <Button type="submit" className="w-full rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-12 mt-2">
-                Complete Transaction
+              <Button type="submit" className="w-full rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-12 mt-2 border-none">
+                {t.completeBtn}
               </Button>
             </div>
           </ResponsiveModal>
@@ -147,61 +151,61 @@ export default function DashboardPage() {
 
       <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
         <StatsCard 
-          title="Monthly Income" 
+          title={t.income} 
           amount="Rp 12,500,000" 
           trend="+12%" 
           positive 
           icon={TrendingUp} 
           gradient="bg-emerald-50/50" 
-          borderColor="border-emerald-200"
+          borderColor="border-emerald-200 dark:border-emerald-800/50"
           textColor="text-emerald-600"
-          iconBg="bg-emerald-100"
+          iconBg="bg-emerald-100 dark:bg-emerald-900/30"
         />
         <StatsCard 
-          title="Monthly Spending" 
+          title={t.spending} 
           amount="Rp 4,230,000" 
           trend="-4%" 
           positive 
           icon={TrendingDown} 
           gradient="bg-rose-50/50" 
-          borderColor="border-rose-200"
+          borderColor="border-rose-200 dark:border-rose-800/50"
           textColor="text-rose-600"
-          iconBg="bg-rose-100"
+          iconBg="bg-rose-100 dark:bg-rose-900/30"
         />
         <StatsCard 
-          title="Total Savings" 
+          title={t.savings} 
           amount="Rp 45,000,000" 
           trend="82%" 
           icon={PiggyBank} 
           gradient="bg-sky-50/50" 
-          borderColor="border-sky-200"
+          borderColor="border-sky-200 dark:border-sky-800/50"
           textColor="text-sky-600"
-          iconBg="bg-sky-100"
-          subtitle="Target: DP Rumah"
+          iconBg="bg-sky-100 dark:bg-sky-900/30"
+          subtitle={`${t.target}: DP Rumah`}
         />
         <StatsCard 
-          title="Net Worth" 
+          title={t.networth} 
           amount="Rp 157,800,000" 
           trend="+Rp 15M" 
           positive 
           icon={Wallet} 
           gradient="bg-violet-50/50" 
-          borderColor="border-violet-200"
+          borderColor="border-violet-200 dark:border-violet-800/50"
           textColor="text-violet-600"
-          iconBg="bg-violet-100"
+          iconBg="bg-violet-100 dark:bg-violet-900/30"
         />
       </div>
 
       <div className="grid gap-8 grid-cols-1 lg:grid-cols-1 xl:grid-cols-7">
-        <Card className="xl:col-span-4 border-slate-200 shadow-none rounded-3xl overflow-hidden bg-white">
+        <Card className="xl:col-span-4 border-slate-200 dark:border-slate-800 shadow-none rounded-3xl overflow-hidden bg-white dark:bg-slate-900 transition-colors">
           <CardHeader className="p-6 md:p-8 pb-0">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <CardTitle className="text-2xl font-bold text-slate-800">Cash Flow</CardTitle>
-                <CardDescription className="text-slate-500 font-medium tracking-tight">Income vs expenses</CardDescription>
+                <CardTitle className="text-2xl font-bold text-slate-800 dark:text-white">{t.cashflow}</CardTitle>
+                <CardDescription className="text-slate-500 dark:text-slate-400 font-medium tracking-tight">{t.cashflowDesc}</CardDescription>
               </div>
               <Tabs defaultValue="6m" className="w-full sm:w-fit">
-                <TabsList className="w-full sm:w-fit rounded-full bg-slate-100 p-1 border border-slate-200">
+                <TabsList className="w-full sm:w-fit rounded-full bg-slate-100 dark:bg-slate-800 p-1 border border-slate-200 dark:border-slate-700">
                   <TabsTrigger value="1m" className="flex-1 sm:flex-none rounded-full px-4 text-xs font-bold data-[state=active]:shadow-sm">1M</TabsTrigger>
                   <TabsTrigger value="6m" className="flex-1 sm:flex-none rounded-full px-4 text-xs font-bold data-[state=active]:shadow-sm">6M</TabsTrigger>
                   <TabsTrigger value="1y" className="flex-1 sm:flex-none rounded-full px-4 text-xs font-bold data-[state=active]:shadow-sm">1Y</TabsTrigger>
@@ -228,34 +232,34 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="xl:col-span-3 border-slate-200 shadow-none rounded-3xl bg-white overflow-hidden">
+        <Card className="xl:col-span-3 border-slate-200 dark:border-slate-800 shadow-none rounded-3xl bg-white dark:bg-slate-900 overflow-hidden transition-colors">
           <CardHeader className="p-6 md:p-8 pb-4">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-2xl font-bold text-slate-800">Recent Activity</CardTitle>
+              <CardTitle className="text-2xl font-bold text-slate-800 dark:text-white">{t.activity}</CardTitle>
               <Link href="/spending">
-                <Button variant="ghost" size="sm" className="rounded-full text-emerald-600 font-bold hover:bg-emerald-50 border border-transparent hover:border-emerald-100 cursor-pointer">
-                  View All <ArrowRight className="ml-2 w-4 h-4" />
+                <Button variant="ghost" size="sm" className="rounded-full text-emerald-600 dark:text-emerald-400 font-bold hover:bg-emerald-50 dark:hover:bg-emerald-900/20 border border-transparent hover:border-emerald-100 dark:hover:border-emerald-800 cursor-pointer">
+                  {t.viewAll} <ArrowRight className="ml-2 w-4 h-4" />
                 </Button>
               </Link>
             </div>
           </CardHeader>
           <CardContent className="p-6 md:p-8 pt-0 space-y-6">
             {[
-              { name: "Sembako Bulanan", category: "Needs", amount: "- Rp 850,000", date: "Today, 14:20", color: "text-orange-500", icon: Wallet, bg: "bg-orange-50" },
-              { name: "Coffee & Chill", category: "Wants", amount: "- Rp 45,000", date: "Today, 10:15", color: "text-violet-500", icon: TrendingDown, bg: "bg-violet-50" },
-              { name: "Salary Transfer", category: "Income", amount: "+ Rp 12,000,000", date: "Jan 25", color: "text-emerald-600", icon: TrendingUp, bg: "bg-emerald-50" },
-              { name: "Listrik & Air", category: "Needs", amount: "- Rp 450,000", date: "Jan 24", color: "text-orange-500", icon: Wallet, bg: "bg-orange-50" },
-              { name: "Tabungan Emas", category: "Savings", amount: "- Rp 1,000,000", date: "Jan 23", color: "text-rose-500", icon: PiggyBank, bg: "bg-rose-50" },
+              { name: "Sembako Bulanan", category: "Needs", amount: "- Rp 850,000", date: "Today, 14:20", color: "text-orange-500", icon: Wallet, bg: "bg-orange-50 dark:bg-orange-950/20" },
+              { name: "Coffee & Chill", category: "Wants", amount: "- Rp 45,000", date: "Today, 10:15", color: "text-violet-500", icon: TrendingDown, bg: "bg-violet-50 dark:bg-violet-950/20" },
+              { name: "Salary Transfer", category: "Income", amount: "+ Rp 12,000,000", date: "Jan 25", color: "text-emerald-600", icon: TrendingUp, bg: "bg-emerald-50 dark:bg-emerald-950/20" },
+              { name: "Listrik & Air", category: "Needs", amount: "- Rp 450,000", date: "Jan 24", color: "text-orange-500", icon: Wallet, bg: "bg-orange-50 dark:bg-orange-950/20" },
+              { name: "Tabungan Emas", category: "Savings", amount: "- Rp 1,000,000", date: "Jan 23", color: "text-rose-500", icon: PiggyBank, bg: "bg-rose-50 dark:bg-rose-950/20" },
             ].map((item, idx) => (
-              <div key={idx} className="flex items-center group cursor-pointer border-b border-slate-50 pb-4 last:border-0 last:pb-0">
-                <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center mr-4 transition-all border border-transparent group-hover:border-slate-200", item.bg)}>
+              <div key={idx} className="flex items-center group cursor-pointer border-b border-slate-50 dark:border-slate-800 pb-4 last:border-0 last:pb-0">
+                <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center mr-4 transition-all border border-transparent group-hover:border-slate-200 dark:group-hover:border-slate-700", item.bg)}>
                   <item.icon className={cn("w-6 h-6", item.color)} />
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-bold text-sm text-slate-800 leading-none mb-1 group-hover:text-emerald-600 transition-colors">{item.name}</h4>
-                  <p className="text-xs text-slate-400 font-medium">{item.category} • {item.date}</p>
+                  <h4 className="font-bold text-sm text-slate-800 dark:text-white leading-none mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors uppercase tracking-tight">{item.name}</h4>
+                  <p className="text-xs text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest leading-none mt-1">{item.category} • {item.date}</p>
                 </div>
-                <div className={cn("font-black text-sm text-right", item.amount.startsWith("+") ? "text-emerald-600" : "text-slate-700")}>
+                <div className={cn("font-black text-sm text-right", item.amount.startsWith("+") ? "text-emerald-600" : "text-slate-700 dark:text-slate-300")}>
                   {item.amount}
                 </div>
               </div>
@@ -280,25 +284,25 @@ function StatsCard({
   subtitle 
 }: any) {
   return (
-    <Card className={cn("border bg-white shadow-none rounded-3xl overflow-hidden relative group transition-all hover:border-slate-300 cursor-pointer", borderColor)}>
+    <Card className={cn("border bg-white dark:bg-slate-900 shadow-none rounded-3xl overflow-hidden relative group transition-all hover:border-slate-300 dark:hover:border-slate-700 cursor-pointer", borderColor)}>
       <div className={cn("absolute inset-0 opacity-40 transition-opacity", gradient)} />
       <CardHeader className="p-5 md:p-6 relative z-10 pb-2">
         <div className="flex items-center justify-between mb-3">
-          <div className={cn("w-11 h-11 rounded-2xl flex items-center justify-center border border-white/50 shadow-sm", iconBg)}>
+          <div className={cn("w-11 h-11 rounded-2xl flex items-center justify-center border border-white/50 dark:border-slate-800/50 shadow-sm", iconBg)}>
             <Icon className={cn("w-5.5 h-5.5", textColor)} />
           </div>
           <div className={cn(
             "text-[10px] sm:text-[11px] font-bold px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full border shadow-xs transition-transform group-hover:scale-105",
-            positive ? "bg-emerald-50 text-emerald-700 border-emerald-100" : "bg-rose-50 text-rose-700 border-rose-100"
+            positive ? "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border-emerald-100 dark:border-emerald-800" : "bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-400 border-rose-100 dark:border-rose-800"
           )}>
             {trend}
           </div>
         </div>
-        <CardTitle className="text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-widest">{title}</CardTitle>
+        <CardTitle className="text-[10px] sm:text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">{title}</CardTitle>
       </CardHeader>
       <CardContent className="p-5 md:p-6 pt-0 relative z-10">
-        <div className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">{amount}</div>
-        {subtitle && <p className="text-[10px] font-bold text-slate-400 mt-1.5 uppercase tracking-wide">{subtitle}</p>}
+        <div className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">{amount}</div>
+        {subtitle && <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 mt-1.5 uppercase tracking-wide">{subtitle}</p>}
       </CardContent>
     </Card>
   )

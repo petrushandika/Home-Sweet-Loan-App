@@ -1,6 +1,6 @@
 "use client"
 
-import { FeaturesSection, CTASection } from "@/components/landing/LandingSections"
+import { FeaturesSection, CTASection } from "@/components/landing/landing-sections"
 
 export default function FeaturesPage() {
   return (

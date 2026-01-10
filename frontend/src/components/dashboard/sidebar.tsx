@@ -1,4 +1,3 @@
-
 "use client"
 
 import Link from "next/link"
@@ -51,10 +50,10 @@ export function Sidebar({ className, onItemClick }: { className?: string, onItem
   const pathname = usePathname()
 
   return (
-    <div className={cn("flex flex-col h-full w-64 bg-sidebar border-r border-slate-200 overflow-y-auto no-scrollbar", className)}>
+    <div className={cn("flex flex-col h-full w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 transition-colors duration-300 overflow-y-auto no-scrollbar", className)}>
       <div className="p-8">
-        <span className="text-2xl font-black tracking-tighter text-gradient-money">
-          Home Sweet Loan
+        <span className="text-2xl font-black tracking-tighter text-slate-900 dark:text-white">
+          Home Sweet <span className="text-emerald-600">Loan</span>
         </span>
       </div>
       <nav className="flex-1 px-4 space-y-2 overflow-y-auto emerald-scrollbar">
@@ -69,11 +68,11 @@ export function Sidebar({ className, onItemClick }: { className?: string, onItem
                 "group flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 border border-transparent",
                 isActive
                   ? "bg-linear-to-r from-emerald-600 to-emerald-700 text-white border-emerald-800/20 shadow-sm"
-                  : "text-slate-600 hover:bg-slate-50 hover:border-slate-200"
+                  : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-200 dark:hover:border-slate-700"
               )}
             >
               <div className="flex items-center gap-3">
-                <item.icon className={cn("w-5 h-5", isActive ? "text-white" : "text-slate-400 group-hover:text-primary")} />
+                <item.icon className={cn("w-5 h-5", isActive ? "text-white" : "text-slate-400 group-hover:text-emerald-500")} />
                 {item.title}
               </div>
               {isActive && <ChevronRight className="w-4 h-4 text-white/70" />}
@@ -82,18 +81,18 @@ export function Sidebar({ className, onItemClick }: { className?: string, onItem
         })}
       </nav>
       <div className="p-6">
-        <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 cursor-pointer hover:bg-white hover:border-primary/20 transition-all group/profile">
+        <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 cursor-pointer hover:bg-white dark:hover:bg-slate-800 hover:border-emerald-500/20 transition-all group/profile">
           <div className="flex items-center gap-3 mb-3">
-             <div className="w-8 h-8 rounded-full bg-linear-to-tr from-primary to-savings border border-white/20" />
+             <div className="w-8 h-8 rounded-full bg-linear-to-tr from-emerald-500 to-emerald-700 border border-white/20" />
              <div className="flex flex-col">
-                <span className="text-sm font-bold text-slate-800">Pandawa</span>
-                <span className="text-[10px] uppercase tracking-wider text-slate-500 font-bold">PRO PLAN</span>
+                <span className="text-sm font-bold text-slate-800 dark:text-white">User</span>
+                <span className="text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">PRO PLAN</span>
              </div>
           </div>
-          <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
-             <div className="h-full bg-primary w-2/3" />
+          <div className="h-1.5 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+             <div className="h-full bg-emerald-600 w-2/3 shadow-[0_0_10px_rgba(16,185,129,0.3)]" />
           </div>
-          <p className="text-[10px] mt-2 text-slate-500 font-medium tracking-wide">Budget usage: 66%</p>
+          <p className="text-[10px] mt-2 text-slate-500 dark:text-slate-400 font-medium tracking-wide">Budget usage: 66%</p>
         </div>
       </div>
     </div>

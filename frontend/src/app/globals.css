@@ -209,6 +209,57 @@ a, button, div, span, input, select {
   -webkit-text-fill-color: transparent;
 }
 
+@utility glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+@utility noise {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+@utility float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes brand-shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes brand-bounce {
+  0%, 100% { transform: translateY(0) scale(1); opacity: 0.8; }
+  50% { transform: translateY(-10px) scale(1.05); opacity: 1; }
+}
+
+.animate-brand-shimmer {
+  background: linear-gradient(90deg, #059669 0%, #10b981 25%, #34d399 50%, #10b981 75%, #059669 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: brand-shimmer 3s linear infinite;
+}
+
+.animate-brand-bounce {
+  animation: brand-bounce 2s ease-in-out infinite;
+}
+
 @utility no-scrollbar {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
@@ -219,21 +270,21 @@ a, button, div, span, input, select {
 
 @utility emerald-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #10b981 #f8fafc;
+  scrollbar-color: #10b981 transparent;
   
   &::-webkit-scrollbar {
     width: 6px;
   }
   
   &::-webkit-scrollbar-track {
-    background: #f8fafc;
+    background: transparent;
     border-radius: 10px;
   }
   
   &::-webkit-scrollbar-thumb {
     background: #10b981;
     border-radius: 10px;
-    border: 2px solid #f8fafc;
+    border: 2px solid transparent;
   }
   
   &::-webkit-scrollbar-thumb:hover {
@@ -245,3 +296,44 @@ a, button, div, span, input, select {
 [data-state="open"] {
   transition-timing-function: var(--ease-expo) !important;
 }
+
+@keyframes glossy-wave {
+  0%, 100% { 
+    transform: translateY(0); 
+    filter: brightness(1);
+    opacity: 0.85;
+  }
+  50% { 
+    transform: translateY(-6px); 
+    filter: brightness(1.1);
+    opacity: 1;
+  }
+}
+
+.animate-glossy-wave {
+  display: inline-block;
+  color: #10b981; /* emerald-600 */
+  animation: glossy-wave 1.5s ease-in-out infinite;
+}
+
+.animate-letter-wave {
+  display: inline-block;
+  animation: letter-wave 1.2s ease-in-out infinite;
+}
+
+.delay-0 { animation-delay: 0s; }
+.delay-1 { animation-delay: 0.05s; }
+.delay-2 { animation-delay: 0.1s; }
+.delay-3 { animation-delay: 0.15s; }
+.delay-4 { animation-delay: 0.2s; }
+.delay-5 { animation-delay: 0.25s; }
+.delay-6 { animation-delay: 0.3s; }
+.delay-7 { animation-delay: 0.35s; }
+.delay-8 { animation-delay: 0.4s; }
+.delay-9 { animation-delay: 0.45s; }
+.delay-10 { animation-delay: 0.5s; }
+.delay-11 { animation-delay: 0.55s; }
+.delay-12 { animation-delay: 0.6s; }
+.delay-13 { animation-delay: 0.65s; }
+.delay-14 { animation-delay: 0.7s; }
+.delay-15 { animation-delay: 0.75s; }

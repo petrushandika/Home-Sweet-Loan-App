@@ -15,6 +15,8 @@ export const metadata: Metadata = {
   description: "Personal Finance Management Application inspired by Home Sweet Loan",
 };
 
+import { ThemeProvider } from "@/components/theme-provider";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -23,10 +25,17 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${roboto.variable} font-sans antialiased`}
+        className={`${roboto.variable} font-sans antialiased bg-white dark:bg-slate-950`}
       >
-        {children}
-        <Toaster position="top-right" richColors />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+          <Toaster position="top-right" richColors />
+        </ThemeProvider>
       </body>
     </html>
   );

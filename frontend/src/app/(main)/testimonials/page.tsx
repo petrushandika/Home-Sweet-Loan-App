@@ -1,6 +1,6 @@
 "use client"
 
-import { CTASection } from "@/components/landing/LandingSections"
+import { CTASection } from "@/components/landing/landing-sections"
 import { Star, Quote } from "lucide-react"
 
 export default function TestimonialsPage() {

@@ -1,6 +1,6 @@
 "use client"
 
-import { PartnersSection, CTASection } from "@/components/landing/LandingSections"
+import { PartnersSection, CTASection } from "@/components/landing/landing-sections"
 
 export default function PartnersPage() {
   return (

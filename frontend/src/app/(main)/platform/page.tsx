@@ -1,6 +1,6 @@
 "use client"
 
-import { PlatformSection, CTASection } from "@/components/landing/LandingSections"
+import { PlatformSection, CTASection } from "@/components/landing/landing-sections"
 
 export default function PlatformPage() {
   return (
