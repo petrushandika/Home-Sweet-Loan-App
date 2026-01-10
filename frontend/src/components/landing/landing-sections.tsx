@@ -242,7 +242,6 @@ export function PlatformSection() {
 export function TestimonialsPlaceholder() {
   return (
     <section id="testimonials" className="bg-white dark:bg-slate-950 transition-colors">
-      {/* Testimonials content goes here */}
     </section>
   )
 }
@@ -253,7 +252,6 @@ export function CTASection() {
 
   return (
     <section className="py-20 px-4 sm:px-6 bg-emerald-600 relative overflow-hidden transition-colors">
-       {/* Decorative Background Elements */}
        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-white/10 rounded-full blur-[100px] -mr-40 -mt-40" />
        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-white/10 rounded-full blur-[100px] -ml-40 -mb-40" />
        

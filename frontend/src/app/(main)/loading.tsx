@@ -6,7 +6,6 @@ export default function Loading() {
     <>
       <BrandLoader />
       <div className="flex flex-col w-full animate-smooth-in noise">
-        {/* Universal Page Header Skeleton */}
         <section className="py-16 md:py-24 px-6 border-b border-slate-50 relative overflow-hidden bg-white">
           <div className="max-w-4xl mx-auto text-center space-y-6">
             <Skeleton className="h-6 w-32 mx-auto rounded-full" />
@@ -15,7 +14,6 @@ export default function Loading() {
           </div>
         </section>
 
-        {/* Content Grid Skeleton */}
         <section className="py-20 px-6 max-w-7xl mx-auto w-full">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
             {[1, 2, 3].map((i) => (
@@ -35,7 +33,6 @@ export default function Loading() {
           </div>
         </section>
 
-        {/* Large Featured Section Skeleton */}
         <section className="py-20 bg-emerald-50/30">
           <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="space-y-8">

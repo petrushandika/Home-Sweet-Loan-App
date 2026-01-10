@@ -6,7 +6,6 @@ export default function DashboardLoading() {
     <>
       <BrandLoader />
       <div className="space-y-10 pb-10 w-full animate-smooth-in">
-        {/* Header Skeleton */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-3">
             <Skeleton className="h-10 w-64 rounded-xl" />
@@ -18,7 +17,6 @@ export default function DashboardLoading() {
           </div>
         </div>
 
-        {/* Stats Cards Skeleton */}
         <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="h-32 rounded-3xl border border-slate-100 bg-white p-6 space-y-4">
@@ -34,7 +32,6 @@ export default function DashboardLoading() {
           ))}
         </div>
 
-        {/* Main Grid Skeleton */}
         <div className="grid gap-8 grid-cols-1 xl:grid-cols-12">
           <div className="xl:col-span-8">
             <div className="rounded-3xl border border-slate-100 bg-white p-6 md:p-10 space-y-10">

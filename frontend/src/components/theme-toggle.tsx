@@ -9,7 +9,6 @@ export function ThemeToggle() {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = React.useState(false)
 
-  // Avoid hydration mismatch
   React.useEffect(() => {
     setMounted(true)
   }, [])
@@ -33,7 +32,6 @@ export function ThemeToggle() {
       )}
       aria-label="Toggle Theme"
     >
-      {/* Light Mode Side */}
       <div className={cn(
         "flex items-center justify-center w-8 h-7 rounded-full transition-all duration-300",
         !isDark ? "bg-white shadow-sm" : "bg-transparent"
@@ -44,7 +42,6 @@ export function ThemeToggle() {
         )} />
       </div>
 
-      {/* Dark Mode Side */}
       <div className={cn(
         "flex items-center justify-center w-8 h-7 rounded-full transition-all duration-300",
         isDark ? "bg-emerald-600 shadow-sm" : "bg-transparent"

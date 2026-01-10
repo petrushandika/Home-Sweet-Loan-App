@@ -46,14 +46,11 @@ export default function DashboardLayout({
   return (
     <BrandGate>
       <div className="flex h-screen overflow-hidden bg-background dark:bg-slate-950 transition-colors duration-300">
-        {/* Desktop Sidebar */}
         <Sidebar className="hidden xl:flex" />
 
         <main className="flex-1 flex flex-col overflow-hidden relative">
-          {/* Header */}
           <header className="h-20 flex items-center px-6 border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-950/95 backdrop-blur-sm sticky top-0 z-30">
             <div className="flex items-center gap-4 flex-1">
-               {/* Mobile Menu Trigger */}
                <Sheet open={open} onOpenChange={setOpen}>
                  <SheetTrigger asChild>
                    <Button variant="ghost" size="icon" className="xl:hidden hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 cursor-pointer">
@@ -126,7 +123,6 @@ export default function DashboardLayout({
             </div>
           </header>
 
-          {/* Content */}
           <div className="flex-1 overflow-y-auto p-5 md:p-10 bg-background dark:bg-slate-950 transition-colors duration-300 emerald-scrollbar">
             <div className="max-w-7xl mx-auto space-y-8">
               {children}

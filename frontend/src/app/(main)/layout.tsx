@@ -23,14 +23,12 @@ export default function MainLayout({
   const [mounted, setMounted] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   
-  // Wait for mounting to avoid hydration mismatch with zustand storage
   useEffect(() => {
     setMounted(true)
   }, [])
 
   const t = translations[language]
 
-  // Simulated login state for frontend design phase
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [showScrollTop, setShowScrollTop] = useState(false)
 

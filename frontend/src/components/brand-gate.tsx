@@ -13,10 +13,9 @@ export function BrandGate({
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Artificial delay to show the brand identity
     const timer = setTimeout(() => {
       setLoading(false)
-    }, 2500) // 2.5 seconds for a premium feel
+    }, 2500)
 
     return () => clearTimeout(timer)
   }, [])
