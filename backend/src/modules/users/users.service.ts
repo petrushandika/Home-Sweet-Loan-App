@@ -12,13 +12,16 @@ export class UsersService {
         id: true,
         email: true,
         name: true,
+        isVerified: true,
+        avatarUrl: true,
+        plan: true,
         createdAt: true,
         updatedAt: true,
       },
     });
   }
 
-  async updateProfile(userId: string, data: { name?: string }) {
+  async updateProfile(userId: string, data: { name?: string; avatarUrl?: string }) {
     return this.prisma.user.update({
       where: { id: userId },
       data,
@@ -26,6 +29,9 @@ export class UsersService {
         id: true,
         email: true,
         name: true,
+        isVerified: true,
+        avatarUrl: true,
+        plan: true,
         createdAt: true,
         updatedAt: true,
       },

@@ -1,5 +1,5 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { ReportsService } from './reports.service';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 
@@ -19,6 +19,16 @@ export class ReportsController {
     return {
       success: true,
       data: report,
+    };
+  }
+
+  @Get('summary')
+  @ApiOperation({ summary: 'Get dashboard summary stats' })
+  async getSummary(@CurrentUser() user: any) {
+    const summary = await this.reportsService.getSummary(user.id);
+    return {
+      success: true,
+      data: summary,
     };
   }
 }
