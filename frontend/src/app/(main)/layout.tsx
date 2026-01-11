@@ -43,10 +43,10 @@ export default function MainLayout({
   if (!mounted) return <BrandGate>{children}</BrandGate>
 
   const navLinks = [
-    { name: t.nav.partners, href: "#partners" },
-    { name: t.nav.features, href: "#features" },
-    { name: t.nav.platform, href: "#platform" },
-    { name: t.nav.testimonials, href: "#testimonials" }
+    { name: t.nav.partners, href: "/partners" },
+    { name: t.nav.features, href: "/features" },
+    { name: t.nav.platform, href: "/platform" },
+    { name: t.nav.testimonials, href: "/testimonials" }
   ]
 
   return (
@@ -61,7 +61,6 @@ export default function MainLayout({
       }
     >
       <div className="flex flex-col min-h-screen bg-white dark:bg-slate-950 selection:bg-emerald-100 selection:text-emerald-900 transition-colors duration-300">
-        {/* Landing Navbar */}
         <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 transition-colors">
           <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2 group">
@@ -70,7 +69,6 @@ export default function MainLayout({
               </span>
             </Link>
 
-            {/* Desktop Navigation */}
             <nav className="hidden xl:flex items-center gap-10">
               {navLinks.map((item) => (
                 <Link 
@@ -125,7 +123,6 @@ export default function MainLayout({
                  </>
                )}
 
-               {/* Mobile Menu */}
                <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
                  <SheetTrigger asChild>
                    <Button variant="ghost" size="icon" className="xl:hidden hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800">
@@ -179,7 +176,6 @@ export default function MainLayout({
           {children}
         </main>
 
-        {/* Landing Footer */}
         <footer className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white py-12 md:py-16 px-6 border-t border-emerald-100 dark:border-slate-800 transition-colors">
           <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
             <div className="space-y-6">

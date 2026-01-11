@@ -8,17 +8,13 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
 
-  // Global prefix
-  const apiPrefix = configService.get('API_PREFIX') || 'api/v1';
-  app.setGlobalPrefix(apiPrefix);
+  app.setGlobalPrefix('api');
 
-  // CORS
   app.enableCors({
     origin: configService.get('CORS_ORIGIN') || 'http://localhost:8000',
     credentials: true,
   });
 
-  // Global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -30,7 +26,6 @@ async function bootstrap() {
     }),
   );
 
-  // Swagger documentation
   const config = new DocumentBuilder()
     .setTitle('Home Sweet Loan API')
     .setDescription('Personal Finance Management API - Inspired by Home Sweet Loan Movie')
@@ -53,7 +48,7 @@ async function bootstrap() {
 
   console.log(`\n🚀 Application is running on: http://localhost:${port}`);
   console.log(`📚 Swagger documentation: http://localhost:${port}/api/docs`);
-  console.log(`🎯 API prefix: /${apiPrefix}\n`);
+  console.log(`🎯 API prefix: /api\n`);
 }
 
 bootstrap();

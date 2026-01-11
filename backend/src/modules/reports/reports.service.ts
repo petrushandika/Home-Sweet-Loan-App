@@ -8,7 +8,6 @@ export class ReportsService {
   async getMonthlyReport(userId: string, year: number, month: number) {
     const yearMonth = `${year}-${month.toString().padStart(2, '0')}`;
 
-    // Get budget
     const budget = await this.prisma.budget.findUnique({
       where: {
         userId_yearMonth: {
@@ -22,7 +21,6 @@ export class ReportsService {
       return null;
     }
 
-    // Get spending for the month
     const startDate = new Date(year, month - 1, 1);
     const endDate = new Date(year, month, 0);
 
@@ -36,7 +34,6 @@ export class ReportsService {
       },
     });
 
-    // Calculate totals
     const income = budget.income as Record<string, number>;
     const savingsAllocation = budget.savingsAllocation as Record<string, number>;
     const expenses = budget.expenses as Record<string, number>;
@@ -48,7 +45,6 @@ export class ReportsService {
     const totalSpending = spending.reduce((sum, s) => sum + Number(s.amount), 0);
     const monthlySavings = totalIncome - totalSpending;
 
-    // Calculate comparison per category
     const comparison = Object.keys(expenses).map((category) => {
       const allocation = Number(expenses[category]);
       const realization = spending

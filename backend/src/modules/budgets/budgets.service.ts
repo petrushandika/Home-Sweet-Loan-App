@@ -35,7 +35,6 @@ export class BudgetsService {
       return null;
     }
 
-    // Calculate summary
     const income = budget.income as Record<string, number>;
     const savingsAllocation = budget.savingsAllocation as Record<string, number>;
     const expenses = budget.expenses as Record<string, number>;

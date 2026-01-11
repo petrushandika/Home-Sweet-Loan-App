@@ -12,7 +12,6 @@ export class SetupService {
     });
 
     if (!setup) {
-      // Create default setup if not exists
       return this.createDefaultSetup(userId);
     }
 
