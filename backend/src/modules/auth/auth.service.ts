@@ -62,12 +62,10 @@ export class AuthService {
       },
     });
 
-    const tokens = await this.getTokens(user.id, user.email);
-    await this.updateRefreshToken(user.id, tokens.refreshToken);
-
     return {
+      success: true,
+      message: 'Account created! Please check your email to verify your account.',
       user,
-      ...tokens,
     };
   }
 
@@ -90,6 +88,10 @@ export class AuthService {
 
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
+    }
+
+    if (!user.isVerified) {
+      throw new UnauthorizedException('Please verify your email before logging in');
     }
 
     const tokens = await this.getTokens(user.id, user.email);
@@ -152,12 +154,17 @@ export class AuthService {
         id: true,
         email: true,
         name: true,
+        isVerified: true,
         createdAt: true,
       },
     });
 
     if (!user) {
       throw new UnauthorizedException('User not found');
+    }
+
+    if (!user.isVerified) {
+      throw new UnauthorizedException('Please verify your email');
     }
 
     return user;

@@ -38,13 +38,12 @@ export class AuthController {
   @ApiOperation({ summary: 'Register new user' })
   @ApiResponse({ status: 201, description: 'User registered successfully' })
   @ApiResponse({ status: 400, description: 'Bad request' })
-  async register(@Body() registerDto: RegisterDto, @Res({ passthrough: true }) res) {
+  async register(@Body() registerDto: RegisterDto) {
     const result = await this.authService.register(registerDto);
-    this.setCookies(res, result.accessToken, result.refreshToken);
     return {
       success: true,
       data: result.user,
-      message: 'User registered successfully',
+      message: 'Account created! Please check your email to verify your account.',
     };
   }
 
