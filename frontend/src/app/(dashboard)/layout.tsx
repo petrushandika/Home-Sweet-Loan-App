@@ -4,7 +4,7 @@ import { Sidebar } from "@/components/dashboard/sidebar"
 import { ChatbotWidget } from "@/components/chatbot-widget"
 import { Separator } from "@/components/ui/separator"
 import Link from "next/link"
-import { Menu, Bell, Search } from "lucide-react"
+import { Menu, Bell, Search, Sidebar as SidebarIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
@@ -39,11 +39,23 @@ export default function DashboardLayout({
   const { language } = useLanguageStore()
   const t = translations[language].dashboard
   const { query, setQuery } = useSearchStore()
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false) // Mobile sheet state
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true) // Desktop sidebar state
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     setMounted(true)
+    
+    // Ctrl+B shortcut to toggle sidebar
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') {
+        e.preventDefault()
+        setIsSidebarOpen(prev => !prev)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
 
   if (!mounted) return null
@@ -55,13 +67,18 @@ export default function DashboardLayout({
   return (
     <BrandGate>
       <div className="flex h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-500">
-        {/* Desktop Sidebar */}
-        <Sidebar className="hidden md:flex" />
+        {/* Desktop Sidebar with Transition */}
+        <div 
+           className={`hidden md:flex flex-col border-r border-border bg-white dark:bg-slate-900 transition-all duration-300 ease-in-out w-fit`}
+        >
+           <Sidebar isCollapsed={!isSidebarOpen} onToggleCollapse={() => setIsSidebarOpen(!isSidebarOpen)} />
+        </div>
 
         <div className="flex flex-col flex-1 overflow-hidden relative">
           {/* Header */}
           <header className="h-20 border-b border-border bg-white/80 dark:bg-slate-900/80 backdrop-blur-md flex items-center justify-between px-8 z-30 sticky top-0 transition-all duration-300">
             <div className="flex items-center gap-4">
+              {/* Mobile Menu Trigger */}
               <Sheet open={open} onOpenChange={setOpen}>
                 <SheetTrigger asChild>
                   <Button variant="ghost" size="icon" className="md:hidden rounded-xl transition-all duration-300 active:scale-95">
@@ -72,7 +89,8 @@ export default function DashboardLayout({
                   <Sidebar onItemClick={() => setOpen(false)} />
                 </SheetContent>
               </Sheet>
-              
+
+            {/* Desktop Sidebar Toggle - Removed as it's now internal to sidebar */}
               <div className="hidden md:flex items-center gap-2 bg-slate-100/50 dark:bg-slate-800/50 px-4 py-2 rounded-2xl border border-border group focus-within:ring-2 focus-within:ring-emerald-500/20 focus-within:bg-white dark:focus-within:bg-slate-800 focus-within:border-emerald-500/50 focus-within:shadow-sm transition-all duration-300">
                 <Search className="w-4 h-4 text-slate-400 group-focus-within:text-emerald-500 transition-colors duration-300" />
                 <input 
@@ -190,7 +208,7 @@ export default function DashboardLayout({
                            </div>
                         </div>
                      </DropdownMenuTrigger>
-                     <DropdownMenuContent align="end" className="w-56 rounded-2xl border-border bg-white dark:bg-slate-900 p-2 shadow-xl animate-in fade-in-0 zoom-in-95 duration-300">
+                     <DropdownMenuContent align="end" sideOffset={8} className="w-56 rounded-2xl border-border bg-white dark:bg-slate-900 p-2 shadow-xl animate-in fade-in-0 zoom-in-95 data-[side=bottom]:slide-in-from-top-2 duration-300">
                         <DropdownMenuLabel className="font-bold text-slate-400 text-[10px] uppercase tracking-widest px-3 py-2">{t.accountSettings}</DropdownMenuLabel>
                         <DropdownMenuItem asChild className="rounded-xl cursor-pointer font-bold text-slate-700 dark:text-slate-300 focus:bg-slate-50 dark:focus:bg-slate-800 focus:text-emerald-600 py-2.5 transition-all duration-200">
                            <Link href="/profile" className="flex items-center gap-3 w-full">

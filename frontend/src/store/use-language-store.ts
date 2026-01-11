@@ -72,6 +72,7 @@ export const translations = {
         toastTitle: "Rencana Diinisialisasi",
         toastDesc: "Siap mengalokasikan dana Anda untuk siklus baru."
       },
+      markAllRead: "Tandai semua sudah dibaca",
       summary: {
         title: "Ringkasan <span class='text-gradient-money'>Finansial</span>",
         welcome: "Selamat datang kembali, User! Berikut adalah kondisi keuangan Anda hari ini.",
@@ -230,6 +231,21 @@ export const translations = {
           light: "Terang",
           dark: "Gelap",
           system: "Sistem"
+        },
+        achievements: {
+          title: "Pencapaian <span class='text-gradient-money'>Finansial</span>",
+          level: "Level Saat Ini",
+          points: "Poin XP",
+          badges: "Lencana Anda",
+          locked: "Terkunci"
+        },
+        family: {
+          title: "Manajemen <span class='text-gradient-money'>Keluarga</span>",
+          subtitle: "Kelola akun anggota keluarga dan anggaran bersama.",
+          members: "Anggota Keluarga",
+          addMember: "Tambah Anggota",
+          role: "Peran",
+          limit: "Batas Belanja"
         }
       },
       subscription: {
@@ -358,6 +374,7 @@ export const translations = {
         toastTitle: "Plan Initialized",
         toastDesc: "Ready to allocate your funds for the new cycle."
       },
+      markAllRead: "Mark all as read",
       summary: {
         title: "Financial <span class='text-gradient-money'>Summary</span>",
         welcome: "Welcome back, User! Here's what's happening today.",
@@ -516,6 +533,21 @@ export const translations = {
           light: "Light",
           dark: "Dark",
           system: "System"
+        },
+        achievements: {
+          title: "Financial <span class='text-gradient-money'>Achievements</span>",
+          level: "Current Level",
+          points: "XP Points",
+          badges: "Your Badges",
+          locked: "Locked"
+        },
+        family: {
+          title: "Family <span class='text-gradient-money'>Management</span>",
+          subtitle: "Manage family member accounts and shared budgets.",
+          members: "Family Members",
+          addMember: "Add Member",
+          role: "Role",
+          limit: "Spending Limit"
         }
       },
       subscription: {

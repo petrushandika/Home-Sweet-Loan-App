@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { User, Mail, Camera, Lock, Globe, Bell, Phone, Calendar, Users } from "lucide-react"
+import { User, Mail, Camera, Lock, Globe, Bell, Phone, Calendar, Users, Trophy, Medal, Plus, Shield } from "lucide-react"
 import { useLanguageStore, translations } from "@/store/use-language-store"
 import { useState, useEffect } from "react"
 import { toast } from "sonner"
@@ -95,13 +95,56 @@ export default function ProfilePage() {
         </p>
       </div>
 
+      {/* Mobile Navigation Dropdown (Visible only on lg and down) */}
+      <div className="lg:hidden mb-8">
+        <Select value={activeTab} onValueChange={setActiveTab}>
+          <SelectTrigger className="w-full h-14 rounded-2xl bg-white dark:bg-slate-900 border-border shadow-sm text-slate-900 dark:text-white font-bold px-4 transition-all active:scale-[0.99]">
+             <div className="flex items-center gap-3">
+                {activeTab === 'personal' && <User className="w-5 h-5 text-emerald-600" />}
+                {activeTab === 'security' && <Lock className="w-5 h-5 text-emerald-600" />}
+                {activeTab === 'achievements' && <Trophy className="w-5 h-5 text-emerald-600" />}
+                {activeTab === 'family' && <Users className="w-5 h-5 text-emerald-600" />}
+                {activeTab === 'notifications' && <Bell className="w-5 h-5 text-emerald-600" />}
+                {activeTab === 'display' && <Globe className="w-5 h-5 text-emerald-600" />}
+                <span className="capitalize">{
+                  activeTab === 'personal' ? t.personalInfo :
+                  activeTab === 'security' ? (t.security?.title.replace(/<\/?[^>]+(>|$)/g, "") || "Security") :
+                  activeTab === 'achievements' ? (t.achievements?.title.replace(/<\/?[^>]+(>|$)/g, "") || "Achievements") :
+                  activeTab === 'family' ? (t.family?.title.replace(/<\/?[^>]+(>|$)/g, "") || "Family") :
+                  activeTab === 'notifications' ? (t.notifications?.title.replace(/<\/?[^>]+(>|$)/g, "") || "Notifications") :
+                  (t.display?.title.replace(/<\/?[^>]+(>|$)/g, "") || "Display")
+                }</span>
+             </div>
+          </SelectTrigger>
+          <SelectContent className="rounded-2xl border-border shadow-xl bg-white dark:bg-slate-900 overflow-hidden p-1 max-h-[40vh] overflow-y-auto">
+             {[
+               { id: "personal", icon: User, label: t.personalInfo },
+               { id: "security", icon: Lock, label: t.security?.title.replace(/<\/?[^>]+(>|$)/g, "") || "Security" },
+               { id: "achievements", icon: Trophy, label: t.achievements?.title.replace(/<\/?[^>]+(>|$)/g, "") || "Achievements" },
+               { id: "family", icon: Users, label: t.family?.title.replace(/<\/?[^>]+(>|$)/g, "") || "Family" },
+               { id: "notifications", icon: Bell, label: t.notifications?.title.replace(/<\/?[^>]+(>|$)/g, "") || "Notifications" },
+               { id: "display", icon: Globe, label: t.display?.title.replace(/<\/?[^>]+(>|$)/g, "") || "Display" },
+             ].map((item) => (
+                <SelectItem key={item.id} value={item.id} className="rounded-xl my-1 py-3 px-3 cursor-pointer focus:bg-slate-50 dark:focus:bg-slate-800 focus:text-emerald-600 font-bold text-slate-500 dark:text-slate-400">
+                   <div className="flex items-center gap-3">
+                      <item.icon className="w-4 h-4" />
+                      {item.label}
+                   </div>
+                </SelectItem>
+             ))}
+          </SelectContent>
+        </Select>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Sidebar settings navigation */}
-        <div className="space-y-4">
+        {/* Sidebar settings navigation - Hidden on Mobile */}
+        <div className="hidden lg:block space-y-4">
           <Card className="border-border bg-white dark:bg-slate-900 rounded-3xl overflow-hidden shadow-sm transition-all duration-300">
             <CardContent className="p-4 space-y-1">
               <TabButton id="personal" icon={User} label={t.personalInfo} />
               <TabButton id="security" icon={Lock} label={t.security?.title.replace(/<\/?[^>]+(>|$)/g, "") || "Security"} />
+              <TabButton id="achievements" icon={Trophy} label={t.achievements?.title.replace(/<\/?[^>]+(>|$)/g, "") || "Achievements"} />
+              <TabButton id="family" icon={Users} label={t.family?.title.replace(/<\/?[^>]+(>|$)/g, "") || "Family"} />
               <TabButton id="notifications" icon={Bell} label={t.notifications?.title.replace(/<\/?[^>]+(>|$)/g, "") || "Notifications"} />
               <TabButton id="display" icon={Globe} label={t.display?.title.replace(/<\/?[^>]+(>|$)/g, "") || "Display"} />
             </CardContent>
@@ -110,8 +153,8 @@ export default function ProfilePage() {
 
         {/* Main form area */}
         <div className="lg:col-span-2 space-y-8">
-          <Card className="border-border bg-white dark:bg-slate-900 rounded-[2.5rem] overflow-hidden shadow-sm transition-all duration-300">
-            <CardHeader className="p-8 border-b border-border bg-slate-50/50 dark:bg-slate-800/30">
+          <Card className="border-border bg-white dark:bg-slate-900 rounded-3xl lg:rounded-[2.5rem] overflow-hidden shadow-sm transition-all duration-300">
+            <CardHeader className="p-6 md:p-8 border-b border-border bg-slate-50/50 dark:bg-slate-800/30">
               <div className="flex flex-col md:flex-row gap-8 items-center">
                 <div className="relative group">
                   <div className="w-32 h-32 rounded-full border-4 border-white dark:border-slate-900 overflow-hidden bg-slate-100 dark:bg-slate-800 transition-transform duration-500 group-hover:scale-105 shadow-md">
@@ -146,7 +189,7 @@ export default function ProfilePage() {
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="p-8 space-y-8">
+            <CardContent className="p-6 md:p-8 space-y-8">
               
               {/* Personal Information Tab */}
               {activeTab === "personal" && (
@@ -317,6 +360,132 @@ export default function ProfilePage() {
                     </div>
                   </div>
                 </div>
+              )}
+
+              {/* Achievements Tab (Gen Z / Millennial Feature) */}
+              {activeTab === "achievements" && (
+                <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
+                  <div className="flex items-center justify-between pb-2 border-b border-border">
+                    <h3 className="text-lg font-black text-slate-800 dark:text-white" dangerouslySetInnerHTML={{ __html: t.achievements?.title || "Achievements" }} />
+                    <div className="flex items-center gap-2 px-3 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-500 rounded-full text-xs font-bold border border-amber-200 dark:border-amber-800">
+                      <Trophy className="w-3.5 h-3.5" />
+                      <span>Top 10% User</span>
+                    </div>
+                  </div>
+
+                  {/* Level & XP Card */}
+                  <div className="bg-gradient-to-br from-emerald-600 to-teal-500 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
+                    <div className="relative z-10 flex items-center justify-between mb-6">
+                      <div>
+                        <p className="text-emerald-100 font-bold text-xs uppercase tracking-wider mb-1">{t.achievements?.level}</p>
+                        <h2 className="text-3xl font-black">Financial Guru <span className="text-2xl">ign</span></h2>
+                      </div>
+                      <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-white/20 shadow-inner">
+                         <span className="text-2xl font-black">42</span>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2 relative z-10">
+                      <div className="flex justify-between text-xs font-bold text-emerald-50">
+                        <span>2,450 {t.achievements?.points}</span>
+                        <span>3,000 XP</span>
+                      </div>
+                      <div className="h-4 bg-black/20 rounded-full overflow-hidden backdrop-blur-sm">
+                        <div className="h-full bg-gradient-to-r from-yellow-300 to-amber-500 w-[82%] relative">
+                           <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/diagonal-stripes.png')] opacity-20"></div>
+                        </div>
+                      </div>
+                      <p className="text-[10px] text-emerald-100 font-medium text-right mt-1">550 XP to Level 43</p>
+                    </div>
+                  </div>
+
+                  {/* Badges Grid */}
+                  <div>
+                    <h4 className="font-bold text-slate-700 dark:text-slate-300 mb-4 flex items-center gap-2">
+                      <Medal className="w-5 h-5 text-emerald-500" />
+                      {t.achievements?.badges}
+                    </h4>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                      {[
+                        { title: "Saver Starter", icon: "🐷", color: "bg-pink-100 text-pink-600 border-pink-200", unlocked: true },
+                        { title: "Debt Destroyer", icon: "⚔️", color: "bg-red-100 text-red-600 border-red-200", unlocked: true },
+                        { title: "Asset King", icon: "👑", color: "bg-amber-100 text-amber-600 border-amber-200", unlocked: true },
+                        { title: "Budget Master", icon: "🎯", color: "bg-blue-100 text-blue-600 border-blue-200", unlocked: true },
+                        { title: "Invincible", icon: "🛡️", color: "bg-slate-100 text-slate-400 border-slate-200", unlocked: false },
+                        { title: "Philanthropist", icon: "❤️", color: "bg-slate-100 text-slate-400 border-slate-200", unlocked: false },
+                        { title: "Crypto Whale", icon: "🐋", color: "bg-slate-100 text-slate-400 border-slate-200", unlocked: false },
+                        { title: "Century Club", icon: "💯", color: "bg-slate-100 text-slate-400 border-slate-200", unlocked: false },
+                      ].map((badge, idx) => (
+                         <div key={idx} className={`p-4 rounded-2xl border flex flex-col items-center gap-3 text-center transition-all duration-300 ${badge.unlocked ? `${badge.color} border-current` : 'bg-slate-50 dark:bg-slate-800 border-border opacity-60'}`}>
+                            <div className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl bg-white dark:bg-slate-900 shadow-sm ${badge.unlocked ? '' : 'grayscale opacity-50'}`}>
+                               {badge.icon}
+                            </div>
+                            <div>
+                               <p className={`font-bold text-xs ${badge.unlocked ? '' : 'text-slate-500'}`}>{badge.title}</p>
+                               {!badge.unlocked && <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400 mt-1">{t.achievements?.locked}</p>}
+                            </div>
+                         </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Family Management Tab (Sandwich Generation Feature) */}
+              {activeTab === "family" && (
+                 <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
+                    <div className="flex items-center justify-between pb-2 border-b border-border">
+                       <h3 className="text-lg font-black text-slate-800 dark:text-white" dangerouslySetInnerHTML={{ __html: t.family?.title || "Family Management" }} />
+                       <Button size="sm" className="rounded-full font-bold bg-emerald-600 hover:bg-emerald-700 text-white gap-2">
+                          <Plus className="w-4 h-4" /> {t.family?.addMember}
+                       </Button>
+                    </div>
+
+                    <div className="space-y-2">
+                       <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">{t.family?.subtitle}</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-4">
+                       {[
+                          { name: "Petrus Handika", role: "Family Head", relation: "You", avatar: avatar, limit: "Rp ∞" },
+                          { name: "Sarah Handika", role: "Spouse", relation: "Wife", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&h=100&q=80", limit: "Rp 15.000.000" },
+                          { name: "Budi Santoso", role: "Dependent (Parent)", relation: "Father", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=100&h=100&q=80", limit: "Rp 5.000.000" },
+                          { name: "Kenzo Handika", role: "Dependent (Child)", relation: "Son", avatar: "https://images.unsplash.com/photo-1540479859555-17af45c78602?auto=format&fit=crop&w=100&h=100&q=80", limit: "Rp 2.500.000" },
+                       ].map((member, idx) => (
+                          <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-3xl border border-border shadow-sm hover:border-emerald-500/30 transition-all duration-300 group gap-4">
+                             <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-2xl overflow-hidden border-2 border-slate-100 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 shrink-0">
+                                   <img src={member.avatar} alt={member.name} className="w-full h-full object-cover" />
+                                </div>
+                                <div className="min-w-0">
+                                   <h4 className="font-bold text-slate-900 dark:text-white flex items-center gap-2 truncate text-sm sm:text-base">
+                                      {member.name}
+                                      {idx === 0 && <span className="bg-emerald-100 text-emerald-700 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-extrabold border border-emerald-200 shrink-0">Owner</span>}
+                                   </h4>
+                                   <p className="text-xs text-slate-500 font-medium truncate">{member.relation} • {member.role}</p>
+                                </div>
+                             </div>
+                             <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-1 w-full sm:w-auto border-t sm:border-t-0 border-slate-100 dark:border-slate-700 pt-3 sm:pt-0">
+                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{t.family?.limit}</span>
+                                <span className="font-black text-slate-700 dark:text-slate-300">{member.limit}</span>
+                             </div>
+                          </div>
+                       ))}
+                    </div>
+
+                    <div className="bg-blue-50 dark:bg-indigo-900/10 p-5 rounded-2xl border border-blue-100 dark:border-indigo-900/30 flex gap-4 items-start">
+                       <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-indigo-900/30 flex items-center justify-center shrink-0 text-blue-600 dark:text-indigo-400">
+                          <Shield className="w-5 h-5" />
+                       </div>
+                       <div>
+                          <h4 className="font-bold text-blue-900 dark:text-indigo-300 text-sm mb-1">Multi-Generational SafeGuard</h4>
+                          <p className="text-xs text-blue-700 dark:text-indigo-400 leading-relaxed font-medium">
+                             Create dedicated financial buffers for your elderly parents and children. Ensure your personal retirement savings remain untouched while caring for your loved ones.
+                          </p>
+                       </div>
+                    </div>
+                 </div>
               )}
 
               <div className="pt-8 border-t border-border flex justify-end gap-4">
