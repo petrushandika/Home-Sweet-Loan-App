@@ -1,9 +1,34 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '@/config/prisma.service';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private cloudinary: CloudinaryService,
+  ) {}
+
+  async updateAvatar(userId: string, file: Express.Multer.File) {
+    try {
+      const result = await this.cloudinary.uploadFile(file);
+      
+      if ('url' in result) {
+        return this.prisma.user.update({
+          where: { id: userId },
+          data: { avatarUrl: result.secure_url || result.url },
+          select: {
+            id: true,
+            avatarUrl: true,
+          },
+        });
+      }
+      
+      throw new BadRequestException('Upload to Cloudinary failed');
+    } catch (error) {
+      throw new BadRequestException(error.message || 'Failed to upload profile picture');
+    }
+  }
 
   async getProfile(userId: string) {
     return this.prisma.user.findUnique({

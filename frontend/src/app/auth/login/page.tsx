@@ -7,6 +7,11 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
 import Link from "next/link"
 import { toast } from "sonner"
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import api from "@/lib/api"
+import { useAuthStore } from "@/store/use-auth-store"
+import { Loader2 } from "lucide-react"
 
 const GoogleIcon = () => (
   <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -24,13 +29,34 @@ const FacebookIcon = () => (
 )
 
 export default function LoginPage() {
-  const handleLogin = (e: React.FormEvent) => {
+  const router = useRouter()
+  const { setUser } = useAuthStore()
+  const [loading, setLoading] = useState(false)
+  const [formData, setFormData] = useState({ email: "", password: "" })
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    toast.success("Welcome back!", { description: "You have been logged in." })
+    setLoading(true)
+
+    try {
+      const response = await api.post("/auth/login", formData)
+      const { data } = response.data
+      
+      setUser(data)
+      toast.success("Welcome back!", { description: "You have been logged in successfully." })
+      router.push("/dashboard")
+    } catch (error: any) {
+      console.error("Login error:", error)
+      const message = error.response?.data?.message || "Invalid email or password"
+      toast.error("Login failed", { description: message })
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const handleSocial = (name: string) => {
-    toast.info(`Login with ${name}...`)
+  const handleSocial = (provider: string) => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+    window.location.href = `${apiUrl}/auth/${provider.toLowerCase()}`
   }
 
   return (
@@ -45,6 +71,8 @@ export default function LoginPage() {
                 type="email" 
                 placeholder="name@example.com" 
                 required 
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className="h-12 rounded-2xl border-border focus:ring-emerald-500 bg-slate-50/30 px-5 font-medium" 
               />
             </div>
@@ -59,12 +87,18 @@ export default function LoginPage() {
                 type="password" 
                 placeholder="••••••••" 
                 required 
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 className="h-12 rounded-2xl border-border focus:ring-emerald-500 bg-slate-50/30 px-5 font-medium tracking-widest" 
               />
             </div>
 
-            <Button type="submit" className="w-full h-12 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-lg transition-all active:scale-95 mt-2">
-              Sign In
+            <Button 
+                type="submit" 
+                disabled={loading}
+                className="w-full h-12 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-lg transition-all active:scale-95 mt-2 border-none"
+            >
+              {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : "Sign In"}
             </Button>
           </form>
 
@@ -99,7 +133,6 @@ export default function LoginPage() {
           </div>
         </CardContent>
       </Card>
-      
     </div>
   )
 }

@@ -7,6 +7,10 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
 import Link from "next/link"
 import { toast } from "sonner"
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import api from "@/lib/api"
+import { Loader2 } from "lucide-react"
 
 const GoogleIcon = () => (
   <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -24,13 +28,34 @@ const FacebookIcon = () => (
 )
 
 export default function RegisterPage() {
-  const handleRegister = (e: React.FormEvent) => {
+  const router = useRouter()
+  const [loading, setLoading] = useState(false)
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  })
+
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
-    toast.success("Account created!", { description: "Please verify your email." })
+    setLoading(true)
+
+    try {
+      await api.post("/auth/register", formData)
+      toast.success("Account created!", { description: "Please check your email to verify your account." })
+      router.push("/auth/verify-email")
+    } catch (error: any) {
+      console.error("Registration error:", error)
+      const message = error.response?.data?.message || "Registration failed. Please try again."
+      toast.error("Error", { description: message })
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const handleSocial = (name: string) => {
-    toast.info(`Register with ${name}...`)
+  const handleSocial = (provider: string) => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+    window.location.href = `${apiUrl}/auth/${provider.toLowerCase()}`
   }
 
   return (
@@ -40,21 +65,48 @@ export default function RegisterPage() {
           <form onSubmit={handleRegister} className="space-y-4">
             <div className="space-y-1.5">
               <Label htmlFor="fullname" className="font-bold text-sm text-slate-700 ml-1">Full Name</Label>
-              <Input id="fullname" placeholder="John Doe" required className="h-12 rounded-2xl border-border focus:ring-emerald-500 bg-slate-50/30 px-5 font-medium" />
+              <Input 
+                id="fullname" 
+                placeholder="John Doe" 
+                required 
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="h-12 rounded-2xl border-border focus:ring-emerald-500 bg-slate-50/30 px-5 font-medium" 
+              />
             </div>
             
             <div className="space-y-1.5">
               <Label htmlFor="email" className="font-bold text-sm text-slate-700 ml-1">Email</Label>
-              <Input id="email" type="email" placeholder="name@example.com" required className="h-12 rounded-2xl border-border focus:ring-emerald-500 bg-slate-50/30 px-5 font-medium" />
+              <Input 
+                id="email" 
+                type="email" 
+                placeholder="name@example.com" 
+                required 
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="h-12 rounded-2xl border-border focus:ring-emerald-500 bg-slate-50/30 px-5 font-medium" 
+              />
             </div>
             
             <div className="space-y-1.5">
               <Label htmlFor="password" title="password" className="font-bold text-sm text-slate-700 ml-1">Password</Label>
-              <Input id="password" type="password" placeholder="••••••••" required className="h-12 rounded-2xl border-border focus:ring-emerald-500 bg-slate-50/30 px-5 font-medium tracking-widest" />
+              <Input 
+                id="password" 
+                type="password" 
+                placeholder="••••••••" 
+                required 
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                className="h-12 rounded-2xl border-border focus:ring-emerald-500 bg-slate-50/30 px-5 font-medium tracking-widest" 
+              />
             </div>
 
-            <Button type="submit" className="w-full h-12 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-lg transition-all active:scale-95 mt-2">
-              Register
+            <Button 
+                type="submit" 
+                disabled={loading}
+                className="w-full h-12 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-lg transition-all active:scale-95 mt-2 border-none"
+            >
+              {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : "Register"}
             </Button>
           </form>
 
@@ -89,7 +141,6 @@ export default function RegisterPage() {
           </div>
         </CardContent>
       </Card>
-      
     </div>
   )
 }

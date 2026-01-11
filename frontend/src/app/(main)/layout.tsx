@@ -1,3 +1,4 @@
+
 "use client"
 
 import { Button } from "@/components/ui/button"
@@ -8,6 +9,8 @@ import { BrandGate } from "@/components/brand-gate"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { LanguageToggle } from "@/components/language-toggle"
 import { useLanguageStore, translations } from "@/store/use-language-store"
+import { useAuthStore } from "@/store/use-auth-store"
+import api from "@/lib/api"
 import {
   Sheet,
   SheetContent,
@@ -20,16 +23,20 @@ export default function MainLayout({
   children: React.ReactNode
 }) {
   const { language } = useLanguageStore()
+  const { user, checkSession, isAuthenticated } = useAuthStore()
   const [mounted, setMounted] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   
   useEffect(() => {
     setMounted(true)
-  }, [])
+    
+    // Check session on mount if not already authenticated
+    if (!user) {
+      checkSession()
+    }
+  }, [user, checkSession])
 
   const t = translations[language]
-
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [showScrollTop, setShowScrollTop] = useState(false)
 
   useEffect(() => {
@@ -60,7 +67,7 @@ export default function MainLayout({
         </Button>
       }
     >
-      <div className="flex flex-col min-h-screen bg-white dark:bg-slate-950 selection:bg-emerald-100 selection:text-emerald-900 transition-colors duration-300">
+      <div className="flex flex-col min-h-screen bg-white dark:bg-slate-950 selection:bg-emerald-100 selection:text-emerald-900 transition-colors duration-300 font-sans">
         <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 transition-colors">
           <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2 group">
@@ -87,16 +94,16 @@ export default function MainLayout({
                  <ThemeToggle />
                </div>
                
-               {isLoggedIn ? (
+               {isAuthenticated ? (
                  <div className="flex items-center gap-4">
                    <div className="hidden sm:flex flex-col items-end">
-                      <p className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tighter">User</p>
+                      <p className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tighter">{user?.name || "User"}</p>
                       <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest leading-none">Pro Member</p>
                    </div>
                    <Link href="/dashboard" className="relative group">
                       <div className="w-10 h-10 rounded-full border-2 border-emerald-100 dark:border-emerald-900/30 p-0.5 group-hover:border-emerald-500 transition-all overflow-hidden bg-slate-50 dark:bg-slate-900">
                          <img 
-                            src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&h=100&q=80" 
+                            src={user?.avatarUrl || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&h=100&q=80"} 
                             alt="Profile" 
                             className="w-full h-full rounded-full object-cover"
                          />
@@ -129,7 +136,7 @@ export default function MainLayout({
                      <Menu className="w-6 h-6 text-slate-900 dark:text-white" />
                    </Button>
                  </SheetTrigger>
-                 <SheetContent side="right" className="w-80 sm:w-96 dark:bg-slate-950 dark:border-slate-800">
+                 <SheetContent side="right" className="w-80 sm:w-96 dark:bg-slate-950 dark:border-slate-800 [&>button]:hidden">
                    <nav className="flex flex-col gap-6 mt-8">
                      <div className="space-y-1">
                        {navLinks.map((item) => (
@@ -150,7 +157,7 @@ export default function MainLayout({
                          <ThemeToggle />
                        </div>
                        
-                       {!isLoggedIn && (
+                       {!isAuthenticated && (
                          <div className="flex flex-col gap-3 pt-4">
                            <Link href="/auth/login" onClick={() => setMobileMenuOpen(false)}>
                              <Button variant="outline" className="w-full rounded-full border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-bold h-12">
@@ -163,6 +170,15 @@ export default function MainLayout({
                              </Button>
                            </Link>
                          </div>
+                       )}
+                       
+                       {isAuthenticated && (
+                         <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
+                           <Button className="w-full rounded-full bg-slate-900 dark:bg-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 text-white font-black shadow-lg h-12 border-none flex items-center justify-center gap-2">
+                             <LayoutDashboard className="w-4 h-4 text-emerald-400" />
+                             {t.nav.dashboard}
+                           </Button>
+                         </Link>
                        )}
                      </div>
                    </nav>
