@@ -101,7 +101,7 @@ export default function DashboardPage() {
     return ALL_ACTIVITY.filter(item => 
       item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.category.toLowerCase().includes(searchQuery.toLowerCase())
-    ).slice(0, 4)
+    ).slice(0, 5)
   }, [searchQuery])
 
   const handleExport = () => {

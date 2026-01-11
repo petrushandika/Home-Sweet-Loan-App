@@ -86,7 +86,7 @@ export function Sidebar({ className, onItemClick, isCollapsed, onToggleCollapse,
             </button>
          )}
       </div>
-      <nav className="flex-1 px-3 space-y-2 overflow-y-auto emerald-scrollbar mt-6">
+      <nav className="flex-1 px-3 space-y-2 overflow-y-auto emerald-scrollbar my-3">
         {items.map((item) => {
           const isActive = pathname === item.href
           return (
