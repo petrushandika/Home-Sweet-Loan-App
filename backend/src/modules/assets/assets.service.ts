@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/config/prisma.service';
+import { CreateAssetDto } from './dto/create-asset.dto';
+import { UpdateAssetDto } from './dto/update-asset.dto';
 
 @Injectable()
 export class AssetsService {
@@ -38,8 +40,8 @@ export class AssetsService {
     };
   }
 
-  async create(userId: string, data: any) {
-    return this.prisma.asset.create({
+  async create(userId: string, data: CreateAssetDto) {
+    return (this.prisma.asset as any).create({
       data: {
         userId,
         ...data,
@@ -47,8 +49,8 @@ export class AssetsService {
     });
   }
 
-  async update(id: string, userId: string, data: any) {
-    return this.prisma.asset.update({
+  async update(id: string, userId: string, data: UpdateAssetDto) {
+    return (this.prisma.asset as any).update({
       where: { id, userId },
       data,
     });

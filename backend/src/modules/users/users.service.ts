@@ -1,6 +1,8 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '@/config/prisma.service';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
+import { UpdateProfileDto } from './dto/update-profile.dto';
+import { UpdateSettingsDto } from './dto/update-settings.dto';
 
 @Injectable()
 export class UsersService {
@@ -49,10 +51,15 @@ export class UsersService {
     });
   }
 
-  async updateProfile(userId: string, data: { name?: string; avatarUrl?: string; phoneNumber?: string; birthDate?: string | Date; gender?: string }) {
+  async updateProfile(userId: string, data: UpdateProfileDto) {
+    const updateData: any = { ...data };
+    if (data.birthDate) {
+      updateData.birthDate = new Date(data.birthDate);
+    }
+    
     return this.prisma.user.update({
       where: { id: userId },
-      data,
+      data: updateData,
       select: {
         id: true,
         email: true,
@@ -83,16 +90,7 @@ export class UsersService {
     return settings;
   }
 
-  async updateSettings(userId: string, data: { 
-    assetsTarget?: number; 
-    currency?: string; 
-    language?: string; 
-    theme?: string;
-    emailNotif?: boolean;
-    pushNotif?: boolean;
-    marketingNotif?: boolean;
-    twoFactorEnabled?: boolean;
-  }) {
+  async updateSettings(userId: string, data: UpdateSettingsDto) {
     return this.prisma.userSettings.upsert({
       where: { userId },
       update: data,

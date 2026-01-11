@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/config/prisma.service';
+import { CreateSpendingDto } from './dto/create-spending.dto';
+import { UpdateSpendingDto } from './dto/update-spending.dto';
 
 @Injectable()
 export class SpendingService {
@@ -42,19 +44,25 @@ export class SpendingService {
     };
   }
 
-  async create(userId: string, data: any) {
-    return this.prisma.spending.create({
+  async create(userId: string, data: CreateSpendingDto) {
+    return (this.prisma.spending as any).create({
       data: {
         userId,
         ...data,
+        date: data.date ? new Date(data.date) : new Date(),
       },
     });
   }
 
-  async update(id: string, userId: string, data: any) {
+  async update(id: string, userId: string, data: UpdateSpendingDto) {
+    const updateData: any = { ...data };
+    if (data.date) {
+      updateData.date = new Date(data.date);
+    }
+
     return this.prisma.spending.update({
       where: { id, userId },
-      data,
+      data: updateData,
     });
   }
 

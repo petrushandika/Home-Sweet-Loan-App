@@ -1,8 +1,10 @@
 import { Controller, Get, Put, Post, Body, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiConsumes, ApiBody, ApiResponse } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { UpdateProfileDto } from './dto/update-profile.dto';
+import { UpdateSettingsDto } from './dto/update-settings.dto';
 
 @ApiTags('users')
 @ApiBearerAuth()
@@ -56,7 +58,8 @@ export class UsersController {
 
   @Put('profile')
   @ApiOperation({ summary: 'Update current user profile' })
-  async updateProfile(@CurrentUser() user: any, @Body() data: { name?: string; avatarUrl?: string; phoneNumber?: string; birthDate?: string | Date; gender?: string }) {
+  @ApiResponse({ status: 200, description: 'Profile updated successfully' })
+  async updateProfile(@CurrentUser() user: any, @Body() data: UpdateProfileDto) {
     const profile = await this.usersService.updateProfile(user.id, data);
     return {
       success: true,
@@ -77,7 +80,8 @@ export class UsersController {
 
   @Put('settings')
   @ApiOperation({ summary: 'Update current user settings' })
-  async updateSettings(@CurrentUser() user: any, @Body() data: any) {
+  @ApiResponse({ status: 200, description: 'Settings updated successfully' })
+  async updateSettings(@CurrentUser() user: any, @Body() data: UpdateSettingsDto) {
     const settings = await this.usersService.updateSettings(user.id, data);
     return {
       success: true,

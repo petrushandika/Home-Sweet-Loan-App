@@ -3,6 +3,7 @@ import { PrismaService } from '@/config/prisma.service';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
 import { MemberRole } from '@prisma/client';
+import { InviteMemberDto } from './dto/invite-member.dto';
 
 @Injectable()
 export class MembersService {
@@ -36,7 +37,7 @@ export class MembersService {
     }));
   }
 
-  async inviteMember(userId: string, data: { name: string; email: string; role: string; relation: string; monthlyLimit: number }) {
+  async inviteMember(userId: string, data: InviteMemberDto) {
     // 1. Get or Create Group logic
     let memberGroupId: string;
     let currentMembersCount = 0;

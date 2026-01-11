@@ -1,7 +1,9 @@
 import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { AssetsService } from './assets.service';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { CreateAssetDto } from './dto/create-asset.dto';
+import { UpdateAssetDto } from './dto/update-asset.dto';
 
 @ApiTags('assets')
 @ApiBearerAuth()
@@ -10,6 +12,7 @@ export class AssetsController {
   constructor(private readonly assetsService: AssetsService) {}
 
   @Get()
+  @ApiOperation({ summary: 'Get all assets' })
   async findAll(@CurrentUser() user: any) {
     const result = await this.assetsService.findAll(user.id);
     return {
@@ -19,7 +22,9 @@ export class AssetsController {
   }
 
   @Post()
-  async create(@CurrentUser() user: any, @Body() data: any) {
+  @ApiOperation({ summary: 'Create a new asset' })
+  @ApiResponse({ status: 201, description: 'Asset created successfully' })
+  async create(@CurrentUser() user: any, @Body() data: CreateAssetDto) {
     const asset = await this.assetsService.create(user.id, data);
     return {
       success: true,
@@ -29,6 +34,7 @@ export class AssetsController {
   }
 
   @Put('target')
+  @ApiOperation({ summary: 'Update assets target' })
   async updateTarget(@CurrentUser() user: any, @Body() data: { target: number }) {
     const settings = await this.assetsService.updateTarget(user.id, data.target);
     return {
@@ -39,7 +45,9 @@ export class AssetsController {
   }
 
   @Put(':id')
-  async update(@CurrentUser() user: any, @Param('id') id: string, @Body() data: any) {
+  @ApiOperation({ summary: 'Update an asset' })
+  @ApiResponse({ status: 200, description: 'Asset updated successfully' })
+  async update(@CurrentUser() user: any, @Param('id') id: string, @Body() data: UpdateAssetDto) {
     const asset = await this.assetsService.update(id, user.id, data);
     return {
       success: true,

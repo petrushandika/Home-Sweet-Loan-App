@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Delete, Param } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { MembersService } from './members.service';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { InviteMemberDto } from './dto/invite-member.dto';
 
 @ApiTags('members')
 @ApiBearerAuth()
@@ -23,7 +24,7 @@ export class MembersController {
   @ApiOperation({ summary: 'Invite a member' })
   async inviteMember(
     @CurrentUser() user: any, 
-    @Body() body: { name: string; email: string; role: string; relation: string; monthlyLimit: number }
+    @Body() body: InviteMemberDto
   ) {
     const result = await this.membersService.inviteMember(user.id, body);
     return {
