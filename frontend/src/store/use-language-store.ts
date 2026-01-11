@@ -91,6 +91,90 @@ export const translations = {
         viewAll: "Lihat Semua",
         toastTitle: "Mengekspor data...",
         toastDesc: "Data keuangan Anda sedang disiapkan untuk diunduh."
+      },
+      spending: {
+        title: "Pelacak <span class='text-gradient-money'>Pengeluaran</span>",
+        desc: "Catat transaksi harian Anda dan pantau penggunaan anggaran.",
+        addBtn: "Tambah Transaksi",
+        modalTitle: "Transaksi Baru",
+        modalDesc: "Catat pengeluaran atau pemasukan baru.",
+        saveBtn: "Simpan Transaksi",
+        quickLog: "Catat Cepat",
+        quickLogDesc: "Masukkan detail pengeluaran secara manual.",
+        history: "Riwayat Transaksi",
+        historyDesc: "Log pengeluaran Anda untuk bulan ini.",
+        emptyState: "Tidak ada transaksi yang tercatat untuk periode ini.",
+        importBtn: "Impor dari CSV",
+        form: {
+          desc: "Deskripsi",
+          descPlaceholder: "Apa yang Anda beli?",
+          amount: "Jumlah",
+          category: "Kategori",
+          date: "Tanggal",
+          proceed: "Lanjutkan Mencatat"
+        }
+      },
+      assets: {
+        title: "Manajemen <span class='text-gradient-money'>Aset</span>",
+        desc: "Pantau kekayaan jangka panjang dan pertumbuhan portofolio Anda.",
+        addBtn: "Tambah Aset",
+        modalTitle: "Aset Baru",
+        modalDesc: "Tambah item baru ke portofolio kekayaan Anda.",
+        registerBtn: "Daftarkan Aset",
+        breakdown: "Rincian Aset",
+        breakdownDesc: "Daftar terperinci kepemilikan dan distribusi kekayaan Anda.",
+        liquid: "Aset Likuid",
+        nonLiquid: "Non-Likuid",
+        total: "Total Kekayaan",
+        form: {
+          name: "Nama Aset",
+          namePlaceholder: "misal. Dana Darurat, Saham",
+          type: "Tipe Aset",
+          typePlaceholder: "Pilih tipe",
+          value: "Nilai Saat Ini"
+        }
+      },
+      report: {
+        title: "Laporan <span class='text-gradient-money'>Finansial</span>",
+        desc: "Pelajari lebih dalam kebiasaan dan tren keuangan Anda.",
+        thisMonth: "Bulan Ini",
+        downloadBtn: "Unduh PDF",
+        analysisTitle: "Analisis Bulanan",
+        analysisDesc: "Perbandingan antara anggaran dan pengeluaran riil.",
+        distTitle: "Distribusi Kategori",
+        distDesc: "Ke mana tepatnya uang Anda pergi?",
+        aiTitle: "Wawasan Finansial Pintar",
+        aiDesc: "Berdasarkan kebiasaan Anda, Anda bisa menghemat hingga <b class='text-white underline underline-offset-4 decoration-indigo-300'>Rp 1.500.000</b> lebih banyak setiap bulan dengan mengurangi pengeluaran gaya hidup.",
+        aiBtn: "Hasilkan Saran AI",
+        detailedBtn: "Analisis Terperinci",
+        optimizeBtn: "Optimalkan Pengeluaran",
+        advisorTitle: "Penasihat Keuangan AI",
+        advisorDesc: "Wawasan personal berdasarkan riwayat transaksi Anda.",
+        refreshBtn: "Perbarui Wawasan",
+        analyzing: "Menganalisis Pola..."
+      },
+      setup: {
+        title: "Setup <span class='text-gradient-money'>Proyek</span>",
+        desc: "Konfigurasi ruang kerja dan kategori keuangan Anda.",
+        addBtn: "Kategori Baru",
+        modalTitle: "Tambah Kategori Baru",
+        modalDesc: "Buat kategori baru untuk transaksi atau aset Anda.",
+        saveBtn: "Simpan Kategori",
+        module: "Modul Arsitektur",
+        form: {
+          name: "Nama Kategori",
+          namePlaceholder: "misal. Langganan, Sampingan",
+          type: "Tipe Kategori",
+          typePlaceholder: "Pilih tipe"
+        },
+        items: {
+          account: "Ringkasan Akun",
+          income: "Sumber Pendapatan",
+          needs: "Kategori Kebutuhan",
+          wants: "Kategori Keinginan",
+          savings: "Kategori Tabungan",
+          assets: "Aset Akun"
+        }
       }
     },
     partners: {
@@ -229,6 +313,90 @@ export const translations = {
         viewAll: "View All",
         toastTitle: "Exporting data...",
         toastDesc: "Your financial data is being prepared for download."
+      },
+      spending: {
+        title: "Spending <span class='text-gradient-money'>Tracker</span>",
+        desc: "Log your daily transactions and monitor budget usage.",
+        addBtn: "Add Transaction",
+        modalTitle: "New Transaction",
+        modalDesc: "Record a new expense or income.",
+        saveBtn: "Save Transaction",
+        quickLog: "Quick Log",
+        quickLogDesc: "Enter spending details manually.",
+        history: "Transaction History",
+        historyDesc: "Your spending logs for this month.",
+        emptyState: "No transactions recorded for this period.",
+        importBtn: "Import from CSV",
+        form: {
+          desc: "Description",
+          descPlaceholder: "What did you buy?",
+          amount: "Amount",
+          category: "Category",
+          date: "Date",
+          proceed: "Proceed to Log"
+        }
+      },
+      assets: {
+        title: "Asset <span class='text-gradient-money'>Management</span>",
+        desc: "Monitor your long-term wealth and portfolio growth.",
+        addBtn: "Add Asset",
+        modalTitle: "New Asset",
+        modalDesc: "Add a new item to your wealth portfolio.",
+        registerBtn: "Register Asset",
+        breakdown: "Asset Breakdown",
+        breakdownDesc: "Detailed list of your holdings and wealth distribution.",
+        liquid: "Liquid Assets",
+        nonLiquid: "Non-Liquid",
+        total: "Total Wealth",
+        form: {
+          name: "Asset Name",
+          namePlaceholder: "e.g. Emergency Fund, Stocks",
+          type: "Asset Type",
+          typePlaceholder: "Select type",
+          value: "Current Value"
+        }
+      },
+      report: {
+        title: "Financial <span class='text-gradient-money'>Reports</span>",
+        desc: "Deep dive into your financial habits and trends.",
+        thisMonth: "This Month",
+        downloadBtn: "Download PDF",
+        analysisTitle: "Monthly Analysis",
+        analysisDesc: "Comparison between budget and real spending.",
+        distTitle: "Category Distribution",
+        distDesc: "Where does your money go exactly?",
+        aiTitle: "Smart Financial Insights",
+        aiDesc: "Based on your habits, you could save up to <b class='text-white underline underline-offset-4 decoration-indigo-300'>Rp 1.500.000</b> more each month by reducing lifestyle spending.",
+        aiBtn: "Generate AI Advice",
+        detailedBtn: "Detailed Analysis",
+        optimizeBtn: "Optimize Spending",
+        advisorTitle: "AI Financial Advisor",
+        advisorDesc: "Personalized insights based on your transaction history.",
+        refreshBtn: "Refresh Insights",
+        analyzing: "Analyzing Patterns..."
+      },
+      setup: {
+        title: "Project <span class='text-gradient-money'>Setup</span>",
+        desc: "Configure your financial workspace and categories.",
+        addBtn: "New Category",
+        modalTitle: "Add New Category",
+        modalDesc: "Create a new category for your transactions or assets.",
+        saveBtn: "Save Category",
+        module: "Architecture Module",
+        form: {
+          name: "Category Name",
+          namePlaceholder: "e.g. Subscriptions, Side Hustle",
+          type: "Category Type",
+          typePlaceholder: "Select a type"
+        },
+        items: {
+          account: "Account Summary",
+          income: "Income Sources",
+          needs: "Needs Categories",
+          wants: "Wants Categories",
+          savings: "Savings Categories",
+          assets: "Account Assets"
+        }
       }
     },
     partners: {

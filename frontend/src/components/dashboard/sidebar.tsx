@@ -83,9 +83,15 @@ export function Sidebar({ className, onItemClick }: { className?: string, onItem
       <div className="p-6">
         <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 cursor-pointer hover:bg-white dark:hover:bg-slate-800 hover:border-emerald-500/20 transition-all group/profile">
           <div className="flex items-center gap-3 mb-3">
-             <div className="w-8 h-8 rounded-full bg-linear-to-tr from-emerald-500 to-emerald-700 border border-white/20" />
+             <div className="w-8 h-8 rounded-full border border-emerald-100 dark:border-emerald-800 p-0.5 overflow-hidden bg-white dark:bg-slate-900 shadow-sm">
+                <img 
+                  src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&h=100&q=80" 
+                  alt="Profile" 
+                  className="w-full h-full rounded-full object-cover"
+                />
+             </div>
              <div className="flex flex-col">
-                <span className="text-sm font-bold text-slate-800 dark:text-white">User</span>
+                <span className="text-sm font-bold text-slate-800 dark:text-white">Pandawa</span>
                 <span className="text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">PRO PLAN</span>
              </div>
           </div>

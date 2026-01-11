@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Plus, Wallet, Target, Info, Sparkles } from "lucide-react"
+import { Plus, Wallet, Target, Info, Sparkles, PieChart, ShieldCheck, Heart } from "lucide-react"
 import { ResponsiveModal } from "@/components/responsive-modal"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -15,16 +15,31 @@ import {
 } from "@/components/ui/select"
 import { toast } from "sonner"
 import { useLanguageStore, translations } from "@/store/use-language-store"
+import { cn } from "@/lib/utils"
+import { useEffect, useState } from "react"
 
 export default function BudgetingPage() {
   const { language } = useLanguageStore()
   const t = translations[language].dashboard.budgeting
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const handleInitialize = () => {
     toast.success(t.toastTitle, {
       description: t.toastDesc
     })
   }
+
+  const handleViewGoals = () => {
+     toast.info("Wealth Goals", {
+       description: "Redirecting to your long-term wealth projection center..."
+     })
+  }
+
+  if (!mounted) return null
 
   return (
     <div className="space-y-10 pb-10 transition-colors duration-300">
@@ -39,9 +54,47 @@ export default function BudgetingPage() {
           </p>
         </div>
         <div className="flex flex-col sm:flex-row gap-3">
-          <Button variant="outline" className="w-full sm:w-auto rounded-full px-6 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-bold hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm transition-all">
-            <Info className="mr-2 h-4 w-4" /> {t.guidelines}
-          </Button>
+          <ResponsiveModal
+            title="Budgeting Guidelines"
+            description="Master the art of financial management with our expert rules."
+            trigger={
+              <Button variant="outline" className="w-full sm:w-auto rounded-full px-6 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-bold hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm transition-all border">
+                <Info className="mr-2 h-4 w-4" /> {t.guidelines}
+              </Button>
+            }
+          >
+            <div className="space-y-6">
+               <div className="p-6 bg-emerald-50 dark:bg-emerald-950/20 rounded-3xl border border-emerald-100 dark:border-emerald-800">
+                  <h3 className="text-emerald-700 dark:text-emerald-400 font-black flex items-center gap-2 mb-3">
+                    <PieChart className="w-5 h-5" /> The 50/30/20 Rule
+                  </h3>
+                  <div className="space-y-4">
+                     <div className="flex gap-4">
+                        <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-900 flex items-center justify-center shrink-0 border border-emerald-100 dark:border-emerald-800 font-bold text-emerald-600">50%</div>
+                        <p className="text-sm text-slate-600 dark:text-slate-400 leading-tight"><b>Needs:</b> Groceries, housing, utilities, insurance, and minimum debt payments.</p>
+                     </div>
+                     <div className="flex gap-4">
+                        <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-900 flex items-center justify-center shrink-0 border border-violet-100 dark:border-violet-800 font-bold text-violet-600">30%</div>
+                        <p className="text-sm text-slate-600 dark:text-slate-400 leading-tight"><b>Wants:</b> Dining out, hobbies, subscriptions, and non-essential shopping.</p>
+                     </div>
+                     <div className="flex gap-4">
+                        <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-900 flex items-center justify-center shrink-0 border border-emerald-100 dark:border-emerald-800 font-bold text-emerald-600">20%</div>
+                        <p className="text-sm text-slate-600 dark:text-slate-400 leading-tight"><b>Savings:</b> Debt repayment, emergency fund, and wealth building.</p>
+                     </div>
+                  </div>
+               </div>
+               <div className="grid grid-cols-2 gap-4">
+                  <div className="p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800">
+                     <p className="text-[10px] font-black uppercase text-slate-400 mb-2">Benefit 1</p>
+                     <p className="text-xs font-bold text-slate-700 dark:text-slate-300 leading-tight">Avoid lifestyle creep and overspending.</p>
+                  </div>
+                  <div className="p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800">
+                     <p className="text-[10px] font-black uppercase text-slate-400 mb-2">Benefit 2</p>
+                     <p className="text-xs font-bold text-slate-700 dark:text-slate-300 leading-tight">Build safety net for unexpected events.</p>
+                  </div>
+               </div>
+            </div>
+          </ResponsiveModal>
           
           <ResponsiveModal
             title={t.modalTitle}
@@ -72,7 +125,7 @@ export default function BudgetingPage() {
                   <Input id="total-income" placeholder="0" className="rounded-2xl border-slate-200 dark:border-slate-800 dark:bg-slate-900 focus-visible:ring-emerald-500 pl-11 h-11" />
                 </div>
               </div>
-              <div className="p-5 bg-emerald-50 dark:bg-emerald-900/20 rounded-2xl border border-emerald-100 dark:border-emerald-800 flex gap-4 animate-smooth-in transition-colors">
+              <div className="p-5 bg-emerald-50 dark:bg-emerald-950/20 rounded-2xl border border-emerald-100 dark:border-emerald-800 flex gap-4 animate-smooth-in transition-colors">
                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center shrink-0 border border-emerald-100 dark:border-emerald-700 shadow-sm transition-colors">
                     <Sparkles className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                  </div>
@@ -96,7 +149,7 @@ export default function BudgetingPage() {
         <Card className="xl:col-span-8 border-slate-200 dark:border-slate-800 shadow-none rounded-[2rem] bg-white dark:bg-slate-900 overflow-hidden border transition-colors duration-300">
           <CardHeader className="p-6 md:p-10">
             <div className="flex items-center gap-5 mb-4">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-100 dark:border-emerald-800 flex items-center justify-center transition-colors">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-800 flex items-center justify-center transition-colors">
                 <Wallet className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
               </div>
               <div>
@@ -106,10 +159,32 @@ export default function BudgetingPage() {
             </div>
           </CardHeader>
           <CardContent className="p-6 md:p-10 pt-0">
-             <div className="aspect-video flex flex-col items-center justify-center border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-[2rem] text-slate-400 dark:text-slate-600 bg-slate-50/50 dark:bg-slate-950/20 font-medium italic transition-all group hover:border-emerald-200 dark:hover:border-emerald-800/50">
-                <Wallet className="w-12 h-12 mb-4 opacity-10 dark:opacity-20 transition-opacity group-hover:opacity-30" />
-                <p>{t.emptyState}</p>
-                <Button variant="link" className="text-emerald-600 dark:text-emerald-400 font-bold mt-2">{t.importBtn}</Button>
+             <div className="space-y-6 lg:max-h-[500px] overflow-y-auto pr-4 emerald-scrollbar">
+                {[
+                  { name: "Housing & Utilities", allocated: "Rp 3,500,000", spent: "Rp 3,200,000", percent: 91, color: "bg-orange-500", icon: Wallet, bg: "bg-orange-50 dark:bg-orange-950/20" },
+                  { name: "Groceries & Food", allocated: "Rp 4,000,000", spent: "Rp 1,850,000", percent: 46, color: "bg-emerald-500", icon: ShieldCheck, bg: "bg-emerald-50 dark:bg-emerald-950/20" },
+                  { name: "Fixed Expenses", allocated: "Rp 1,500,000", spent: "Rp 1,450,000", percent: 96, color: "bg-blue-500", icon: Info, bg: "bg-blue-50 dark:bg-blue-950/20" },
+                  { name: "Entertainment", allocated: "Rp 1,000,000", spent: "Rp 420,000", percent: 42, color: "bg-violet-500", icon: Heart, bg: "bg-violet-50 dark:bg-violet-950/20" },
+                  { name: "Other Spending", allocated: "Rp 1,400,000", spent: "Rp 50,000", percent: 3, color: "bg-slate-400", icon: Target, bg: "bg-slate-50 dark:bg-slate-950/20" },
+                ].map((item, idx) => (
+                  <div key={idx} className="group p-5 rounded-3xl border border-transparent hover:border-slate-100 dark:hover:border-slate-800 hover:bg-slate-50/50 dark:hover:bg-slate-950/50 transition-all">
+                    <div className="flex justify-between items-center mb-4">
+                       <div className="flex items-center gap-3">
+                          <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center border border-transparent group-hover:border-slate-200 dark:group-hover:border-slate-700 transition-all", item.bg)}>
+                             <item.icon className={cn("w-5 h-5", item.color.replace('bg-', 'text-'))} />
+                          </div>
+                          <h4 className="font-bold text-slate-800 dark:text-white uppercase tracking-tight text-sm">{item.name}</h4>
+                       </div>
+                       <span className="text-xs font-black text-slate-500 dark:text-slate-400">{item.spent} / {item.allocated}</span>
+                    </div>
+                    <div className="h-2.5 w-full bg-slate-100 dark:bg-slate-800/50 rounded-full overflow-hidden p-0.5 border border-slate-200 dark:border-slate-800 transition-colors">
+                      <div 
+                        className={cn("h-full rounded-full transition-all duration-1000", item.color)} 
+                        style={{ width: `${item.percent}%` }} 
+                      />
+                    </div>
+                  </div>
+                ))}
              </div>
           </CardContent>
         </Card>
@@ -128,7 +203,7 @@ export default function BudgetingPage() {
                 <span>{t.savingTarget}</span>
                 <span>75%</span>
               </div>
-              <div className="h-2.5 w-full bg-white/20 dark:bg-black/20 rounded-full overflow-hidden border border-white/10 dark:border-emerald-900/30 p-0.5 transition-colors">
+              <div className="h-3 w-full bg-black/20 rounded-full overflow-hidden border border-white/10 dark:border-emerald-900/30 p-0.5 transition-colors">
                 <div className="h-full bg-white dark:bg-emerald-500 rounded-full w-3/4 shadow-[0_0_10px_rgba(255,255,255,0.3)] dark:shadow-none" />
               </div>
             </div>
@@ -137,7 +212,10 @@ export default function BudgetingPage() {
                 className="text-sm font-medium leading-relaxed text-emerald-50 dark:text-emerald-100/80 transition-colors"
                 dangerouslySetInnerHTML={{ __html: t.encouragement }}
               />
-              <Button className="w-full rounded-2xl bg-white dark:bg-emerald-600 text-emerald-700 dark:text-white font-black hover:bg-emerald-50 dark:hover:bg-emerald-700 border border-transparent transition-all py-6 shadow-sm active:scale-95 border-none">
+              <Button 
+                onClick={handleViewGoals}
+                className="w-full rounded-2xl bg-white dark:bg-emerald-600 text-emerald-700 dark:text-white font-black hover:bg-emerald-50 dark:hover:bg-emerald-700 border border-transparent transition-all py-7 shadow-sm active:scale-95 border-none"
+              >
                 {t.viewGoalsBtn}
               </Button>
             </div>

@@ -116,10 +116,22 @@ export class ReportsService {
       .filter((a) => a.type === 'NON_LIQUID')
       .reduce((sum, a) => sum + Number(a.value), 0);
 
+    // Get user settings (target)
+    const settings = await this.prisma.userSettings.findUnique({
+      where: { userId },
+    });
+
     // Get payday date
     const setup = await this.prisma.setupConfig.findUnique({
       where: { userId },
       select: { paydayDate: true },
+    });
+
+    // Get last 5 transactions
+    const transactions = await this.prisma.spending.findMany({
+      where: { userId },
+      orderBy: { date: 'desc' },
+      take: 5,
     });
 
     // Get last 6 months cashflow
@@ -158,6 +170,8 @@ export class ReportsService {
       nonLiquidAssets,
       netWorth,
       paydayDate: setup?.paydayDate || 1,
+      savingsTarget: settings?.assetsTarget || 0,
+      recentTransactions: transactions,
       cashflow,
     };
   }

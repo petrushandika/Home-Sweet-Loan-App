@@ -14,6 +14,7 @@ import {
   TabsTrigger 
 } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
+import { useState, useEffect } from "react"
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -52,12 +53,12 @@ import { toast } from "sonner"
 import { useLanguageStore, translations } from "@/store/use-language-store"
 
 const chartData = [
-  { month: "Jan", income: 12500000, expenses: 4200000 },
-  { month: "Feb", income: 12500000, expenses: 5100000 },
-  { month: "Mar", income: 15000000, expenses: 4800000 },
-  { month: "Apr", income: 12500000, expenses: 6200000 },
-  { month: "May", income: 13000000, expenses: 4500000 },
-  { month: "Jun", income: 14000000, expenses: 4900000 },
+  { month: "Jan", income: 15400000, expenses: 8200000 },
+  { month: "Feb", income: 15400000, expenses: 7100000 },
+  { month: "Mar", income: 18000000, expenses: 9800000 },
+  { month: "Apr", income: 15400000, expenses: 11200000 },
+  { month: "May", income: 16500000, expenses: 8500000 },
+  { month: "Jun", income: 15400000, expenses: 9900000 },
 ]
 
 const chartConfig = {
@@ -74,12 +75,19 @@ const chartConfig = {
 export default function DashboardPage() {
   const { language } = useLanguageStore()
   const t = translations[language].dashboard.summary
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const handleExport = () => {
     toast.success(t.toastTitle, {
       description: t.toastDesc
     })
   }
+
+  if (!mounted) return null
 
   return (
     <div className="space-y-10 pb-10">
@@ -152,8 +160,8 @@ export default function DashboardPage() {
       <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
         <StatsCard 
           title={t.income} 
-          amount="Rp 12,500,000" 
-          trend="+12%" 
+          amount="Rp 15,400,000" 
+          trend="+18%" 
           positive 
           icon={TrendingUp} 
           gradient="bg-emerald-50/50" 
@@ -163,8 +171,8 @@ export default function DashboardPage() {
         />
         <StatsCard 
           title={t.spending} 
-          amount="Rp 4,230,000" 
-          trend="-4%" 
+          amount="Rp 5,820,000" 
+          trend="-7%" 
           positive 
           icon={TrendingDown} 
           gradient="bg-rose-50/50" 
@@ -174,8 +182,8 @@ export default function DashboardPage() {
         />
         <StatsCard 
           title={t.savings} 
-          amount="Rp 45,000,000" 
-          trend="82%" 
+          amount="Rp 62,300,000" 
+          trend="88%" 
           icon={PiggyBank} 
           gradient="bg-sky-50/50" 
           borderColor="border-sky-200 dark:border-sky-800/50"
@@ -185,8 +193,8 @@ export default function DashboardPage() {
         />
         <StatsCard 
           title={t.networth} 
-          amount="Rp 157,800,000" 
-          trend="+Rp 15M" 
+          amount="Rp 184,200,000" 
+          trend="+Rp 22M" 
           positive 
           icon={Wallet} 
           gradient="bg-violet-50/50" 
@@ -247,10 +255,15 @@ export default function DashboardPage() {
             {[
               { name: "Sembako Bulanan", category: "Needs", amount: "- Rp 850,000", date: "Today, 14:20", color: "text-orange-500", icon: Wallet, bg: "bg-orange-50 dark:bg-orange-950/20" },
               { name: "Coffee & Chill", category: "Wants", amount: "- Rp 45,000", date: "Today, 10:15", color: "text-violet-500", icon: TrendingDown, bg: "bg-violet-50 dark:bg-violet-950/20" },
-              { name: "Salary Transfer", category: "Income", amount: "+ Rp 12,000,000", date: "Jan 25", color: "text-emerald-600", icon: TrendingUp, bg: "bg-emerald-50 dark:bg-emerald-950/20" },
+              { name: "Salary Transfer", category: "Income", amount: "+ Rp 15,400,000", date: "Jan 25", color: "text-emerald-600", icon: TrendingUp, bg: "bg-emerald-50 dark:bg-emerald-950/20" },
+              { name: "Netflix Subscription", category: "Wants", amount: "- Rp 186,000", date: "Jan 25", color: "text-violet-500", icon: TrendingDown, bg: "bg-violet-50 dark:bg-violet-950/20" },
+              { name: "Supermarket Plaza", category: "Needs", amount: "- Rp 1,240,000", date: "Jan 24", color: "text-orange-500", icon: Wallet, bg: "bg-orange-50 dark:bg-orange-950/20" },
               { name: "Listrik & Air", category: "Needs", amount: "- Rp 450,000", date: "Jan 24", color: "text-orange-500", icon: Wallet, bg: "bg-orange-50 dark:bg-orange-950/20" },
               { name: "Tabungan Emas", category: "Savings", amount: "- Rp 1,000,000", date: "Jan 23", color: "text-rose-500", icon: PiggyBank, bg: "bg-rose-50 dark:bg-rose-950/20" },
-            ].map((item, idx) => (
+              { name: "Gopay Topup", category: "Wants", amount: "- Rp 200,000", date: "Jan 22", color: "text-violet-500", icon: TrendingDown, bg: "bg-violet-50 dark:bg-violet-950/20" },
+              { name: "Investasi Saham", category: "Assets", amount: "- Rp 2,500,000", date: "Jan 21", color: "text-sky-600", icon: TrendingUp, bg: "bg-sky-50 dark:bg-sky-950/20" },
+              { name: "Dividen Saham", category: "Income", amount: "+ Rp 350,000", date: "Jan 20", color: "text-emerald-600", icon: TrendingUp, bg: "bg-emerald-50 dark:bg-emerald-950/20" },
+            ].slice(0, 4).map((item, idx) => (
               <div key={idx} className="flex items-center group cursor-pointer border-b border-slate-50 dark:border-slate-800 pb-4 last:border-0 last:pb-0">
                 <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center mr-4 transition-all border border-transparent group-hover:border-slate-200 dark:group-hover:border-slate-700", item.bg)}>
                   <item.icon className={cn("w-6 h-6", item.color)} />
