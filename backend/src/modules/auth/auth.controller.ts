@@ -7,6 +7,8 @@ import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { VerifyEmailDto } from './dto/verify-email.dto';
 import { ResendVerificationDto } from './dto/resend-verification.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { Public } from '@/common/decorators/public.decorator';
 import { GoogleAuthGuard } from '@/common/guards/google-auth.guard';
 import { FacebookAuthGuard } from '@/common/guards/facebook-auth.guard';
@@ -193,6 +195,16 @@ export class AuthController {
     return {
         success: true,
         message: 'Tokens refreshed successfully',
+    };
+  }
+  @Post('change-password')
+  @ApiOperation({ summary: 'Change user password' })
+  @ApiResponse({ status: 200, description: 'Password changed successfully' })
+  async changePassword(@CurrentUser() user: any, @Body() changePasswordDto: ChangePasswordDto) {
+    const result = await this.authService.changePassword(user.id, changePasswordDto);
+    return {
+      success: true,
+      message: result.message,
     };
   }
 }

@@ -349,4 +349,21 @@ export class AuthService {
 
     return { message: 'Verification link has been resent' };
   }
+  async changePassword(userId: string, data: any) {
+    const { currentPassword, newPassword } = data;
+    
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new BadRequestException('User not found');
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) throw new BadRequestException('Current password incorrect');
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+    await this.prisma.user.update({
+        where: { id: userId },
+        data: { password: hashed }
+    });
+
+    return { message: 'Password changed successfully' };
+  }
 }

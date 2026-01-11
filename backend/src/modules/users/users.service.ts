@@ -15,6 +15,9 @@ export class UsersService {
         isVerified: true,
         avatarUrl: true,
         plan: true,
+        phoneNumber: true,
+        birthDate: true,
+        gender: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -38,6 +41,37 @@ export class UsersService {
         createdAt: true,
         updatedAt: true,
       },
+    });
+  }
+
+  async getSettings(userId: string) {
+    let settings = await this.prisma.userSettings.findUnique({
+      where: { userId },
+    });
+
+    if (!settings) {
+      settings = await this.prisma.userSettings.create({
+        data: { userId },
+      });
+    }
+
+    return settings;
+  }
+
+  async updateSettings(userId: string, data: { 
+    assetsTarget?: number; 
+    currency?: string; 
+    language?: string; 
+    theme?: string;
+    emailNotif?: boolean;
+    pushNotif?: boolean;
+    marketingNotif?: boolean;
+    twoFactorEnabled?: boolean;
+  }) {
+    return this.prisma.userSettings.upsert({
+      where: { userId },
+      update: data,
+      create: { userId, ...data as any },
     });
   }
 }

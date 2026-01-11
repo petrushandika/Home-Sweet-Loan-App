@@ -17,7 +17,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
 import { ChatModule } from './modules/chat/chat.module';
 
 import { AchievementsModule } from './modules/achievements/achievements.module';
-import { FamilyModule } from './modules/family/family.module';
+import { MembersModule } from './modules/members/members.module';
 
 @Module({
   imports: [
@@ -63,7 +63,7 @@ import { FamilyModule } from './modules/family/family.module';
     NotificationsModule,
     ChatModule,
     AchievementsModule,
-    FamilyModule,
+    MembersModule,
   ],
 })
 export class AppModule {}

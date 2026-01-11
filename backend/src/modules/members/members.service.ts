@@ -2,28 +2,28 @@ import { Injectable, BadRequestException, NotFoundException } from '@nestjs/comm
 import { PrismaService } from '@/config/prisma.service';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
-import { FamilyRole } from '@prisma/client';
+import { MemberRole } from '@prisma/client';
 
 @Injectable()
-export class FamilyService {
+export class MembersService {
   constructor(
     private prisma: PrismaService,
     private mailerService: MailerService,
     private configService: ConfigService,
   ) {}
 
-  async getFamily(userId: string) {
-    // Check if user belongs to a family
-    const membership = await this.prisma.familyMember.findFirst({
+  async getMembers(userId: string) {
+    // Check if user belongs to a group
+    const membership = await this.prisma.member.findFirst({
         where: { userId },
-        include: { family: { include: { members: { include: { user: true } } } } }
+        include: { group: { include: { members: { include: { user: true } } } } }
     });
 
     if (!membership) {
         return [];
     }
 
-    return membership.family.members.map(m => ({
+    return membership.group.members.map(m => ({
         id: m.id,
         name: m.name,
         role: m.role,
@@ -37,31 +37,36 @@ export class FamilyService {
   }
 
   async inviteMember(userId: string, data: { name: string; email: string; role: string; relation: string; monthlyLimit: number }) {
-    // 1. Get or Create Family logic
-    let familyId: string;
+    // 1. Get or Create Group logic
+    let memberGroupId: string;
+    let currentMembersCount = 0;
 
-    const membership = await this.prisma.familyMember.findFirst({
+    const membership = await this.prisma.member.findFirst({
         where: { userId },
+        include: { group: { include: { members: true } } }
     });
 
     if (membership) {
-        familyId = membership.familyId;
-        // Verify permissions? (Assuming HEAD or SPOUSE can invite)
+        memberGroupId = membership.memberGroupId;
+        currentMembersCount = membership.group.members.length;
+        // Verify permissions
         if (membership.role !== 'HEAD' && membership.role !== 'SPOUSE') {
-            throw new BadRequestException('Only Family Head or Spouse can invite members');
+            throw new BadRequestException('Only Group Head or Spouse can invite members');
         }
     } else {
-        // Create new Family for this user (they become HEAD)
-        const family = await this.prisma.family.create({
-            data: { name: 'My Family' }
+        // Create new Group for this user (they become HEAD)
+        const memberGroup = await this.prisma.memberGroup.create({
+            data: { name: 'My Group' }
         });
-        familyId = family.id;
+        memberGroupId = memberGroup.id;
         
         // Add current user as HEAD
         const user = await this.prisma.user.findUnique({ where: { id: userId } });
-        await this.prisma.familyMember.create({
+        if (!user) throw new NotFoundException('User not found');
+
+        await this.prisma.member.create({
             data: {
-                familyId,
+                memberGroupId,
                 userId,
                 name: user.name,
                 role: 'HEAD',
@@ -70,27 +75,40 @@ export class FamilyService {
                 email: user.email 
             }
         });
+        currentMembersCount = 1;
+    }
+
+    // Check Plan Limits
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    const plan = user.plan || 'FREE';
+    
+    let limit = 1; // FREE
+    if (plan === 'BASIC') limit = 4;
+    if (plan === 'MEMBERS') limit = 10;
+
+    if (currentMembersCount >= limit) {
+        throw new BadRequestException(`Upgrade to add more members. Your ${plan} plan limit is ${limit} members.`);
     }
 
     // 2. Add new member
-    const existingMember = await this.prisma.familyMember.findFirst({
-        where: { familyId, email: data.email }
+    const existingMember = await this.prisma.member.findFirst({
+        where: { memberGroupId, email: data.email }
     });
 
     if (existingMember) {
-        throw new BadRequestException('This email is already invited to the family');
+        throw new BadRequestException('This email is already invited');
     }
     
     // Check if invited user exists in system
     const invitedUser = await this.prisma.user.findUnique({ where: { email: data.email } });
 
-    const newMember = await this.prisma.familyMember.create({
+    const newMember = await this.prisma.member.create({
         data: {
-            familyId,
+            memberGroupId,
             userId: invitedUser?.id || null,
             name: data.name,
             email: data.email,
-            role: data.role as FamilyRole || 'MEMBER',
+            role: data.role as MemberRole || 'MEMBER',
             relation: data.relation,
             monthlyLimit: data.monthlyLimit,
             isAccepted: false // Pending invitation
@@ -99,12 +117,12 @@ export class FamilyService {
 
     // 3. Send Email
     const inviter = await this.prisma.user.findUnique({ where: { id: userId } });
-    const inviteUrl = `${this.configService.get('FRONTEND_URL')}/family/accept?token=${newMember.id}`; // Simplified for demo
+    const inviteUrl = `${this.configService.get('FRONTEND_URL')}/members/accept?token=${newMember.id}`;
 
     await this.mailerService.sendMail({
         to: data.email,
-        subject: `Family Invitation from ${inviter.name}`,
-        template: 'family-invite',
+        subject: `Group Invitation from ${inviter.name}`,
+        template: 'member-invite',
         context: {
             frontendUrl: this.configService.get('FRONTEND_URL'),
             inviterName: inviter.name,
@@ -117,9 +135,7 @@ export class FamilyService {
   }
 
   async removeMember(userId: string, memberId: string) {
-    // Validate requester is HEAD or modifying self?
-    // Simplified: Allow removal
-    await this.prisma.familyMember.delete({
+    await this.prisma.member.delete({
         where: { id: memberId }
     });
   }

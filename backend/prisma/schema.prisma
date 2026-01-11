@@ -37,7 +37,7 @@ model User {
     chatSessions  ChatSession[]
 
     // Relations
-    familyMembers    FamilyMember[]
+    members          Member[]
     userAchievements UserAchievement[]
 
     @@map("users")
@@ -152,19 +152,19 @@ model UserSettings {
     @@map("user_settings")
 }
 
-// Family Management
-model Family {
+// Member Management
+model MemberGroup {
     id        String   @id @default(uuid())
     name      String
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    members FamilyMember[]
+    members Member[]
 
-    @@map("families")
+    @@map("member_groups")
 }
 
-enum FamilyRole {
+enum MemberRole {
     HEAD
     SPOUSE
     CHILD
@@ -172,24 +172,24 @@ enum FamilyRole {
     MEMBER
 }
 
-model FamilyMember {
-    id           String     @id @default(uuid())
-    familyId     String
-    userId       String?
-    name         String
-    role         FamilyRole @default(MEMBER)
-    relation     String?
-    monthlyLimit Decimal    @default(0) @db.Decimal(15, 2)
-    isAccepted   Boolean    @default(false)
-    email        String?
+model Member {
+    id            String     @id @default(uuid())
+    memberGroupId String
+    userId        String?
+    name          String
+    role          MemberRole @default(MEMBER)
+    relation      String?
+    monthlyLimit  Decimal    @default(0) @db.Decimal(15, 2)
+    isAccepted    Boolean    @default(false)
+    email         String?
 
-    family Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
-    user   User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
+    group MemberGroup @relation(fields: [memberGroupId], references: [id], onDelete: Cascade)
+    user  User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    @@map("family_members")
+    @@map("members")
 }
 
 // Achievements System
@@ -222,10 +222,11 @@ model UserAchievement {
     @@map("user_achievements")
 }
 
+// Subscription
 enum SubscriptionPlan {
     FREE
     BASIC
-    FAMILY
+    MEMBERS
 }
 
 enum SubscriptionStatus {

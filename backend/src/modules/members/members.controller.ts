@@ -1,18 +1,18 @@
 import { Controller, Get, Post, Body, Delete, Param } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
-import { FamilyService } from './family.service';
+import { MembersService } from './members.service';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 
-@ApiTags('family')
+@ApiTags('members')
 @ApiBearerAuth()
-@Controller('family')
-export class FamilyController {
-  constructor(private readonly familyService: FamilyService) {}
+@Controller('members')
+export class MembersController {
+  constructor(private readonly membersService: MembersService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get current user family members' })
-  async getFamily(@CurrentUser() user: any) {
-    const result = await this.familyService.getFamily(user.id);
+  @ApiOperation({ summary: 'Get current user members' })
+  async getMembers(@CurrentUser() user: any) {
+    const result = await this.membersService.getMembers(user.id);
     return {
       success: true,
       data: result,
@@ -20,12 +20,12 @@ export class FamilyController {
   }
 
   @Post('invite')
-  @ApiOperation({ summary: 'Invite a family member' })
+  @ApiOperation({ summary: 'Invite a member' })
   async inviteMember(
     @CurrentUser() user: any, 
     @Body() body: { name: string; email: string; role: string; relation: string; monthlyLimit: number }
   ) {
-    const result = await this.familyService.inviteMember(user.id, body);
+    const result = await this.membersService.inviteMember(user.id, body);
     return {
       success: true,
       data: result,
@@ -34,9 +34,9 @@ export class FamilyController {
   }
 
   @Delete(':memberId')
-  @ApiOperation({ summary: 'Remove a family member' })
+  @ApiOperation({ summary: 'Remove a member' })
   async removeMember(@CurrentUser() user: any, @Param('memberId') memberId: string) {
-    await this.familyService.removeMember(user.id, memberId);
+    await this.membersService.removeMember(user.id, memberId);
     return {
       success: true,
       message: 'Member removed successfully',

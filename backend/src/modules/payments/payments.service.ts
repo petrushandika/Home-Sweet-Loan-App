@@ -133,6 +133,8 @@ export class PaymentsService {
     const endDate = new Date();
     endDate.setMonth(endDate.getMonth() + 1); // 1 month subscription
 
+    const normalizedPlan = planName.toUpperCase() === 'FAMILY' ? 'MEMBERS' : planName.toUpperCase();
+
     // Deactivate old active subscriptions
     await this.prisma.subscription.updateMany({
         where: { userId, status: 'ACTIVE' },
@@ -142,7 +144,7 @@ export class PaymentsService {
     await this.prisma.subscription.create({
         data: {
             userId,
-            plan: planName.toUpperCase() as any, // FREE, BASIC, FAMILY
+            plan: normalizedPlan as any, // FREE, BASIC, MEMBERS
             status: 'ACTIVE',
             startDate,
             endDate,
@@ -152,7 +154,7 @@ export class PaymentsService {
     // Update user plan in User table for quick access
     await this.prisma.user.update({
         where: { id: userId },
-        data: { plan: planName.toUpperCase() }
+        data: { plan: normalizedPlan }
     });
   }
 }
