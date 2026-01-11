@@ -85,8 +85,8 @@ export default function DashboardLayout({
                     <Menu className="w-5 h-5" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="left" className="p-0 w-64 border-r border-border animate-in slide-in-from-left duration-300">
-                  <Sidebar onItemClick={() => setOpen(false)} />
+                <SheetContent side="left" className="p-0 w-64 border-r border-border animate-in slide-in-from-left duration-300 [&>button]:hidden">
+                  <Sidebar onItemClick={() => setOpen(false)} onClose={() => setOpen(false)} />
                 </SheetContent>
               </Sheet>
 

@@ -120,7 +120,7 @@ export default function AssetsPage() {
       <Card className="border-border rounded-3xl bg-white dark:bg-slate-900 overflow-hidden border transition-all duration-500 hover:shadow-sm">
         <CardHeader className="p-6 md:px-10 md:pt-8 md:pb-4 border-b border-border/50">
           <div className="flex items-center gap-5">
-             <div className="w-14 h-14 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-800 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+             <div className="w-14 h-14 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-800 flex items-center justify-center transition-transform duration-300 group-hover:scale-110 shrink-0">
                 <PiggyBank className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
              </div>
              <div>
@@ -133,7 +133,7 @@ export default function AssetsPage() {
            {filteredAssets.length > 0 ? (
              filteredAssets.map((item, idx) => (
                <div key={idx} className="flex items-center group cursor-pointer border-b border-slate-50 dark:border-slate-800 pb-5 last:border-0 last:pb-0">
-                 <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center mr-5 transition-all border border-transparent group-hover:border-slate-200 dark:group-hover:border-slate-700", item.bg)}>
+                 <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center mr-5 transition-all border border-transparent group-hover:border-slate-200 dark:group-hover:border-slate-700 shrink-0", item.bg)}>
                    <item.icon className={cn("w-6 h-6", item.color)} />
                  </div>
                  <div className="flex-1">
@@ -169,7 +169,7 @@ function AssetMiniCard({ title, amount, icon: Icon, color, bg, border }: any) {
     <Card className={cn("border-border shadow-none rounded-3xl bg-white dark:bg-slate-900 p-8 group transition-all border hover:border-slate-300 dark:hover:border-slate-700 cursor-pointer relative overflow-hidden")}>
        <div className={cn("absolute inset-0 opacity-10 transition-opacity group-hover:opacity-20", bg)} />
        <div className="flex items-center gap-4 mb-5 relative z-10">
-          <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center transition-all border shadow-xs group-hover:scale-105", bg, border)}>
+          <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center transition-all border shadow-xs group-hover:scale-105 shrink-0", bg, border)}>
              <Icon className={cn("w-6 h-6", color)} />
           </div>
           <span className="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">{title}</span>

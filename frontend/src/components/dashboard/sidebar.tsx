@@ -12,7 +12,8 @@ import {
   PiggyBank,
   ChevronRight,
   PanelLeftClose,
-  PanelLeftOpen
+  PanelLeftOpen,
+  X
 } from "lucide-react"
 
 const items = [
@@ -48,30 +49,41 @@ const items = [
   },
 ]
 
-export function Sidebar({ className, onItemClick, isCollapsed, onToggleCollapse }: { className?: string, onItemClick?: () => void, isCollapsed?: boolean, onToggleCollapse?: () => void }) {
+export function Sidebar({ className, onItemClick, isCollapsed, onToggleCollapse, onClose }: { className?: string, onItemClick?: () => void, isCollapsed?: boolean, onToggleCollapse?: () => void, onClose?: () => void }) {
   const pathname = usePathname()
 
   return (
     <div className={cn("flex flex-col h-full bg-white dark:bg-slate-900 border-r border-border transition-all duration-300 ease-in-out overflow-y-auto no-scrollbar", isCollapsed ? "w-[80px]" : "w-[280px]", className)}>
-      <div className={cn("flex items-center h-20 transition-all duration-300 border-b border-transparent", isCollapsed ? "justify-center" : "justify-between px-6")}>
-        <div className={cn("flex items-center overflow-hidden transition-all duration-300 ease-in-out", isCollapsed ? "w-0 opacity-0" : "w-auto opacity-100 gap-2")}>
-          <span className="text-xl font-black tracking-tighter text-slate-900 dark:text-white whitespace-nowrap">
+      <div className={cn("flex items-center h-20 transition-all duration-300 border-b border-transparent shrink-0", isCollapsed ? "justify-center" : "justify-between px-6")}>
+        <div className={cn("flex items-center overflow-hidden transition-all duration-300 ease-in-out", isCollapsed ? "w-0 opacity-0" : "w-auto opacity-100 mr-2")}>
+          <span className="text-xl font-black tracking-tighter text-slate-900 dark:text-white whitespace-nowrap leading-none">
             Home Sweet <span className="text-emerald-600">Loan</span>
           </span>
         </div>
 
-        {/* Toggle Button */}
-         {onToggleCollapse && (
+        {/* Toggle Button (Desktop) */}
+         {onToggleCollapse && !onClose && (
            <button 
              onClick={onToggleCollapse}
              className={cn(
-               "text-slate-400 hover:text-emerald-600 transition-all duration-300 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800",
-               isCollapsed ? "mx-auto" : ""
+               "text-slate-400 hover:text-emerald-600 transition-all duration-300 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center",
+               isCollapsed ? "mx-auto" : "ml-auto"
              )}
              title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
            >
              {isCollapsed ? <PanelLeftOpen className="w-5 h-5" /> : <PanelLeftClose className="w-5 h-5" />}
            </button>
+         )}
+
+         {/* Close Button (Mobile) */}
+         {onClose && (
+            <button 
+              onClick={onClose}
+              className="ml-auto text-slate-400 hover:text-rose-600 transition-all duration-300 p-2 rounded-full hover:bg-rose-50 dark:hover:bg-rose-950/30 flex items-center justify-center border border-transparent hover:border-rose-100 dark:hover:border-rose-900"
+              title="Close Sidebar"
+            >
+              <X className="w-5 h-5" />
+            </button>
          )}
       </div>
       <nav className="flex-1 px-3 space-y-2 overflow-y-auto emerald-scrollbar mt-6">

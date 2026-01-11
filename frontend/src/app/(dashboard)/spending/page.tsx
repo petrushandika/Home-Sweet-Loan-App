@@ -125,7 +125,7 @@ export default function SpendingPage() {
         <Card className="xl:col-span-4 border-border shadow-none rounded-3xl bg-white dark:bg-slate-900 overflow-hidden border transition-colors">
           <CardHeader className="p-6 md:p-8">
             <div className="flex items-center justify-between mb-5">
-               <div className="w-12 h-12 rounded-2xl bg-orange-50 dark:bg-orange-950/20 border border-orange-100 dark:border-orange-800 flex items-center justify-center">
+               <div className="w-12 h-12 rounded-2xl bg-orange-50 dark:bg-orange-950/20 border border-orange-100 dark:border-orange-800 flex items-center justify-center shrink-0">
                   <ArrowUpRight className="w-6 h-6 text-orange-600 dark:text-orange-400" />
                </div>
                 <Button 
@@ -155,7 +155,7 @@ export default function SpendingPage() {
           <CardHeader className="p-6 md:p-8 pb-4">
             <div className="flex items-center justify-between">
                <div className="flex items-center gap-5">
-                  <div className="w-12 h-12 rounded-2xl bg-violet-50 dark:bg-violet-950/20 border border-violet-100 dark:border-violet-800 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-2xl bg-violet-50 dark:bg-violet-950/20 border border-violet-100 dark:border-violet-800 flex items-center justify-center shrink-0">
                      <History className="w-6 h-6 text-violet-600 dark:text-violet-400" />
                   </div>
                   <div>
@@ -191,7 +191,7 @@ export default function SpendingPage() {
                 {filteredTransactions.length > 0 ? (
                   filteredTransactions.map((item, idx) => (
                     <div key={idx} className="flex items-center group cursor-pointer border-b border-slate-50 dark:border-slate-800 pb-4 last:border-0 last:pb-0">
-                      <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center mr-4 transition-all border border-transparent group-hover:border-slate-200 dark:group-hover:border-slate-700", item.bg)}>
+                      <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center mr-4 transition-all border border-transparent group-hover:border-slate-200 dark:group-hover:border-slate-700 shrink-0", item.bg)}>
                         <item.icon className={cn("w-6 h-6", item.color)} />
                       </div>
                       <div className="flex-1">

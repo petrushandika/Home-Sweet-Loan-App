@@ -149,7 +149,7 @@ export default function BudgetingPage() {
         <Card className="xl:col-span-8 border-border shadow-none rounded-[2rem] bg-white dark:bg-slate-900 overflow-hidden border transition-colors duration-300">
           <CardHeader className="p-4 md:px-10 md:pt-8 md:pb-6">
             <div className="flex items-center gap-4 md:gap-5 mb-2 md:mb-4">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-800 flex items-center justify-center transition-colors">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-800 flex items-center justify-center transition-colors shrink-0">
                 <Wallet className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
               </div>
               <div>

@@ -110,7 +110,7 @@ export default function ReportPage() {
         <Card className="border-border shadow-none rounded-3xl bg-white dark:bg-slate-900 overflow-hidden border group transition-all hover:border-slate-400 dark:hover:border-slate-600">
           <CardHeader className="p-6 md:px-10 md:pt-8 md:pb-4">
             <div className="flex items-center gap-5 mb-2">
-              <div className="w-14 h-14 rounded-2xl bg-violet-50 dark:bg-violet-950/20 border border-violet-100 dark:border-violet-800 flex items-center justify-center transition-transform group-hover:scale-105">
+              <div className="w-14 h-14 rounded-2xl bg-violet-50 dark:bg-violet-950/20 border border-violet-100 dark:border-violet-800 flex items-center justify-center transition-transform group-hover:scale-105 shrink-0">
                 <FileText className="w-7 h-7 text-violet-600 dark:text-violet-400" />
               </div>
               <div>
@@ -140,7 +140,7 @@ export default function ReportPage() {
         <Card className="border-border shadow-none rounded-3xl bg-white dark:bg-slate-900 overflow-hidden border group transition-all hover:border-slate-400 dark:hover:border-slate-600">
           <CardHeader className="p-6 md:px-10 md:pt-8 md:pb-4">
             <div className="flex items-center gap-5 mb-2">
-              <div className="w-14 h-14 rounded-2xl bg-rose-50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-800 flex items-center justify-center transition-transform group-hover:scale-105">
+              <div className="w-14 h-14 rounded-2xl bg-rose-50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-800 flex items-center justify-center transition-transform group-hover:scale-105 shrink-0">
                 <FileText className="w-7 h-7 text-rose-600 dark:text-rose-400" />
               </div>
               <div>
