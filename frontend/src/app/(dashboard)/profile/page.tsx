@@ -7,17 +7,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
+import { ResponsiveModal } from "@/components/responsive-modal";
 import {
   User,
   Mail,
@@ -795,12 +790,182 @@ export default function ProfilePage() {
                         __html: t.family?.title || "Family Management",
                       }}
                     />
-                    <Button
-                      size="sm"
-                      className="rounded-full font-bold bg-emerald-600 hover:bg-emerald-700 text-white gap-2"
+                    <ResponsiveModal
+                      title={
+                        (t.family as any)?.addMemberTitle || "Add Family Member"
+                      }
+                      description={
+                        (t.family as any)?.addMemberDesc ||
+                        "Invite a family member to join your financial workspace."
+                      }
+                      trigger={
+                        <Button
+                          size="sm"
+                          className="rounded-full font-bold bg-emerald-600 hover:bg-emerald-700 text-white gap-2"
+                        >
+                          <Plus className="w-4 h-4" /> {t.family?.addMember}
+                        </Button>
+                      }
                     >
-                      <Plus className="w-4 h-4" /> {t.family?.addMember}
-                    </Button>
+                      <div className="grid gap-5">
+                        <div className="grid gap-2">
+                          <Label
+                            htmlFor="member-name"
+                            className="text-slate-700 dark:text-slate-300 font-bold ml-1"
+                          >
+                            {(t.family as any)?.nameLabel || "Full Name"}
+                          </Label>
+                          <Input
+                            id="member-name"
+                            placeholder={
+                              (t.family as any)?.namePlaceholder ||
+                              "Enter member's full name"
+                            }
+                            className="rounded-2xl border-border dark:bg-slate-900 focus-visible:ring-emerald-500 h-11"
+                          />
+                        </div>
+                        <div className="grid gap-2">
+                          <Label
+                            htmlFor="member-email"
+                            className="text-slate-700 dark:text-slate-300 font-bold ml-1"
+                          >
+                            {(t.family as any)?.emailLabel || "Email Address"}
+                          </Label>
+                          <Input
+                            id="member-email"
+                            type="email"
+                            placeholder={
+                              (t.family as any)?.emailPlaceholder ||
+                              "Enter member's email"
+                            }
+                            className="rounded-2xl border-border dark:bg-slate-900 focus-visible:ring-emerald-500 h-11"
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="grid gap-2">
+                            <Label
+                              htmlFor="member-relation"
+                              className="text-slate-700 dark:text-slate-300 font-bold ml-1"
+                            >
+                              {(t.family as any)?.relationLabel || "Relation"}
+                            </Label>
+                            <Select>
+                              <SelectTrigger className="rounded-2xl border-border dark:bg-slate-900 focus:ring-emerald-500 h-11">
+                                <SelectValue
+                                  placeholder={
+                                    (t.family as any)?.relationPlaceholder ||
+                                    "Select"
+                                  }
+                                />
+                              </SelectTrigger>
+                              <SelectContent className="rounded-2xl border-border dark:bg-slate-900">
+                                <SelectItem
+                                  value="spouse"
+                                  className="cursor-pointer"
+                                >
+                                  Spouse
+                                </SelectItem>
+                                <SelectItem
+                                  value="child"
+                                  className="cursor-pointer"
+                                >
+                                  Child
+                                </SelectItem>
+                                <SelectItem
+                                  value="parent"
+                                  className="cursor-pointer"
+                                >
+                                  Parent
+                                </SelectItem>
+                                <SelectItem
+                                  value="sibling"
+                                  className="cursor-pointer"
+                                >
+                                  Sibling
+                                </SelectItem>
+                                <SelectItem
+                                  value="other"
+                                  className="cursor-pointer"
+                                >
+                                  Other
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="grid gap-2">
+                            <Label
+                              htmlFor="member-role"
+                              className="text-slate-700 dark:text-slate-300 font-bold ml-1"
+                            >
+                              {t.family?.roleLabel || "Role"}
+                            </Label>
+                            <Select>
+                              <SelectTrigger className="rounded-2xl border-border dark:bg-slate-900 focus:ring-emerald-500 h-11">
+                                <SelectValue
+                                  placeholder={
+                                    t.family?.rolePlaceholder || "Select"
+                                  }
+                                />
+                              </SelectTrigger>
+                              <SelectContent className="rounded-2xl border-border dark:bg-slate-900">
+                                <SelectItem
+                                  value="admin"
+                                  className="cursor-pointer"
+                                >
+                                  Admin
+                                </SelectItem>
+                                <SelectItem
+                                  value="member"
+                                  className="cursor-pointer"
+                                >
+                                  Member
+                                </SelectItem>
+                                <SelectItem
+                                  value="viewer"
+                                  className="cursor-pointer"
+                                >
+                                  Viewer
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                        <div className="grid gap-2">
+                          <Label
+                            htmlFor="member-limit"
+                            className="text-slate-700 dark:text-slate-300 font-bold ml-1"
+                          >
+                            {t.family?.limitLabel || "Spending Limit"}
+                          </Label>
+                          <div className="relative">
+                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">
+                              Rp
+                            </span>
+                            <Input
+                              id="member-limit"
+                              type="number"
+                              placeholder="0"
+                              className="rounded-2xl border-border dark:bg-slate-900 focus-visible:ring-emerald-500 pl-11 h-11"
+                            />
+                          </div>
+                        </div>
+                        <Button
+                          onClick={() => {
+                            toast.success(
+                              t.family?.inviteSent || "Invitation Sent",
+                              {
+                                description:
+                                  t.family?.inviteDesc ||
+                                  "Family member will receive an email invitation.",
+                              }
+                            );
+                          }}
+                          className="w-full rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-12 mt-2 border-none transition-all active:scale-95"
+                        >
+                          {t.family?.sendInvite || "Send Invitation"}
+                        </Button>
+                      </div>
+                    </ResponsiveModal>
                   </div>
 
                   <div className="space-y-2">

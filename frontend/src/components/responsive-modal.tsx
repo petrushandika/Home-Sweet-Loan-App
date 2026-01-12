@@ -194,7 +194,7 @@ export function ResponsiveModal({
             </SheetClose>
           </div>
         </div>
-        <div className="flex-1 overflow-y-auto px-6 pb-6 animate-smooth-in">
+        <div className="flex-1 overflow-y-auto px-6 pb-6 emerald-scrollbar">
           {children}
         </div>
       </SheetContent>

@@ -421,7 +421,7 @@ export default function DashboardLayout({
                           </SheetClose>
                         </div>
                       </div>
-                      <div className="flex-1 overflow-y-auto p-4 space-y-2">
+                      <div className="flex-1 overflow-y-auto p-4 space-y-2 emerald-scrollbar">
                         {[
                           {
                             id: 1,
@@ -590,7 +590,7 @@ export default function DashboardLayout({
                           onMouseDown={handleUserMenuDrag}
                         />
                       </div>
-                      <div className="flex-1 overflow-y-auto px-6 pb-6">
+                      <div className="flex-1 overflow-y-auto px-6 pb-6 emerald-scrollbar">
                         <div className="flex flex-col gap-6">
                           <div className="flex items-center gap-4 bg-white dark:bg-slate-800 p-4 rounded-3xl shadow-sm border border-border">
                             <div className="w-16 h-16 rounded-2xl border-2 border-emerald-100 dark:border-emerald-800 p-0.5 overflow-hidden bg-white dark:bg-slate-900">
