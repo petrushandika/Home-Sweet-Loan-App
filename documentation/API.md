@@ -99,7 +99,7 @@ Semua keys menggunakan prefix `homeSweetLoan_`:
 ```
 Production: https://api.homesweetloan.com/v1
 Staging: https://staging-api.homesweetloan.com/v1
-Development: http://localhost:3000/api/v1
+Development: http://localhost:3050/api/v1
 ```
 
 ### Authentication

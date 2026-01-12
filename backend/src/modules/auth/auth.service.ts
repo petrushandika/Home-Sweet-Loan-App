@@ -52,15 +52,21 @@ export class AuthService {
 
     const verificationUrl = `${this.configService.get('FRONTEND_URL')}/auth/verify-email?token=${verificationToken}`;
 
-    await this.mailerService.sendMail({
-      to: email,
-      subject: 'Verify your email for Home Sweet Loan',
-      template: 'verification',
-      context: {
-        name: user.name,
-        url: verificationUrl,
-      },
-    });
+    try {
+      await this.mailerService.sendMail({
+        to: email,
+        subject: 'Verify your email for Home Sweet Loan',
+        template: 'verification',
+        context: {
+          name: user.name,
+          url: verificationUrl,
+        },
+      });
+    } catch (error) {
+      console.error('Error sending verification email:', error);
+      // Don't throw error, user is already created
+      // They can resend verification later
+    }
 
     const tokens = await this.getTokens(user.id, user.email);
     await this.updateRefreshToken(user.id, tokens.refreshToken);
@@ -83,7 +89,7 @@ export class AuthService {
     }
 
     if (!user.password && (user.googleId || user.facebookId)) {
-        throw new UnauthorizedException('Please login with your social account');
+      throw new UnauthorizedException('Please login with your social account');
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -113,35 +119,41 @@ export class AuthService {
     let user = await this.prisma.user.findUnique({ where: { email } });
 
     if (user) {
-        // If user exists, update social ID if missing
-        if (googleId && !user.googleId) {
-            user = await this.prisma.user.update({ where: { email }, data: { googleId, avatarUrl: user.avatarUrl || picture } });
-        }
-        if (facebookId && !user.facebookId) {
-            user = await this.prisma.user.update({ where: { email }, data: { facebookId, avatarUrl: user.avatarUrl || picture } });
-        }
-    } else {
-        // Create new user
-        user = await this.prisma.user.create({
-            data: {
-                email,
-                name,
-                password: '', // Social logins don't have passwords initially
-                avatarUrl: picture,
-                googleId,
-                facebookId,
-                isVerified: true, // Trusted provider
-                plan: 'FREE',
-            },
+      // If user exists, update social ID if missing
+      if (googleId && !user.googleId) {
+        user = await this.prisma.user.update({
+          where: { email },
+          data: { googleId, avatarUrl: user.avatarUrl || picture },
         });
+      }
+      if (facebookId && !user.facebookId) {
+        user = await this.prisma.user.update({
+          where: { email },
+          data: { facebookId, avatarUrl: user.avatarUrl || picture },
+        });
+      }
+    } else {
+      // Create new user
+      user = await this.prisma.user.create({
+        data: {
+          email,
+          name,
+          password: '', // Social logins don't have passwords initially
+          avatarUrl: picture,
+          googleId,
+          facebookId,
+          isVerified: true, // Trusted provider
+          plan: 'FREE',
+        },
+      });
     }
 
     const tokens = await this.getTokens(user.id, user.email);
     await this.updateRefreshToken(user.id, tokens.refreshToken);
 
     return {
-        user,
-        ...tokens,
+      user,
+      ...tokens,
     };
   }
 
@@ -165,55 +177,53 @@ export class AuthService {
 
   async logout(userId: string) {
     return this.prisma.user.updateMany({
-        where: {
-            id: userId,
-            hashedRefreshToken: { not: null },
-        },
-        data: { hashedRefreshToken: null },
+      where: {
+        id: userId,
+        hashedRefreshToken: { not: null },
+      },
+      data: { hashedRefreshToken: null },
     });
   }
 
   async refreshTokens(userId: string, refreshToken: string) {
     const user = await this.prisma.user.findUnique({
-        where: { id: userId },
+      where: { id: userId },
     });
-    
-    if (!user || !user.hashedRefreshToken)
-        throw new UnauthorizedException('Access Denied');
+
+    if (!user || !user.hashedRefreshToken) throw new UnauthorizedException('Access Denied');
 
     const refreshTokenMatches = await bcrypt.compare(refreshToken, user.hashedRefreshToken);
-    if (!refreshTokenMatches)
-        throw new UnauthorizedException('Access Denied');
+    if (!refreshTokenMatches) throw new UnauthorizedException('Access Denied');
 
     const tokens = await this.getTokens(user.id, user.email);
     await this.updateRefreshToken(user.id, tokens.refreshToken);
-    
+
     return tokens;
   }
 
   async updateRefreshToken(userId: string, refreshToken: string) {
     const hash = await bcrypt.hash(refreshToken, 10);
     await this.prisma.user.update({
-        where: { id: userId },
-        data: { hashedRefreshToken: hash },
+      where: { id: userId },
+      data: { hashedRefreshToken: hash },
     });
   }
 
   async getTokens(userId: string, email: string) {
     const [accessToken, refreshToken] = await Promise.all([
-        this.jwtService.signAsync(
-            { sub: userId, email },
-            { secret: this.configService.get<string>('JWT_SECRET'), expiresIn: '15m' },
-        ),
-        this.jwtService.signAsync(
-            { sub: userId, email },
-            { secret: this.configService.get<string>('JWT_REFRESH_SECRET'), expiresIn: '7d' },
-        ),
+      this.jwtService.signAsync(
+        { sub: userId, email },
+        { secret: this.configService.get<string>('JWT_SECRET'), expiresIn: '15m' },
+      ),
+      this.jwtService.signAsync(
+        { sub: userId, email },
+        { secret: this.configService.get<string>('JWT_REFRESH_SECRET'), expiresIn: '7d' },
+      ),
     ]);
 
     return {
-        accessToken,
-        refreshToken,
+      accessToken,
+      refreshToken,
     };
   }
 
@@ -239,15 +249,16 @@ export class AuthService {
     const resetUrl = `${this.configService.get('FRONTEND_URL')}/auth/reset-password?token=${token}`;
 
     await this.mailerService.sendMail({
-        to: email,
-        subject: 'Reset your password for Home Sweet Loan',
-        template: 'notification',
-        context: {
-          name: user.name,
-          title: 'Reset User Password',
-          message: 'You have requested to reset your password. Please click the link below to set a new password. This link will expire in 1 hour.',
-          link: resetUrl,
-        },
+      to: email,
+      subject: 'Reset your password for Home Sweet Loan',
+      template: 'notification',
+      context: {
+        name: user.name,
+        title: 'Reset User Password',
+        message:
+          'You have requested to reset your password. Please click the link below to set a new password. This link will expire in 1 hour.',
+        link: resetUrl,
+      },
     });
 
     return { message: 'If an account with that email exists, a reset link has been sent.' };
@@ -302,14 +313,14 @@ export class AuthService {
 
     const dashboardUrl = `${this.configService.get('FRONTEND_URL')}/dashboard`;
     await this.mailerService.sendMail({
-        to: user.email,
-        subject: 'Welcome to Home Sweet Loan! 🏠',
-        template: 'welcome',
-        context: {
-            frontendUrl: this.configService.get('FRONTEND_URL'),
-            name: user.name,
-            url: dashboardUrl
-        }
+      to: user.email,
+      subject: 'Welcome to Home Sweet Loan! 🏠',
+      template: 'welcome',
+      context: {
+        frontendUrl: this.configService.get('FRONTEND_URL'),
+        name: user.name,
+        url: dashboardUrl,
+      },
     });
 
     return { message: 'Email verified successfully' };
@@ -321,7 +332,7 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new UnauthorizedException('User not found');
+      throw new BadRequestException('User not found');
     }
 
     if (user.isVerified) {
@@ -337,21 +348,26 @@ export class AuthService {
 
     const verificationUrl = `${this.configService.get('FRONTEND_URL')}/auth/verify-email?token=${verificationToken}`;
 
-    await this.mailerService.sendMail({
-      to: email,
-      subject: 'Verify your email for Home Sweet Loan',
-      template: 'verification',
-      context: {
-        name: user.name,
-        url: verificationUrl,
-      },
-    });
+    try {
+      await this.mailerService.sendMail({
+        to: email,
+        subject: 'Verify your email for Home Sweet Loan',
+        template: 'verification',
+        context: {
+          name: user.name,
+          url: verificationUrl,
+        },
+      });
 
-    return { message: 'Verification link has been resent' };
+      return { message: 'Verification link has been resent to your email' };
+    } catch (error) {
+      console.error('Error sending verification email:', error);
+      throw new BadRequestException('Failed to send verification email. Please try again later.');
+    }
   }
   async changePassword(userId: string, data: any) {
     const { currentPassword, newPassword } = data;
-    
+
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) throw new BadRequestException('User not found');
 
@@ -360,8 +376,8 @@ export class AuthService {
 
     const hashed = await bcrypt.hash(newPassword, 10);
     await this.prisma.user.update({
-        where: { id: userId },
-        data: { password: hashed }
+      where: { id: userId },
+      data: { password: hashed },
     });
 
     return { message: 'Password changed successfully' };

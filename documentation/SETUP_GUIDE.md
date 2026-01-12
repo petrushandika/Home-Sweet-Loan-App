@@ -286,11 +286,11 @@ export default config;
 
 ```env
 # App
-NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_APP_URL=http://localhost:3050
 NEXT_PUBLIC_API_URL=http://localhost:4000/api
 
 # NextAuth
-NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:3050
 NEXTAUTH_SECRET=your-super-secret-key-change-this-in-production
 
 # Database (if using Prisma in frontend)
@@ -490,7 +490,7 @@ PORT=4000
 NODE_ENV=development
 
 # CORS
-CORS_ORIGIN=http://localhost:3000
+CORS_ORIGIN=http://localhost:3050
 ```
 
 ### 6. Run Prisma Migrations
@@ -523,7 +523,7 @@ async function bootstrap() {
 
   // CORS
   app.enableCors({
-    origin: process.env.CORS_ORIGIN || "http://localhost:3000",
+    origin: process.env.CORS_ORIGIN || "http://localhost:3050",
     credentials: true,
   });
 
@@ -638,7 +638,7 @@ docker-compose up -d
 # Terminal 1 - Frontend
 cd frontend
 npm run dev
-# Runs on http://localhost:3000
+# Runs on http://localhost:3050
 
 # Terminal 2 - Backend
 cd backend
