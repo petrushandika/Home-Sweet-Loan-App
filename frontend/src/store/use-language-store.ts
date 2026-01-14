@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
-import { create } from "zustand"
-import { persist } from "zustand/middleware"
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
-export type Language = "en" | "id"
+export type Language = "en" | "id";
 
 interface LanguageStore {
-  language: Language
-  setLanguage: (lang: Language) => void
+  language: Language;
+  setLanguage: (lang: Language) => void;
 }
 
 export const useLanguageStore = create<LanguageStore>()(
@@ -20,7 +20,7 @@ export const useLanguageStore = create<LanguageStore>()(
       name: "language-storage",
     }
   )
-)
+);
 
 export const translations = {
   id: {
@@ -33,14 +33,47 @@ export const translations = {
       getStarted: "Mulai Sekarang",
       dashboard: "Dasbor",
     },
+    notificationPanel: {
+      title: "Notifikasi",
+      newCount: "Baru",
+      markAllRead: "Tandai semua sudah dibaca",
+      unreadMessages: "pesan belum dibaca",
+      youHave: "Anda memiliki",
+      paymentSuccess: "Pembayaran Berhasil",
+      paymentSuccessDesc: "Pembayaran Anda untuk Paket Pro berhasil.",
+      newFeature: "Fitur Baru",
+      newFeatureDesc: "Lihat alat penganggaran baru!",
+      timeAgo: {
+        minutes: "menit yang lalu",
+        hours: "jam yang lalu",
+        days: "hari yang lalu",
+      },
+    },
+    search: {
+      placeholder: "Cari keuangan Anda...",
+    },
+    auth: {
+      signedOut: "Berhasil keluar",
+    },
     months: [
-      "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-      "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+      "Januari",
+      "Februari",
+      "Maret",
+      "April",
+      "Mei",
+      "Juni",
+      "Juli",
+      "Agustus",
+      "September",
+      "Oktober",
+      "November",
+      "Desember",
     ],
     hero: {
       new: "Baru",
       ai: "Asisten AI Finansial Generasi Terbaru",
-      title: "Kelola <span class='text-gradient-money italic'>Kekayaan</span> Anda Lebih Cepat.",
+      title:
+        "Kelola <span class='text-gradient-money italic'>Kekayaan</span> Anda Lebih Cepat.",
       desc: "Ambil kendali penuh atas keuangan keluarga Anda. Penganggaran otomatis, pelacakan aset pintar, dan wawasan mendalam untuk mencapai rumah impian lebih cepat.",
       cta: "Mulai Perjalanan Anda",
       demo: "Lihat Demo",
@@ -67,15 +100,17 @@ export const translations = {
         goalTrackerTitle: "Pelacak Target",
         goalTrackerDesc: "Status target tabungan bulanan",
         savingTarget: "Target Tabungan",
-        encouragement: "Luar biasa! Anda telah mengalokasikan <b class='text-white'>Rp 3.500.000</b> untuk tabungan Anda sejauh ini bulan ini.",
+        encouragement:
+          "Luar biasa! Anda telah mengalokasikan <b class='text-white'>Rp 3.500.000</b> untuk tabungan Anda sejauh ini bulan ini.",
         viewGoalsBtn: "Lihat Target Kekayaan",
         toastTitle: "Rencana Diinisialisasi",
-        toastDesc: "Siap mengalokasikan dana Anda untuk siklus baru."
+        toastDesc: "Siap mengalokasikan dana Anda untuk siklus baru.",
       },
       markAllRead: "Tandai semua sudah dibaca",
       summary: {
         title: "Ringkasan <span class='text-gradient-money'>Finansial</span>",
-        welcome: "Selamat datang kembali, User! Berikut adalah kondisi keuangan Anda hari ini.",
+        welcome:
+          "Selamat datang kembali, User! Berikut adalah kondisi keuangan Anda hari ini.",
         exportBtn: "Ekspor Data",
         addBtn: "Tambah Transaksi",
         modalTitle: "Tambah Transaksi",
@@ -95,7 +130,7 @@ export const translations = {
         activity: "Aktivitas Terbaru",
         viewAll: "Lihat Semua",
         toastTitle: "Mengekspor data...",
-        toastDesc: "Data keuangan Anda sedang disiapkan untuk diunduh."
+        toastDesc: "Data keuangan Anda sedang disiapkan untuk diunduh.",
       },
       spending: {
         title: "Pelacak <span class='text-gradient-money'>Pengeluaran</span>",
@@ -116,8 +151,8 @@ export const translations = {
           amount: "Jumlah",
           category: "Kategori",
           date: "Tanggal",
-          proceed: "Lanjutkan Mencatat"
-        }
+          proceed: "Lanjutkan Mencatat",
+        },
       },
       assets: {
         title: "Manajemen <span class='text-gradient-money'>Aset</span>",
@@ -127,7 +162,8 @@ export const translations = {
         modalDesc: "Tambah item baru ke portofolio kekayaan Anda.",
         registerBtn: "Daftarkan Aset",
         breakdown: "Rincian Aset",
-        breakdownDesc: "Daftar terperinci kepemilikan dan distribusi kekayaan Anda.",
+        breakdownDesc:
+          "Daftar terperinci kepemilikan dan distribusi kekayaan Anda.",
         liquid: "Aset Likuid",
         nonLiquid: "Non-Likuid",
         total: "Total Kekayaan",
@@ -136,8 +172,8 @@ export const translations = {
           namePlaceholder: "misal. Dana Darurat, Saham",
           type: "Tipe Aset",
           typePlaceholder: "Pilih tipe",
-          value: "Nilai Saat Ini"
-        }
+          value: "Nilai Saat Ini",
+        },
       },
       report: {
         title: "Laporan <span class='text-gradient-money'>Finansial</span>",
@@ -149,14 +185,15 @@ export const translations = {
         distTitle: "Distribusi Kategori",
         distDesc: "Ke mana tepatnya uang Anda pergi?",
         aiTitle: "Wawasan Finansial Pintar",
-        aiDesc: "Berdasarkan kebiasaan Anda, Anda bisa menghemat hingga <b class='text-white underline underline-offset-4 decoration-indigo-300'>Rp 1.500.000</b> lebih banyak setiap bulan dengan mengurangi pengeluaran gaya hidup.",
+        aiDesc:
+          "Berdasarkan kebiasaan Anda, Anda bisa menghemat hingga <b class='text-white underline underline-offset-4 decoration-indigo-300'>Rp 1.500.000</b> lebih banyak setiap bulan dengan mengurangi pengeluaran gaya hidup.",
         aiBtn: "Hasilkan Saran AI",
         detailedBtn: "Analisis Terperinci",
         optimizeBtn: "Optimalkan Pengeluaran",
         advisorTitle: "Penasihat Keuangan AI",
         advisorDesc: "Wawasan personal berdasarkan riwayat transaksi Anda.",
         refreshBtn: "Perbarui Wawasan",
-        analyzing: "Menganalisis Pola..."
+        analyzing: "Menganalisis Pola...",
       },
       setup: {
         title: "Setup <span class='text-gradient-money'>Proyek</span>",
@@ -170,7 +207,7 @@ export const translations = {
           name: "Nama Kategori",
           namePlaceholder: "misal. Langganan, Sampingan",
           type: "Tipe Kategori",
-          typePlaceholder: "Pilih tipe"
+          typePlaceholder: "Pilih tipe",
         },
         items: {
           account: "Ringkasan Akun",
@@ -178,7 +215,7 @@ export const translations = {
           needs: "Kategori Kebutuhan",
           wants: "Kategori Keinginan",
           savings: "Kategori Tabungan",
-          assets: "Aset Akun"
+          assets: "Aset Akun",
         },
       },
       accountSettings: "Pengaturan Akun",
@@ -201,7 +238,8 @@ export const translations = {
         dangerZone: "Zona Bahaya",
         changeAvatar: "Ubah Avatar",
         security: {
-          title: "Keamanan & <span class='text-gradient-money'>Kata Sandi</span>",
+          title:
+            "Keamanan & <span class='text-gradient-money'>Kata Sandi</span>",
           subtitle: "Kelola pengaturan keamanan akun Anda.",
           currentPwd: "Kata Sandi Saat Ini",
           newPwd: "Kata Sandi Baru",
@@ -209,17 +247,18 @@ export const translations = {
           updateBtn: "Perbarui Kata Sandi",
           twoFactor: "Autentikasi Dua Faktor",
           twoFactorDesc: "Tambahkan lapisan keamanan ekstra ke akun Anda.",
-          enableBtn: "Aktifkan 2FA"
+          enableBtn: "Aktifkan 2FA",
         },
         notifications: {
-          title: "Preferensi <span class='text-gradient-money'>Notifikasi</span>",
+          title:
+            "Preferensi <span class='text-gradient-money'>Notifikasi</span>",
           subtitle: "Pilih bagaimana Anda ingin kami menghubungi Anda.",
           email: "Notifikasi Email",
           emailDesc: "Terima ringkasan mingguan dan peringatan keamanan.",
           push: "Notifikasi Push",
           pushDesc: "Pemberitahuan real-time tentang transaksi.",
           marketing: "Email Pemasaran",
-          marketingDesc: "Terima tips, tawaran, dan promosi khusus."
+          marketingDesc: "Terima tips, tawaran, dan promosi khusus.",
         },
         display: {
           title: "Tampilan & <span class='text-gradient-money'>Bahasa</span>",
@@ -230,23 +269,39 @@ export const translations = {
           languageDesc: "Pilih bahasa pilihan Anda.",
           light: "Terang",
           dark: "Gelap",
-          system: "Sistem"
+          system: "Sistem",
         },
         achievements: {
-          title: "Pencapaian <span class='text-gradient-money'>Finansial</span>",
+          title:
+            "Pencapaian <span class='text-gradient-money'>Finansial</span>",
           level: "Level Saat Ini",
           points: "Poin XP",
           badges: "Lencana Anda",
-          locked: "Terkunci"
+          locked: "Terkunci",
         },
         family: {
           title: "Manajemen <span class='text-gradient-money'>Keluarga</span>",
           subtitle: "Kelola akun anggota keluarga dan anggaran bersama.",
           members: "Anggota Keluarga",
           addMember: "Tambah Anggota",
+          addMemberTitle: "Tambah Anggota Keluarga",
+          addMemberDesc:
+            "Undang anggota keluarga untuk bergabung ke ruang kerja finansial Anda.",
+          nameLabel: "Nama Lengkap",
+          namePlaceholder: "Masukkan nama lengkap anggota",
+          emailLabel: "Alamat Email",
+          emailPlaceholder: "Masukkan email anggota",
+          relationLabel: "Hubungan",
+          relationPlaceholder: "Pilih",
+          roleLabel: "Peran",
+          rolePlaceholder: "Pilih",
+          limitLabel: "Batas Belanja",
+          sendInvite: "Kirim Undangan",
+          inviteSent: "Undangan Terkirim",
+          inviteDesc: "Anggota keluarga akan menerima email undangan.",
           role: "Peran",
-          limit: "Batas Belanja"
-        }
+          limit: "Batas Belanja",
+        },
       },
       subscription: {
         title: "Paket <span class='text-gradient-money'>Langganan</span>",
@@ -255,45 +310,48 @@ export const translations = {
         getStarted: "Mulai Sekarang",
         contactUs: "Hubungi Kami",
         faq: "Pertanyaan Umum",
-      }
+      },
     },
     partners: {
       title: "Dipercaya oleh Institusi Finansial Global",
     },
     features: {
       badge: "Precision Core",
-      title: "Semua yang Anda butuhkan untuk <br/> <span class='text-gradient-money'>Membangun Kekayaan</span>.",
+      title:
+        "Semua yang Anda butuhkan untuk <br/> <span class='text-gradient-money'>Membangun Kekayaan</span>.",
       cards: [
         {
           title: "Pelacakan Real-time",
-          desc: "Pantau pengeluaran rutin dan sumber pendapatan Anda dengan pembaruan langsung dan bagan yang indah."
+          desc: "Pantau pengeluaran rutin dan sumber pendapatan Anda dengan pembaruan langsung dan bagan yang indah.",
         },
         {
           title: "Penganggaran Pintar",
-          desc: "Tetapkan target bulanan berdasarkan pendapatan Anda dan biarkan AI kami menyarankan strategi alokasi terbaik."
+          desc: "Tetapkan target bulanan berdasarkan pendapatan Anda dan biarkan AI kami menyarankan strategi alokasi terbaik.",
         },
         {
           title: "Keamanan Aset",
-          desc: "Kelola aset jangka panjang Anda, dari properti hingga tabungan likuid, dalam satu brankas yang aman."
-        }
+          desc: "Kelola aset jangka panjang Anda, dari properti hingga tabungan likuid, dalam satu brankas yang aman.",
+        },
       ],
-      more: "Pelajari Lebih Lanjut"
+      more: "Pelajari Lebih Lanjut",
     },
     platform: {
-      title: "Dasbor paling <span class='text-emerald-600 italic font-medium'>intuitif</span> di pasar.",
+      title:
+        "Dasbor paling <span class='text-emerald-600 italic font-medium'>intuitif</span> di pasar.",
       desc: "Didesain untuk kejelasan. Dibangun untuk aksi. Pantau setiap aset di pusat komando yang indah.",
       items: [
         "Proyeksi Arus Kas Interaktif",
         "Kategorisasi Pengeluaran Otomatis",
         "Indikator Kemajuan Tujuan Visual",
-        "Audit Finansial PDF Sekali Klik"
+        "Audit Finansial PDF Sekali Klik",
       ],
-      cta: "Buka Dasbor"
+      cta: "Buka Dasbor",
     },
     cta: {
-      title: "Siap untuk <br/><span class='underline decoration-emerald-300 decoration-4 sm:decoration-8 underline-offset-4 sm:underline-offset-8 italic'>Kebebasan</span> Finansial?",
+      title:
+        "Siap untuk <br/><span class='underline decoration-emerald-300 decoration-4 sm:decoration-8 underline-offset-4 sm:underline-offset-8 italic'>Kebebasan</span> Finansial?",
       desc: "Mulai kelola pinjaman dan aset Anda seperti profesional. Tanpa kartu kredit. Bersih, sederhana, dan kuat.",
-      button: "Buka Dasbor"
+      button: "Buka Dasbor",
     },
     footer: {
       desc: "Pendamping finansial utama untuk keluarga Indonesia. Penganggaran, pelacakan aset, dan manajemen pinjaman cerdas menjadi mudah.",
@@ -306,24 +364,64 @@ export const translations = {
       terms: {
         title: "Syarat Ketentuan Layanan",
         sections: [
-          { title: "1. Penerimaan Ketentuan", content: "Dengan mengakses dan menggunakan Home Sweet Loan, Anda setuju untuk terikat oleh Syarat Ketentuan Layanan ini. Jika Anda tidak setuju, mohon untuk tidak menggunakan layanan kami." },
-          { title: "2. Akun Pengguna", content: "Anda bertanggung jawab untuk menjaga kerahasiaan akun dan kata sandi Anda. Anda menyetujui untuk menerima tanggung jawab atas semua aktivitas yang terjadi di bawah akun Anda." },
-          { title: "3. Layanan Keuangan", content: "Home Sweet Loan menyediakan alat manajemen keuangan. Kami bukan penasihat keuangan berlisensi. Harap konsultasikan dengan profesional sebelum membuat keputusan keuangan besar." },
-          { title: "4. Batasan Tanggung Jawab", content: "Kami berusaha memberikan data yang paling akurat, namun kami tidak bertanggung jawab atas kerugian finansial yang mungkin terjadi akibat penggunaan aplikasi ini." },
-          { title: "5. Perubahan Layanan", content: "Kami berhak untuk mengubah atau menghentikan layanan (atau bagian mana pun darinya) kapan saja tanpa pemberitahuan sebelumnya." }
-        ]
+          {
+            title: "1. Penerimaan Ketentuan",
+            content:
+              "Dengan mengakses dan menggunakan Home Sweet Loan, Anda setuju untuk terikat oleh Syarat Ketentuan Layanan ini. Jika Anda tidak setuju, mohon untuk tidak menggunakan layanan kami.",
+          },
+          {
+            title: "2. Akun Pengguna",
+            content:
+              "Anda bertanggung jawab untuk menjaga kerahasiaan akun dan kata sandi Anda. Anda menyetujui untuk menerima tanggung jawab atas semua aktivitas yang terjadi di bawah akun Anda.",
+          },
+          {
+            title: "3. Layanan Keuangan",
+            content:
+              "Home Sweet Loan menyediakan alat manajemen keuangan. Kami bukan penasihat keuangan berlisensi. Harap konsultasikan dengan profesional sebelum membuat keputusan keuangan besar.",
+          },
+          {
+            title: "4. Batasan Tanggung Jawab",
+            content:
+              "Kami berusaha memberikan data yang paling akurat, namun kami tidak bertanggung jawab atas kerugian finansial yang mungkin terjadi akibat penggunaan aplikasi ini.",
+          },
+          {
+            title: "5. Perubahan Layanan",
+            content:
+              "Kami berhak untuk mengubah atau menghentikan layanan (atau bagian mana pun darinya) kapan saja tanpa pemberitahuan sebelumnya.",
+          },
+        ],
       },
       privacy: {
         title: "Kebijakan Privasi",
         sections: [
-          { title: "1. Pengumpulan Data", content: "Kami mengumpulkan informasi yang Anda berikan saat mendaftar, seperti nama, email, dan data transaksi keuangan yang Anda masukkan secara manual." },
-          { title: "2. Penggunaan Informasi", content: "Data Anda digunakan untuk memberikan analisis keuangan yang dipersonalisasi dan meningkatkan pengalaman pengguna di dalam aplikasi." },
-          { title: "3. Keamanan Data", content: "Kami menggunakan enkripsi tingkat institusi untuk melindungi data sensitif Anda. Keamanan privasi Anda adalah prioritas utama kami." },
-          { title: "4. Berbagi Data", content: "Kami tidak menjual data pribadi Anda kepada pihak ketiga. Data hanya dibagikan jika diperlukan oleh hukum atau untuk menyediakan layanan inti kami." },
-          { title: "5. Hak Pengguna", content: "Anda memiliki hak untuk mengakses, memperbarui, atau menghapus data pribadi Anda kapan saja melalui pengaturan profil Anda." }
-        ]
-      }
-    }
+          {
+            title: "1. Pengumpulan Data",
+            content:
+              "Kami mengumpulkan informasi yang Anda berikan saat mendaftar, seperti nama, email, dan data transaksi keuangan yang Anda masukkan secara manual.",
+          },
+          {
+            title: "2. Penggunaan Informasi",
+            content:
+              "Data Anda digunakan untuk memberikan analisis keuangan yang dipersonalisasi dan meningkatkan pengalaman pengguna di dalam aplikasi.",
+          },
+          {
+            title: "3. Keamanan Data",
+            content:
+              "Kami menggunakan enkripsi tingkat institusi untuk melindungi data sensitif Anda. Keamanan privasi Anda adalah prioritas utama kami.",
+          },
+          {
+            title: "4. Berbagi Data",
+            content:
+              "Kami tidak menjual data pribadi Anda kepada pihak ketiga. Data hanya dibagikan jika diperlukan oleh hukum atau untuk menyediakan layanan inti kami.",
+          },
+          {
+            title: "5. Hak Pengguna",
+            content:
+              "Anda memiliki hak untuk mengakses, memperbarui, atau menghapus data pribadi Anda kapan saja melalui pengaturan profil Anda.",
+          },
+        ],
+      },
+    },
   },
   en: {
     nav: {
@@ -335,14 +433,47 @@ export const translations = {
       getStarted: "Get Started",
       dashboard: "Dashboard",
     },
+    notificationPanel: {
+      title: "Notifications",
+      newCount: "New",
+      markAllRead: "Mark all as read",
+      unreadMessages: "unread messages",
+      youHave: "You have",
+      paymentSuccess: "Payment Successful",
+      paymentSuccessDesc: "Your payment for Pro Plan was successful.",
+      newFeature: "New Feature",
+      newFeatureDesc: "Check out the new budgeting tools!",
+      timeAgo: {
+        minutes: "minutes ago",
+        hours: "hours ago",
+        days: "days ago",
+      },
+    },
+    search: {
+      placeholder: "Search your finance...",
+    },
+    auth: {
+      signedOut: "Signed out successfully",
+    },
     months: [
-      "January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December"
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
     ],
     hero: {
       new: "New",
       ai: "Next Gen Financial AI Assistant",
-      title: "Manage Your <span class='text-gradient-money italic'>Wealth</span> Faster Than Ever.",
+      title:
+        "Manage Your <span class='text-gradient-money italic'>Wealth</span> Faster Than Ever.",
       desc: "Take full control of your family's finances. Automated budgeting, smart asset tracking, and deep insights to achieve your dream home faster.",
       cta: "Start Your Journey",
       demo: "Watch Demo",
@@ -369,10 +500,11 @@ export const translations = {
         goalTrackerTitle: "Goal Tracker",
         goalTrackerDesc: "Monthly saving target status",
         savingTarget: "Saving Target",
-        encouragement: "You're doing great! You've allocated <b class='text-white'>Rp 3.500.000</b> to your savings so far this month.",
+        encouragement:
+          "You're doing great! You've allocated <b class='text-white'>Rp 3.500.000</b> to your savings so far this month.",
         viewGoalsBtn: "View Wealth Goals",
         toastTitle: "Plan Initialized",
-        toastDesc: "Ready to allocate your funds for the new cycle."
+        toastDesc: "Ready to allocate your funds for the new cycle.",
       },
       markAllRead: "Mark all as read",
       summary: {
@@ -397,7 +529,7 @@ export const translations = {
         activity: "Recent Activity",
         viewAll: "View All",
         toastTitle: "Exporting data...",
-        toastDesc: "Your financial data is being prepared for download."
+        toastDesc: "Your financial data is being prepared for download.",
       },
       spending: {
         title: "Spending <span class='text-gradient-money'>Tracker</span>",
@@ -418,8 +550,8 @@ export const translations = {
           amount: "Amount",
           category: "Category",
           date: "Date",
-          proceed: "Proceed to Log"
-        }
+          proceed: "Proceed to Log",
+        },
       },
       assets: {
         title: "Asset <span class='text-gradient-money'>Management</span>",
@@ -429,7 +561,8 @@ export const translations = {
         modalDesc: "Add a new item to your wealth portfolio.",
         registerBtn: "Register Asset",
         breakdown: "Asset Breakdown",
-        breakdownDesc: "Detailed list of your holdings and wealth distribution.",
+        breakdownDesc:
+          "Detailed list of your holdings and wealth distribution.",
         liquid: "Liquid Assets",
         nonLiquid: "Non-Liquid",
         total: "Total Wealth",
@@ -438,8 +571,8 @@ export const translations = {
           namePlaceholder: "e.g. Emergency Fund, Stocks",
           type: "Asset Type",
           typePlaceholder: "Select type",
-          value: "Current Value"
-        }
+          value: "Current Value",
+        },
       },
       report: {
         title: "Financial <span class='text-gradient-money'>Reports</span>",
@@ -451,14 +584,15 @@ export const translations = {
         distTitle: "Category Distribution",
         distDesc: "Where does your money go exactly?",
         aiTitle: "Smart Financial Insights",
-        aiDesc: "Based on your habits, you could save up to <b class='text-white underline underline-offset-4 decoration-indigo-300'>Rp 1.500.000</b> more each month by reducing lifestyle spending.",
+        aiDesc:
+          "Based on your habits, you could save up to <b class='text-white underline underline-offset-4 decoration-indigo-300'>Rp 1.500.000</b> more each month by reducing lifestyle spending.",
         aiBtn: "Generate AI Advice",
         detailedBtn: "Detailed Analysis",
         optimizeBtn: "Optimize Spending",
         advisorTitle: "AI Financial Advisor",
         advisorDesc: "Personalized insights based on your transaction history.",
         refreshBtn: "Refresh Insights",
-        analyzing: "Analyzing Patterns..."
+        analyzing: "Analyzing Patterns...",
       },
       setup: {
         title: "Project <span class='text-gradient-money'>Setup</span>",
@@ -472,7 +606,7 @@ export const translations = {
           name: "Category Name",
           namePlaceholder: "e.g. Subscriptions, Side Hustle",
           type: "Category Type",
-          typePlaceholder: "Select a type"
+          typePlaceholder: "Select a type",
         },
         items: {
           account: "Account Summary",
@@ -480,7 +614,7 @@ export const translations = {
           needs: "Needs Categories",
           wants: "Wants Categories",
           savings: "Savings Categories",
-          assets: "Account Assets"
+          assets: "Account Assets",
         },
       },
       accountSettings: "Account Settings",
@@ -511,17 +645,18 @@ export const translations = {
           updateBtn: "Update Password",
           twoFactor: "Two-Factor Authentication",
           twoFactorDesc: "Add an extra layer of security to your account.",
-          enableBtn: "Enable 2FA"
+          enableBtn: "Enable 2FA",
         },
         notifications: {
-          title: "Notification <span class='text-gradient-money'>Preferences</span>",
+          title:
+            "Notification <span class='text-gradient-money'>Preferences</span>",
           subtitle: "Choose how you want us to contact you.",
           email: "Email Notifications",
           emailDesc: "Receive weekly summaries and security alerts.",
           push: "Push Notifications",
           pushDesc: "Real-time updates about transactions.",
           marketing: "Marketing Emails",
-          marketingDesc: "Receive tips, offers, and special promotions."
+          marketingDesc: "Receive tips, offers, and special promotions.",
         },
         display: {
           title: "Display & <span class='text-gradient-money'>Language</span>",
@@ -532,23 +667,39 @@ export const translations = {
           languageDesc: "Select your preferred language.",
           light: "Light",
           dark: "Dark",
-          system: "System"
+          system: "System",
         },
         achievements: {
-          title: "Financial <span class='text-gradient-money'>Achievements</span>",
+          title:
+            "Financial <span class='text-gradient-money'>Achievements</span>",
           level: "Current Level",
           points: "XP Points",
           badges: "Your Badges",
-          locked: "Locked"
+          locked: "Locked",
         },
         family: {
           title: "Family <span class='text-gradient-money'>Management</span>",
           subtitle: "Manage family member accounts and shared budgets.",
           members: "Family Members",
           addMember: "Add Member",
+          addMemberTitle: "Add Family Member",
+          addMemberDesc:
+            "Invite a family member to join your financial workspace.",
+          nameLabel: "Full Name",
+          namePlaceholder: "Enter member's full name",
+          emailLabel: "Email Address",
+          emailPlaceholder: "Enter member's email",
+          relationLabel: "Relation",
+          relationPlaceholder: "Select",
+          roleLabel: "Role",
+          rolePlaceholder: "Select",
+          limitLabel: "Spending Limit",
+          sendInvite: "Send Invitation",
+          inviteSent: "Invitation Sent",
+          inviteDesc: "Family member will receive an email invitation.",
           role: "Role",
-          limit: "Spending Limit"
-        }
+          limit: "Spending Limit",
+        },
       },
       subscription: {
         title: "Subscription <span class='text-gradient-money'>Plan</span>",
@@ -557,45 +708,48 @@ export const translations = {
         getStarted: "Get Started",
         contactUs: "Contact Us",
         faq: "Frequently Asked Questions",
-      }
+      },
     },
     partners: {
       title: "Trusted by Global Financial Institutions",
     },
     features: {
       badge: "Precision Core",
-      title: "Everything you need to <br/> <span class='text-gradient-money'>Build Wealth</span>.",
+      title:
+        "Everything you need to <br/> <span class='text-gradient-money'>Build Wealth</span>.",
       cards: [
         {
           title: "Real-time Tracking",
-          desc: "Monitor your recurring expenses and income sources with live updates and beautiful charts."
+          desc: "Monitor your recurring expenses and income sources with live updates and beautiful charts.",
         },
         {
           title: "Smart Budgeting",
-          desc: "Set monthly goals based on your income and let our AI suggest the best allocation strategy."
+          desc: "Set monthly goals based on your income and let our AI suggest the best allocation strategy.",
         },
         {
           title: "Wealth Security",
-          desc: "Manage your long-term assets, from property to liquid savings, in one secure vault."
-        }
+          desc: "Manage your long-term assets, from property to liquid savings, in one secure vault.",
+        },
       ],
-      more: "Dive Deeper"
+      more: "Dive Deeper",
     },
     platform: {
-      title: "The most <span class='text-emerald-600 italic font-medium'>intuitive</span> dashboard on the market.",
+      title:
+        "The most <span class='text-emerald-600 italic font-medium'>intuitive</span> dashboard on the market.",
       desc: "Designed for clarity. Built for action. Monitor every asset in a beautiful command center.",
       items: [
         "Interactive Cash Flow Projections",
         "Automated Expense Categorization",
         "Visual Goal Progress Indicators",
-        "One-click PDF Financial Audits"
+        "One-click PDF Financial Audits",
       ],
-      cta: "Go To Dashboard"
+      cta: "Go To Dashboard",
     },
     cta: {
-      title: "Ready for Financial <br/><span class='underline decoration-emerald-300 decoration-4 sm:decoration-8 underline-offset-4 sm:underline-offset-8 italic'>Freedom</span>?",
+      title:
+        "Ready for Financial <br/><span class='underline decoration-emerald-300 decoration-4 sm:decoration-8 underline-offset-4 sm:underline-offset-8 italic'>Freedom</span>?",
       desc: "Start managing your loan and assets like a professional. No credit card required. Clean, simple, and powerful.",
-      button: "Launch Dashboard"
+      button: "Launch Dashboard",
     },
     footer: {
       desc: "The ultimate financial companion for Indonesian families. Budgeting, asset tracking, and smart loan management made easy.",
@@ -608,23 +762,63 @@ export const translations = {
       terms: {
         title: "Terms of Service",
         sections: [
-          { title: "1. Acceptance of Terms", content: "By accessing and using Home Sweet Loan, you agree to be bound by these Terms of Service. If you do not agree, please do not use our services." },
-          { title: "2. User Accounts", content: "You are responsible for maintaining the confidentiality of your account and password. You agree to accept responsibility for all activities that occur under your account." },
-          { title: "3. Financial Services", content: "Home Sweet Loan provides financial management tools. We are not licensed financial advisors. Please consult with a professional before making major financial decisions." },
-          { title: "4. Limitation of Liability", content: "We strive to provide the most accurate data, but we are not responsible for any financial losses that may occur from using this application." },
-          { title: "5. Changes to Service", content: "We reserve the right to modify or discontinue the service (or any part thereof) at any time without prior notice." }
-        ]
+          {
+            title: "1. Acceptance of Terms",
+            content:
+              "By accessing and using Home Sweet Loan, you agree to be bound by these Terms of Service. If you do not agree, please do not use our services.",
+          },
+          {
+            title: "2. User Accounts",
+            content:
+              "You are responsible for maintaining the confidentiality of your account and password. You agree to accept responsibility for all activities that occur under your account.",
+          },
+          {
+            title: "3. Financial Services",
+            content:
+              "Home Sweet Loan provides financial management tools. We are not licensed financial advisors. Please consult with a professional before making major financial decisions.",
+          },
+          {
+            title: "4. Limitation of Liability",
+            content:
+              "We strive to provide the most accurate data, but we are not responsible for any financial losses that may occur from using this application.",
+          },
+          {
+            title: "5. Changes to Service",
+            content:
+              "We reserve the right to modify or discontinue the service (or any part thereof) at any time without prior notice.",
+          },
+        ],
       },
       privacy: {
         title: "Privacy Policy",
         sections: [
-          { title: "1. Data Collection", content: "We collect information you provide when registering, such as name, email, and financial transaction data that you enter manually." },
-          { title: "2. Use of Information", content: "Your data is used to provide personalized financial analysis and improve the user experience within the application." },
-          { title: "3. Data Security", content: "We use institution-grade encryption to protect your sensitive data. Your privacy security is our top priority." },
-          { title: "4. Data Sharing", content: "We do not sell your personal data to third parties. Data is only shared if required by law or to provide our core services." },
-          { title: "5. User Rights", content: "You have the right to access, update, or delete your personal data at any time via your profile settings." }
-        ]
-      }
-    }
-  }
-}
+          {
+            title: "1. Data Collection",
+            content:
+              "We collect information you provide when registering, such as name, email, and financial transaction data that you enter manually.",
+          },
+          {
+            title: "2. Use of Information",
+            content:
+              "Your data is used to provide personalized financial analysis and improve the user experience within the application.",
+          },
+          {
+            title: "3. Data Security",
+            content:
+              "We use institution-grade encryption to protect your sensitive data. Your privacy security is our top priority.",
+          },
+          {
+            title: "4. Data Sharing",
+            content:
+              "We do not sell your personal data to third parties. Data is only shared if required by law or to provide our core services.",
+          },
+          {
+            title: "5. User Rights",
+            content:
+              "You have the right to access, update, or delete your personal data at any time via your profile settings.",
+          },
+        ],
+      },
+    },
+  },
+};

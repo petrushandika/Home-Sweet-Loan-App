@@ -1,0 +1,33 @@
+{
+  "name": "home-sweet-loan-app",
+  "version": "1.0.0",
+  "description": "Home Sweet Loan - Personal Finance Management App",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run frontend:dev\" \"npm run backend:dev\"",
+    "frontend:dev": "cd frontend && npm run dev",
+    "frontend:build": "cd frontend && npm run build",
+    "frontend:start": "cd frontend && npm run start",
+    "backend:dev": "cd backend && npm run dev",
+    "backend:build": "cd backend && npm run build",
+    "backend:start": "cd backend && npm run start:prod",
+    "db:generate": "cd backend && npx prisma generate",
+    "db:migrate": "cd backend && npx prisma migrate dev",
+    "db:push": "cd backend && npx prisma db push",
+    "db:studio": "cd backend && npx prisma studio",
+    "db:seed": "cd backend && npm run db:seed",
+    "db:reset": "cd backend && npx prisma migrate reset --force",
+    "db:deploy": "cd backend && npx prisma migrate deploy",
+    "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install",
+    "clean": "cd frontend && rmdir /s /q node_modules .next && cd ../backend && rmdir /s /q node_modules dist"
+  },
+  "keywords": [
+    "finance",
+    "budgeting",
+    "loan",
+    "nextjs",
+    "nestjs"
+  ],
+  "author": "Petrus Handika",
+  "license": "MIT"
+}

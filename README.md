@@ -852,11 +852,11 @@ npm run dev
 DATABASE_URL="postgresql://user:password@localhost:5432/homesweet"
 
 # Authentication
-NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_URL="http://localhost:3050"
 NEXTAUTH_SECRET="your-secret-key"
 
 # API Keys (if needed)
-NEXT_PUBLIC_API_URL="http://localhost:3000/api"
+NEXT_PUBLIC_API_URL="http://localhost:3050/api"
 ```
 
 ## 🤝 Contributing

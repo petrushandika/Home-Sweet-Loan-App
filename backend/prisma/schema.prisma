@@ -7,24 +7,25 @@ datasource db {
 }
 
 model User {
-    id                   String    @id @default(uuid())
-    email                String    @unique
-    password             String
-    name                 String
-    isVerified           Boolean   @default(false)
-    verificationToken    String?
-    resetPasswordToken   String?
-    resetPasswordExpires DateTime?
-    avatarUrl            String?
-    plan                 String    @default("FREE")
-    phoneNumber          String?
-    birthDate            DateTime?
-    gender               String?
-    googleId             String?
-    facebookId           String?
-    hashedRefreshToken   String?
-    createdAt            DateTime  @default(now())
-    updatedAt            DateTime  @updatedAt
+    id                          String    @id @default(uuid())
+    email                       String    @unique
+    password                    String
+    name                        String
+    isVerified                  Boolean   @default(false)
+    verificationToken           String?
+    lastVerificationEmailSent   DateTime?
+    resetPasswordToken          String?
+    resetPasswordExpires        DateTime?
+    avatarUrl                   String?
+    plan                        String    @default("FREE")
+    phoneNumber                 String?
+    birthDate                   DateTime?
+    gender                      String?
+    googleId                    String?
+    facebookId                  String?
+    hashedRefreshToken          String?
+    createdAt                   DateTime  @default(now())
+    updatedAt                   DateTime  @updatedAt
 
     setupConfig   SetupConfig?
     budgets       Budget[]

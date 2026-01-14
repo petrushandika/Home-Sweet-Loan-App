@@ -1,4 +1,3 @@
-
 @import "tailwindcss";
 
 @plugin "tailwindcss-animate";
@@ -14,7 +13,7 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
-  
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -33,19 +32,19 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  
+
   --color-income: var(--income);
   --color-savings: var(--savings);
   --color-needs: var(--needs);
   --color-wants: var(--wants);
   --color-expenses: var(--expenses);
-  
+
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-  
+
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -76,19 +75,19 @@
   --border: #d4dae1;
   --input: #d4dae1;
   --ring: #10b981;
-  
+
   --income: #10b981;
   --savings: #059669;
   --needs: #f97316;
   --wants: #8b5cf6;
   --expenses: #ec4899;
-  
+
   --chart-1: #10b981;
   --chart-2: #f97316;
   --chart-3: #8b5cf6;
   --chart-4: #ec4899;
   --chart-5: #3b82f6;
-  
+
   --sidebar: #ffffff;
   --sidebar-foreground: #0f172a;
   --sidebar-primary: #059669;
@@ -118,7 +117,7 @@
   --border: #2a3749; /* Subtle middle ground for dark mode */
   --input: #2a3749;
   --ring: #10b981;
-  
+
   --sidebar: #0f172a;
   --sidebar-foreground: #f8fafc;
   --sidebar-primary: #10b981;
@@ -141,7 +140,7 @@
   body {
     @apply bg-background text-foreground selection:bg-primary/20 antialiased;
   }
-  
+
   /* Hide default calendar picker indicator for consistent UI */
   input[type="date"]::-webkit-calendar-picker-indicator {
     background: transparent;
@@ -155,15 +154,25 @@
     top: 0;
     width: auto;
   }
-  
+
   input[type="date"] {
     position: relative;
   }
 }
 
 /* Base interactive smoothness */
-a, button, div, span, input, select, link, .card, .transition-all {
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+a,
+button,
+div,
+span,
+input,
+select,
+link,
+.card,
+.transition-all {
+  transition-property: color, background-color, border-color,
+    text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter,
+    backdrop-filter;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 300ms;
 }
@@ -190,8 +199,12 @@ a, button, div, span, input, select, link, .card, .transition-all {
 }
 
 @keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 .animate-marquee {
@@ -205,7 +218,11 @@ a, button, div, span, input, select, link, .card, .transition-all {
 }
 
 .bottom-sheet-handle {
-  @apply w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-4;
+  @apply w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-4 transition-colors duration-300 cursor-grab active:cursor-grabbing;
+}
+
+.bottom-sheet-handle:hover {
+  @apply bg-slate-400 dark:bg-slate-600;
 }
 
 /* Updated Utility Classes */
@@ -251,22 +268,45 @@ a, button, div, span, input, select, link, .card, .transition-all {
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 @keyframes brand-shimmer {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
 }
 
 @keyframes brand-bounce {
-  0%, 100% { transform: translateY(0) scale(1); opacity: 0.8; }
-  50% { transform: translateY(-10px) scale(1.05); opacity: 1; }
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateY(-10px) scale(1.05);
+    opacity: 1;
+  }
 }
 
 .animate-brand-shimmer {
-  background: linear-gradient(90deg, #059669 0%, #10b981 25%, #34d399 50%, #10b981 75%, #059669 100%);
+  background: linear-gradient(
+    90deg,
+    #059669 0%,
+    #10b981 25%,
+    #34d399 50%,
+    #10b981 75%,
+    #059669 100%
+  );
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
@@ -289,22 +329,22 @@ a, button, div, span, input, select, link, .card, .transition-all {
 @utility emerald-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: #10b981 transparent;
-  
+
   &::-webkit-scrollbar {
     width: 6px;
   }
-  
+
   &::-webkit-scrollbar-track {
     background: transparent;
     border-radius: 10px;
   }
-  
+
   &::-webkit-scrollbar-thumb {
     background: #10b981;
     border-radius: 10px;
     border: 2px solid transparent;
   }
-  
+
   &::-webkit-scrollbar-thumb:hover {
     background: #059669;
   }
@@ -316,26 +356,39 @@ a, button, div, span, input, select, link, .card, .transition-all {
 }
 
 @keyframes glossy-wave {
-  0%, 100% { 
-    transform: translateY(0); 
+  0%,
+  100% {
+    transform: translateY(0);
     filter: brightness(1);
     opacity: 0.85;
   }
-  50% { 
-    transform: translateY(-6px); 
+  50% {
+    transform: translateY(-6px);
     filter: brightness(1.1);
     opacity: 1;
   }
 }
 
 @keyframes bounce-subtle {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
 }
 
 @keyframes pulse-subtle {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.8; transform: scale(0.98); }
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(0.98);
+  }
 }
 
 .animate-glossy-wave {
@@ -357,19 +410,51 @@ a, button, div, span, input, select, link, .card, .transition-all {
   animation: letter-wave 1.2s ease-in-out infinite;
 }
 
-.delay-0 { animation-delay: 0s; }
-.delay-1 { animation-delay: 0.05s; }
-.delay-2 { animation-delay: 0.1s; }
-.delay-3 { animation-delay: 0.15s; }
-.delay-4 { animation-delay: 0.2s; }
-.delay-5 { animation-delay: 0.25s; }
-.delay-6 { animation-delay: 0.3s; }
-.delay-7 { animation-delay: 0.35s; }
-.delay-8 { animation-delay: 0.4s; }
-.delay-9 { animation-delay: 0.45s; }
-.delay-10 { animation-delay: 0.5s; }
-.delay-11 { animation-delay: 0.55s; }
-.delay-12 { animation-delay: 0.6s; }
-.delay-13 { animation-delay: 0.65s; }
-.delay-14 { animation-delay: 0.7s; }
-.delay-15 { animation-delay: 0.75s; }
+.delay-0 {
+  animation-delay: 0s;
+}
+.delay-1 {
+  animation-delay: 0.05s;
+}
+.delay-2 {
+  animation-delay: 0.1s;
+}
+.delay-3 {
+  animation-delay: 0.15s;
+}
+.delay-4 {
+  animation-delay: 0.2s;
+}
+.delay-5 {
+  animation-delay: 0.25s;
+}
+.delay-6 {
+  animation-delay: 0.3s;
+}
+.delay-7 {
+  animation-delay: 0.35s;
+}
+.delay-8 {
+  animation-delay: 0.4s;
+}
+.delay-9 {
+  animation-delay: 0.45s;
+}
+.delay-10 {
+  animation-delay: 0.5s;
+}
+.delay-11 {
+  animation-delay: 0.55s;
+}
+.delay-12 {
+  animation-delay: 0.6s;
+}
+.delay-13 {
+  animation-delay: 0.65s;
+}
+.delay-14 {
+  animation-delay: 0.7s;
+}
+.delay-15 {
+  animation-delay: 0.75s;
+}
