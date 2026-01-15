@@ -300,6 +300,8 @@ enum NotificationType {
     ERROR
     PAYMENT
     SYSTEM
+    BUDGET
+    ASSET
 }
 
 model Notification {

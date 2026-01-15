@@ -327,8 +327,7 @@ export default function BudgetingPage() {
                       {t.emptyState}
                     </h3>
                     <p className="text-sm text-slate-500 max-w-xs mx-auto">
-                      Click "Create Plan" above to start your financial journey
-                      for this month.
+                      {t.createPlanDesc}
                     </p>
                   </div>
                 </div>
@@ -337,7 +336,7 @@ export default function BudgetingPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                     <div className="p-4 bg-emerald-50 dark:bg-emerald-950/20 rounded-2xl border border-emerald-100 dark:border-emerald-800">
                       <p className="text-[10px] font-black uppercase text-emerald-600 dark:text-emerald-400 mb-2">
-                        Income Sources
+                        {t.incomeSources}
                       </p>
                       <div className="space-y-3">
                         {setup?.incomeSources?.map((source) => (
@@ -370,7 +369,7 @@ export default function BudgetingPage() {
                       </div>
                       <div className="mt-4 pt-4 border-t border-emerald-100 dark:border-emerald-800 flex justify-between items-center">
                         <span className="text-xs font-bold text-emerald-700 dark:text-emerald-300">
-                          Total Projected
+                          {t.totalProjected}
                         </span>
                         <span className="text-lg font-black text-emerald-700 dark:text-emerald-300">
                           Rp{" "}
@@ -382,7 +381,7 @@ export default function BudgetingPage() {
                     </div>
                     <div className="p-4 bg-orange-50 dark:bg-orange-950/20 rounded-2xl border border-orange-100 dark:border-orange-800">
                       <p className="text-[10px] font-black uppercase text-orange-600 dark:text-orange-400 mb-1">
-                        Remaining to Allocate
+                        {t.remaining}
                       </p>
                       <p className="text-xl font-black text-slate-800 dark:text-white leading-none">
                         Rp{" "}
@@ -395,21 +394,21 @@ export default function BudgetingPage() {
 
                   {[
                     {
-                      title: "Needs",
+                      title: t.needs,
                       items: setup?.needs || [],
                       color: "bg-orange-500",
                       icon: Wallet,
                       bg: "bg-orange-50 dark:bg-orange-950/20",
                     },
                     {
-                      title: "Wants",
+                      title: t.wants,
                       items: setup?.wants || [],
                       color: "bg-violet-500",
                       icon: Heart,
                       bg: "bg-violet-50 dark:bg-violet-950/20",
                     },
                     {
-                      title: "Savings",
+                      title: t.savingsCat,
                       items: setup?.savings || [],
                       color: "bg-emerald-500",
                       icon: ShieldCheck,
@@ -427,12 +426,12 @@ export default function BudgetingPage() {
                       </div>
                       {cat.items.length === 0 ? (
                         <p className="text-xs text-slate-400 italic px-2">
-                          No items configured in Setup.
+                          {t.noSetup}
                         </p>
                       ) : (
                         cat.items.map((itemName) => {
                           const allocated =
-                            (cat.title === "Savings"
+                            (cat.title === t.savingsCat
                               ? currentBudget.savingsAllocation?.[itemName]
                               : currentBudget.expenses?.[itemName]) || 0;
                           const spent = Math.abs(spentByItem[itemName] || 0);

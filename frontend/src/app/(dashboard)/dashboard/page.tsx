@@ -62,6 +62,7 @@ import { useMemo } from "react";
 import { getBudget, getBudgets } from "@/lib/api/budgets";
 import { getSpending, createSpending } from "@/lib/api/spending";
 import { getAssets } from "@/lib/api/assets";
+import { getNotifications } from "@/lib/api/notifications";
 import { format } from "date-fns";
 
 import { useSetupStore } from "@/store/use-setup-store";
@@ -113,6 +114,7 @@ export default function DashboardPage() {
   });
 
   const [rawBudgets, setRawBudgets] = useState<any[]>([]);
+  const [allTransactions, setAllTransactions] = useState<any[]>([]);
 
   useEffect(() => {
     setMounted(true);
@@ -150,36 +152,56 @@ export default function DashboardPage() {
   // The block I am targeting starts at line 107 (useEffect).
   // I will include processChartHistory in the replacement to be safe and ensure order.
 
-  const processChartHistory = (budgets: any[], range: string) => {
-    // Sort budgets by yearMonth ASC
-    const sorted = [...budgets].sort((a, b) =>
-      a.yearMonth.localeCompare(b.yearMonth)
-    );
-
+  const processChartHistory = (
+    budgets: any[],
+    range: string,
+    transactions: any[] = []
+  ) => {
     const now = new Date();
+    const currentYear = now.getFullYear();
     const currentMonthStr = format(now, "yyyy-MM");
 
-    // Ensure the current month is always included if missing from sorted list
-    // (Optional: depending on if backend returns partial months)
+    let targetMonths: string[] = [];
 
-    let filtered = sorted;
     if (range === "1m") {
-      // Show only the latest available month
-      filtered = sorted.slice(-1);
+      targetMonths = [currentMonthStr];
     } else if (range === "6m") {
-      // Last 6 months
-      filtered = sorted.slice(-6);
+      for (let i = 1; i <= 6; i++) {
+        targetMonths.push(`${currentYear}-${String(i).padStart(2, "0")}`);
+      }
     } else if (range === "12m") {
-      // Last 12 months
-      filtered = sorted.slice(-12);
+      for (let i = 1; i <= 12; i++) {
+        targetMonths.push(`${currentYear}-${String(i).padStart(2, "0")}`);
+      }
     }
 
-    return filtered.map((b) => ({
-      month: format(new Date(b.yearMonth + "-01"), "MMM yy"),
-      income: b.summary?.totalIncome || 0,
-      expenses: b.summary?.totalExpenses || 0,
-      raw: b.yearMonth,
-    }));
+    const incomeSources = setup?.incomeSources || [];
+
+    return targetMonths.map((ym) => {
+      // 1. Get Budgeted Income
+      const budget = budgets.find((b) => b.yearMonth === ym);
+      const budgetedIncome = budget?.summary?.totalIncome || 0;
+
+      // 2. Get Actual Spending (Expenses)
+      const monthTx = transactions.filter((t) => t.date.startsWith(ym));
+      let actualSpending = 0;
+
+      monthTx.forEach((tx) => {
+        // Exclude income categories from spending bar
+        if (!incomeSources.includes(tx.category)) {
+          actualSpending += Math.abs(Number(tx.amount));
+        }
+      });
+
+      const dateObj = new Date(ym + "-01");
+      return {
+        month:
+          range === "1m" ? format(dateObj, "MMMM") : format(dateObj, "MMM"),
+        income: budgetedIncome, // Now from Budget Summary
+        expenses: actualSpending, // From Actual Transactions
+        raw: ym,
+      };
+    });
   };
 
   const fetchDashboardData = async () => {
@@ -190,23 +212,32 @@ export default function DashboardPage() {
 
       // Fetch concurrent data
       // We fetch 'currentMonthTransactions' specifically for accurate summary stats
-      const [allBudgets, assetsRes, spendingRes, currentMonthTransactions] =
-        await Promise.all([
-          getBudgets(), // To build chart history
-          getAssets(),
-          getSpending({ limit: 10, excludeIncome: true }), // Get latest 10 transactions (expenses only)
-          getSpending({
-            startDate: `${currentMonthStr}-01`,
-            endDate: `${currentMonthStr}-31`,
-            limit: 2000,
-            excludeIncome: true, // Only fetch expenses for 'Actual Spending' calc
-          }),
-        ]);
+      const [
+        allBudgets,
+        assetsRes,
+        spendingRes,
+        yearlyTransactionsRes,
+        notifications,
+      ] = await Promise.all([
+        getBudgets(),
+        getAssets(),
+        getSpending({ limit: 50 }), // Latest for Activity Card - increased to 50
+        getSpending({
+          startDate: `${now.getFullYear()}-01-01`,
+          limit: 5000,
+        }),
+        getNotifications(),
+      ]);
 
-      setRawBudgets(allBudgets); // Store for filtering
+      setRawBudgets(allBudgets);
+      setAllTransactions(yearlyTransactionsRes.spending || []);
 
-      // 1. Process Chart Data (Default 6 Months)
-      const processedChartData = processChartHistory(allBudgets, "6m");
+      // 1. Process Chart Data
+      const processedChartData = processChartHistory(
+        allBudgets,
+        "6m",
+        yearlyTransactionsRes.spending || []
+      );
       setChartData(processedChartData);
 
       // 2. Process Summary Stats
@@ -222,12 +253,14 @@ export default function DashboardPage() {
       // Logic: Income based on Setup Config
       const incomeSources = setup?.incomeSources || [];
 
-      if (currentMonthTransactions && currentMonthTransactions.spending) {
-        currentMonthTransactions.spending.forEach((s: any) => {
-          if (incomeSources.includes(s.category)) {
-            actualIncome += Math.abs(s.amount);
-          } else {
-            actualSpending += Math.abs(s.amount);
+      if (yearlyTransactionsRes && yearlyTransactionsRes.spending) {
+        yearlyTransactionsRes.spending.forEach((s: any) => {
+          if (s.date.startsWith(currentMonthStr)) {
+            if (incomeSources.includes(s.category)) {
+              actualIncome += Math.abs(s.amount);
+            } else {
+              actualSpending += Math.abs(s.amount);
+            }
           }
         });
       }
@@ -268,7 +301,40 @@ export default function DashboardPage() {
       });
 
       // 3. Process Activity
-      setRecentActivity(spendingRes.spending);
+      // Merge Transactions and Notifications/Events
+      const txActivities = (spendingRes.spending || []).map((s: any) => ({
+        ...s,
+        isEvent: false,
+      }));
+
+      const eventActivities = (notifications || [])
+        .filter((n: any) => ["BUDGET", "ASSET", "SYSTEM"].includes(n.type))
+        .map((n: any) => ({
+          id: n.id,
+          date: n.createdAt,
+          description: n.message,
+          category: n.type,
+          amount: Number(n.metadata?.value || 0),
+          isEvent: true,
+          type: n.type,
+        }));
+
+      console.log("📊 Dashboard Activity Debug:", {
+        spendingCount: txActivities.length,
+        notificationsCount: eventActivities.length,
+        totalNotifications: notifications?.length || 0,
+        sampleSpending: txActivities.slice(0, 2),
+        sampleNotifications: eventActivities.slice(0, 2),
+        allNotificationTypes: notifications?.map((n: any) => n.type) || [],
+      });
+
+      const combined = [...txActivities, ...eventActivities].sort(
+        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+      );
+
+      console.log("✅ Combined activities:", combined.length, "items");
+
+      setRecentActivity(combined.slice(0, 15));
     } catch (error) {
       console.error("Failed to load dashboard", error);
       toast.error("Failed to load dashboard data");
@@ -372,10 +438,12 @@ export default function DashboardPage() {
   const [chartRange, setChartRange] = useState("6m");
 
   useEffect(() => {
-    if (rawBudgets.length > 0) {
-      setChartData(processChartHistory(rawBudgets, chartRange));
+    if (rawBudgets.length > 0 || allTransactions.length > 0) {
+      setChartData(
+        processChartHistory(rawBudgets, chartRange, allTransactions)
+      );
     }
-  }, [rawBudgets, chartRange]);
+  }, [rawBudgets, chartRange, allTransactions]);
 
   if (!mounted) return null;
 
@@ -625,7 +693,7 @@ export default function DashboardPage() {
             <div className="h-[350px] w-full">
               {isLoading ? (
                 <div className="h-full flex items-center justify-center">
-                  <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
+                  <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
                 </div>
               ) : chartData.length > 0 ? (
                 <ChartContainer
@@ -650,13 +718,17 @@ export default function DashboardPage() {
                       dataKey="income"
                       fill="#10b981"
                       radius={[4, 4, 0, 0]}
-                      barSize={24}
+                      barSize={
+                        chartRange === "1m" ? 60 : chartRange === "6m" ? 32 : 16
+                      }
                     />
                     <Bar
                       dataKey="expenses"
                       fill="#ec4899"
                       radius={[4, 4, 0, 0]}
-                      barSize={24}
+                      barSize={
+                        chartRange === "1m" ? 60 : chartRange === "6m" ? 32 : 16
+                      }
                     />
                   </BarChart>
                 </ChartContainer>
@@ -689,18 +761,27 @@ export default function DashboardPage() {
           <CardContent className="p-6 md:px-10 md:pt-4 md:pb-8 space-y-4">
             {isLoading ? (
               <div className="h-40 flex items-center justify-center">
-                <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
+                <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
               </div>
             ) : filteredActivity.length > 0 ? (
               filteredActivity.map((item, idx) => {
-                // Determine logic based on Setup configuration
-                // If it's in incomeSources -> Income (+), otherwise Expense (-)
-                const isIncome =
-                  setup?.incomeSources?.includes(item.category) ||
-                  (item.amount > 0 &&
-                    !setup?.needs?.includes(item.category) &&
-                    !setup?.wants?.includes(item.category) &&
-                    !setup?.savings?.includes(item.category));
+                const isIncome = !!setup?.incomeSources?.includes(
+                  item.category
+                );
+                const isSavings = !!setup?.savings?.includes(item.category);
+                const isAsset =
+                  !!setup?.accountAssets?.includes(item.category) ||
+                  item.category === "ASSET";
+                const isBudget = item.category === "BUDGET";
+                const isSystem = item.category === "SYSTEM";
+
+                // Colors based on category type
+                let typeColor = "text-rose-600 dark:text-rose-400";
+                if (isIncome) typeColor = "text-emerald-600";
+                if (isSavings) typeColor = "text-sky-600";
+                if (isAsset) typeColor = "text-violet-600";
+                if (isBudget) typeColor = "text-amber-600";
+                if (isSystem) typeColor = "text-slate-600";
 
                 return (
                   <div
@@ -717,20 +798,52 @@ export default function DashboardPage() {
                       <h4 className="font-bold text-sm text-slate-800 dark:text-white leading-none mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors uppercase tracking-tight">
                         {item.description}
                       </h4>
-                      <p className="text-xs text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest leading-none mt-1">
-                        {item.category} •{" "}
-                        {format(new Date(item.date), "dd MMM")}
-                      </p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span
+                          className={cn(
+                            "text-[9px] font-black uppercase px-1.5 py-0.5 rounded",
+                            isIncome
+                              ? "bg-emerald-100 text-emerald-700"
+                              : isSavings
+                              ? "bg-sky-100 text-sky-700"
+                              : isAsset
+                              ? "bg-violet-100 text-violet-700"
+                              : isBudget
+                              ? "bg-amber-100 text-amber-700"
+                              : isSystem
+                              ? "bg-slate-100 text-slate-700"
+                              : "bg-rose-100 text-rose-700"
+                          )}
+                        >
+                          {isIncome
+                            ? t.badgeIncome
+                            : isSavings
+                            ? t.badgeSavings
+                            : isAsset
+                            ? t.badgeAsset
+                            : isBudget
+                            ? t.badgeBudget
+                            : isSystem
+                            ? "System"
+                            : t.badgeSpending}
+                        </span>
+                        <p className="text-xs text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest leading-none">
+                          {item.category} •{" "}
+                          {format(new Date(item.date), "dd MMM")}
+                        </p>
+                      </div>
                     </div>
                     <div
                       className={cn(
                         "font-black text-sm text-right transition-colors duration-300",
                         isIncome
                           ? "text-emerald-600"
-                          : "text-rose-600 dark:text-rose-400"
+                          : isBudget
+                          ? "text-amber-600"
+                          : typeColor
                       )}
                     >
-                      {isIncome ? "+" : "-"} Rp{" "}
+                      {item.amount > 0 ? "+" : "-"} Rp{" "}
                       {Math.abs(item.amount).toLocaleString()}
                     </div>
                   </div>

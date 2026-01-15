@@ -10,9 +10,14 @@ import { AddItemDto, CategoryType } from './dto/add-item.dto';
 import { DeleteItemDto } from './dto/delete-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
 
+import { NotificationsService } from '../notifications/notifications.service';
+
 @Injectable()
 export class SetupService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private notifications: NotificationsService,
+  ) {}
 
   async getSetup(userId: string) {
     const setup = await this.prisma.setupConfig.findUnique({
@@ -36,6 +41,14 @@ export class SetupService {
       },
     });
 
+    // Log Activity
+    await this.notifications.create(
+      userId,
+      'System Configuration Updated',
+      'Your general financial setup has been updated.',
+      'SYSTEM',
+    );
+
     return setup;
   }
 
@@ -57,6 +70,18 @@ export class SetupService {
       data: {
         [category]: updatedItems,
       },
+    });
+
+    // Log Activity
+    const type = category === 'accountAssets' ? 'ASSET' : 'BUDGET';
+    const actionDesc =
+      category === 'incomeSources'
+        ? `Added a new income source: ${itemName}`
+        : `Added a new item to ${category}: ${itemName}`;
+
+    await this.notifications.create(userId, 'Configuration Added', actionDesc, type, {
+      category,
+      itemName,
     });
 
     return {
@@ -85,6 +110,16 @@ export class SetupService {
         [category]: updatedItems,
       },
     });
+
+    // Log Activity
+    const type = category === 'accountAssets' ? 'ASSET' : 'BUDGET';
+    await this.notifications.create(
+      userId,
+      'Configuration Removed',
+      `Removed "${itemName}" from ${category}`,
+      type,
+      { category, itemName },
+    );
 
     return {
       category,
@@ -115,6 +150,16 @@ export class SetupService {
         [category]: updatedItems,
       },
     });
+
+    // Log Activity
+    const type = category === 'accountAssets' ? 'ASSET' : 'BUDGET';
+    await this.notifications.create(
+      userId,
+      'Configuration Updated',
+      `Renamed "${oldItemName}" to "${newItemName}" in ${category}`,
+      type,
+      { category, oldItemName, newItemName },
+    );
 
     return {
       category,

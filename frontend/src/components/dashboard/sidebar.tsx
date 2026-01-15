@@ -96,32 +96,32 @@ export function Sidebar({
 
   const items = [
     {
-      title: language === "id" ? "Ringkasan" : "Summary",
+      title: t.nav.summary,
       href: "/dashboard",
       icon: LayoutDashboard,
     },
     {
-      title: language === "id" ? "Pengaturan" : "Setup",
+      title: t.nav.setup,
       href: "/setup",
       icon: Settings,
     },
     {
-      title: language === "id" ? "Anggaran" : "Budgeting",
+      title: t.nav.budgeting,
       href: "/budgeting",
       icon: Wallet,
     },
     {
-      title: language === "id" ? "Pengeluaran" : "Spending",
+      title: t.nav.spending,
       href: "/spending",
       icon: ArrowUpRight,
     },
     {
-      title: language === "id" ? "Laporan" : "Report",
+      title: t.nav.report,
       href: "/report",
       icon: FileText,
     },
     {
-      title: language === "id" ? "Aset" : "Assets",
+      title: t.nav.assets,
       href: "/assets",
       icon: PiggyBank,
     },

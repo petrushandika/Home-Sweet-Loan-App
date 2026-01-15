@@ -299,22 +299,22 @@ export default function SetupPage() {
                 </SelectTrigger>
                 <SelectContent className="rounded-2xl border-border dark:bg-slate-900">
                   <SelectItem value="account" className="cursor-pointer">
-                    Account (Wallet/Bank)
+                    {t.typeLabels.account}
                   </SelectItem>
                   <SelectItem value="income" className="cursor-pointer">
-                    Income Source
+                    {t.typeLabels.income}
                   </SelectItem>
                   <SelectItem value="needs" className="cursor-pointer">
-                    Needs (Fixed)
+                    {t.typeLabels.needs}
                   </SelectItem>
                   <SelectItem value="wants" className="cursor-pointer">
-                    Wants (Flex)
+                    {t.typeLabels.wants}
                   </SelectItem>
                   <SelectItem value="savings" className="cursor-pointer">
-                    Savings / Investment
+                    {t.typeLabels.savings}
                   </SelectItem>
                   <SelectItem value="assets" className="cursor-pointer">
-                    Assets
+                    {t.typeLabels.assets}
                   </SelectItem>
                 </SelectContent>
               </Select>
@@ -344,8 +344,10 @@ export default function SetupPage() {
             return (
               <ResponsiveModal
                 key={item.id}
-                title={`${item.title} Settings`}
-                description={`Manage your ${item.title.toLowerCase()} list and configurations.`}
+                title={`${item.title} ${t.placeholder.settings}`}
+                description={`${
+                  t.placeholder.manage
+                } ${item.title.toLowerCase()}.`}
                 trigger={
                   <Card
                     className={`border-border shadow-none rounded-3xl bg-white dark:bg-slate-900 overflow-hidden group transition-all cursor-pointer border hover:shadow-md ${item.borderColor}`}
@@ -373,7 +375,7 @@ export default function SetupPage() {
                           {itemList.length}
                         </span>
                         <span className="text-[10px] uppercase font-bold tracking-widest opacity-60">
-                          Active Items
+                          {t.placeholder.activeItems}
                         </span>
                       </div>
                     </CardContent>
@@ -385,7 +387,7 @@ export default function SetupPage() {
                     {itemList.length === 0 ? (
                       <div className="flex flex-col items-center justify-center p-8 text-center">
                         <p className="text-slate-400 dark:text-slate-500 text-sm font-medium">
-                          No items yet. Add your first item below!
+                          {t.placeholder.noItems}
                         </p>
                       </div>
                     ) : (
@@ -474,12 +476,14 @@ export default function SetupPage() {
                           htmlFor={`new-item-${item.id}`}
                           className="text-slate-700 dark:text-slate-300 font-bold text-sm block mb-2"
                         >
-                          New Item Name
+                          {t.placeholder.newItem}
                         </Label>
                         <div className="flex gap-2">
                           <Input
                             id={`new-item-${item.id}`}
-                            placeholder={`Enter ${item.title.toLowerCase()} name...`}
+                            placeholder={`${
+                              t.placeholder.enterName
+                            } ${item.title.toLowerCase()}...`}
                             value={newItemValue[item.id] || ""}
                             onChange={(e) =>
                               setNewItemValue((prev) => ({
@@ -499,7 +503,7 @@ export default function SetupPage() {
                             onClick={() => handleAddItem(item.id)}
                             className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-11 px-4 cursor-pointer transition-all active:scale-95 border-none"
                           >
-                            Add
+                            {t.addBtn}
                           </Button>
                         </div>
                         <Button
@@ -520,7 +524,8 @@ export default function SetupPage() {
                           variant="outline"
                           className="rounded-xl border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 font-bold h-11 px-6 hover:bg-white dark:hover:bg-slate-800 hover:text-emerald-600 dark:hover:text-emerald-400 hover:border-emerald-200 dark:hover:border-emerald-700 transition-all"
                         >
-                          <Plus className="w-4 h-4 mr-2" /> Add custom item
+                          <Plus className="w-4 h-4 mr-2" />{" "}
+                          {t.placeholder.addCustom}
                         </Button>
                       </div>
                     )}

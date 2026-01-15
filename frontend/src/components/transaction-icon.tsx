@@ -132,9 +132,13 @@ export const getCategoryIcon = (category: string) => {
   if (
     normalized.includes("asset") ||
     normalized.includes("stock") ||
-    normalized.includes("crypto")
+    normalized.includes("crypto") ||
+    normalized.includes("property")
   )
     return Briefcase;
+
+  // Budget -> Settings2 / PieChart
+  if (normalized.includes("budget")) return PieChart;
 
   // Catch-all based on broader keywords
   if (normalized.includes("card") || normalized.includes("bank"))

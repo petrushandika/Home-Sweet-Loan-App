@@ -151,7 +151,7 @@ export default function ProfilePage() {
         }
 
         toast.dismiss(loadingToast);
-        toast.success("Avatar updated successfully");
+        toast.success(t.toasts.avatarSuccess);
       } catch (error: any) {
         toast.error("Failed to upload avatar", { description: error.message });
       }
@@ -181,7 +181,7 @@ export default function ProfilePage() {
         setAuthUser({ ...authUser, name: updated.name });
       }
 
-      toast.success("Profile updated successfully");
+      toast.success(t.toasts.updateSuccess);
     } catch (error: any) {
       toast.error("Failed to update profile", { description: error.message });
     } finally {
@@ -221,7 +221,11 @@ export default function ProfilePage() {
         ...inviteForm,
         monthlyLimit: Number(inviteForm.monthlyLimit),
       });
-      toast.success("Invitation sent successfully");
+      toast.success(
+        language === "id"
+          ? "Undangan berhasil dikirim"
+          : "Invitation sent successfully"
+      );
       setInviteForm({
         name: "",
         email: "",
@@ -252,7 +256,7 @@ export default function ProfilePage() {
         currentPassword: passwordForm.currentPassword,
         newPassword: passwordForm.newPassword,
       });
-      toast.success("Password changed successfully");
+      toast.success(t.toasts.passwordSuccess);
       setPasswordForm({
         currentPassword: "",
         newPassword: "",
@@ -338,12 +342,14 @@ export default function ProfilePage() {
             <span className="capitalize">{activeTab}</span>
           </SelectTrigger>
           <SelectContent className="rounded-2xl border-border shadow-xl bg-white dark:bg-slate-900 overflow-hidden p-1 max-h-[40vh] overflow-y-auto">
-            <SelectItem value="personal">Personal Info</SelectItem>
-            <SelectItem value="security">Security</SelectItem>
-            <SelectItem value="notifications">Notifications</SelectItem>
-            <SelectItem value="display">Display</SelectItem>
-            <SelectItem value="achievements">Achievements</SelectItem>
-            <SelectItem value="family">Family</SelectItem>
+            <SelectItem value="personal">{t.tabs.personal}</SelectItem>
+            <SelectItem value="security">{t.tabs.security}</SelectItem>
+            <SelectItem value="notifications">
+              {t.tabs.notifications}
+            </SelectItem>
+            <SelectItem value="display">{t.tabs.display}</SelectItem>
+            <SelectItem value="achievements">{t.tabs.achievements}</SelectItem>
+            <SelectItem value="family">{t.tabs.family}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -353,12 +359,20 @@ export default function ProfilePage() {
         <div className="hidden lg:block space-y-4">
           <Card className="border-border bg-white dark:bg-slate-900 rounded-3xl overflow-hidden shadow-sm transition-all duration-300">
             <CardContent className="p-4 space-y-1">
-              <TabButton id="personal" icon={User} label={t.personalInfo} />
-              <TabButton id="security" icon={Lock} label="Security" />
-              <TabButton id="achievements" icon={Trophy} label="Achievements" />
-              <TabButton id="family" icon={Users} label="Family" />
-              <TabButton id="notifications" icon={Bell} label="Notifications" />
-              <TabButton id="display" icon={Globe} label="Display" />
+              <TabButton id="personal" icon={User} label={t.tabs.personal} />
+              <TabButton id="security" icon={Lock} label={t.tabs.security} />
+              <TabButton
+                id="achievements"
+                icon={Trophy}
+                label={t.tabs.achievements}
+              />
+              <TabButton id="family" icon={Users} label={t.tabs.family} />
+              <TabButton
+                id="notifications"
+                icon={Bell}
+                label={t.tabs.notifications}
+              />
+              <TabButton id="display" icon={Globe} label={t.tabs.display} />
             </CardContent>
           </Card>
         </div>
@@ -399,7 +413,9 @@ export default function ProfilePage() {
                   </h2>
                   <p className="text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest text-xs transition-colors duration-300">
                     {userProfile?.plan || "Free"} Plan •{" "}
-                    {userProfile?.isVerified ? "Verified" : "Unverified"}
+                    {userProfile?.isVerified
+                      ? t.statusVerified
+                      : t.statusUnverified}
                   </p>
                 </div>
               </div>
@@ -409,7 +425,7 @@ export default function ProfilePage() {
               {activeTab === "personal" && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-right-4 duration-500">
                   <div className="space-y-2">
-                    <Label className="font-bold">Full Name</Label>
+                    <Label className="font-bold">{t.fullName}</Label>
                     <Input
                       value={profileForm.name}
                       onChange={(e) =>
@@ -419,7 +435,7 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="font-bold">Phone Number</Label>
+                    <Label className="font-bold">{t.phoneNumber}</Label>
                     <Input
                       value={profileForm.phoneNumber}
                       onChange={(e) =>
@@ -433,7 +449,7 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="font-bold">Email</Label>
+                    <Label className="font-bold">{t.email}</Label>
                     <Input
                       value={userProfile?.email || ""}
                       readOnly
@@ -441,7 +457,7 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="font-bold">Birth Date</Label>
+                    <Label className="font-bold">{t.birthDate}</Label>
                     <Input
                       type="date"
                       value={profileForm.birthDate}
@@ -455,7 +471,7 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="font-bold">Gender</Label>
+                    <Label className="font-bold">{t.gender}</Label>
                     <Select
                       value={profileForm.gender}
                       onValueChange={(v) =>
@@ -463,11 +479,11 @@ export default function ProfilePage() {
                       }
                     >
                       <SelectTrigger className="rounded-2xl h-12">
-                        <SelectValue placeholder="Select Gender" />
+                        <SelectValue placeholder={t.genderPlaceholder} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="MALE">Male</SelectItem>
-                        <SelectItem value="FEMALE">Female</SelectItem>
+                        <SelectItem value="MALE">{t.genderMale}</SelectItem>
+                        <SelectItem value="FEMALE">{t.genderFemale}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -477,7 +493,11 @@ export default function ProfilePage() {
                       disabled={isSaving}
                       className="w-full md:w-auto rounded-full bg-emerald-600 font-bold"
                     >
-                      {isSaving ? "Saving..." : "Save Changes"}
+                      {isSaving
+                        ? language === "id"
+                          ? "Menyimpan..."
+                          : "Saving..."
+                        : t.saveBtn}
                     </Button>
                   </div>
                 </div>
@@ -488,9 +508,11 @@ export default function ProfilePage() {
                 <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-4">
-                      <h3 className="font-black text-lg">Change Password</h3>
+                      <h3 className="font-black text-lg">
+                        {t.security.changePwd}
+                      </h3>
                       <div className="space-y-2">
-                        <Label>Current Password</Label>
+                        <Label>{t.security.currentPwd}</Label>
                         <PasswordInput
                           value={passwordForm.currentPassword}
                           onChange={(e) =>
@@ -503,7 +525,7 @@ export default function ProfilePage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>New Password</Label>
+                        <Label>{t.security.newPwd}</Label>
                         <PasswordInput
                           value={passwordForm.newPassword}
                           onChange={(e) =>
@@ -516,7 +538,7 @@ export default function ProfilePage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>Confirm Password</Label>
+                        <Label>{t.security.confirmPwd}</Label>
                         <PasswordInput
                           value={passwordForm.confirmPassword}
                           onChange={(e) =>
@@ -533,20 +555,24 @@ export default function ProfilePage() {
                         disabled={isSaving}
                         className="rounded-full bg-emerald-600 font-bold"
                       >
-                        Update Password
+                        {isSaving
+                          ? language === "id"
+                            ? "Memperbarui..."
+                            : "Updating..."
+                          : t.security.updateBtn}
                       </Button>
                     </div>
                     <div className="space-y-4">
                       <h3 className="font-black text-lg">
-                        Two-Factor Authentication
+                        {t.security.twoFactor}
                       </h3>
                       <div className="bg-emerald-50 dark:bg-emerald-900/10 p-6 rounded-2xl flex items-center justify-between">
                         <div>
                           <p className="font-bold text-emerald-900 dark:text-emerald-400">
-                            Enable 2FA
+                            {t.security.enableBtn}
                           </p>
                           <p className="text-sm text-emerald-700">
-                            Secure your account
+                            {t.security.twoFactorDesc}
                           </p>
                         </div>
                         <Toggle
@@ -565,7 +591,7 @@ export default function ProfilePage() {
               {activeTab === "notifications" && (
                 <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
                   <h3 className="font-black text-lg">
-                    Notification Preferences
+                    {t.notifications.title.replace(/<[^>]*>/g, "")}
                   </h3>
                   {["emailNotif", "pushNotif", "marketingNotif"].map((key) => (
                     <div
@@ -592,22 +618,22 @@ export default function ProfilePage() {
               {activeTab === "display" && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
                   <h3 className="text-lg font-black text-slate-800 dark:text-white pb-2 border-b border-border">
-                    Display Settings
+                    {t.display.title.replace(/<[^>]*>/g, "")}
                   </h3>
 
                   <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
                     {/* Theme Selector */}
                     <div className="space-y-4">
                       <Label className="font-bold text-slate-700 dark:text-slate-300 ml-1 text-base">
-                        Appearance
+                        {t.display.appearance}
                       </Label>
                       <p className="text-sm text-slate-500 font-medium mb-4">
-                        Customize how Home Sweet Loan looks on your device.
+                        {t.display.appearanceDesc}
                       </p>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         {[
-                          { id: "light", label: "Light Mode", icon: Sun },
-                          { id: "dark", label: "Dark Mode", icon: Moon },
+                          { id: "light", label: t.display.light, icon: Sun },
+                          { id: "dark", label: t.display.dark, icon: Moon },
                         ].map((item) => (
                           <button
                             key={item.id}
@@ -653,12 +679,12 @@ export default function ProfilePage() {
                         {[
                           {
                             code: "id",
-                            label: "Indonesia",
+                            label: t.display.indonesia,
                             flag: "https://flagcdn.com/w40/id.png",
                           },
                           {
                             code: "en",
-                            label: "English",
+                            label: t.display.english,
                             flag: "https://flagcdn.com/w40/us.png",
                           },
                         ].map((lang) => (
@@ -695,7 +721,7 @@ export default function ProfilePage() {
                 <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
                   <div className="flex items-center justify-between pb-2 border-b border-border">
                     <h3 className="text-lg font-black text-slate-800 dark:text-white">
-                      Achievements
+                      {t.achievements.title.replace(/<[^>]*>/g, "")}
                     </h3>
                     <div className="flex items-center gap-2 px-3 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-500 rounded-full text-xs font-bold border border-amber-200 dark:border-amber-800">
                       <Trophy className="w-3.5 h-3.5" />
@@ -709,7 +735,7 @@ export default function ProfilePage() {
                     <div className="relative z-10 flex items-center justify-between mb-6">
                       <div>
                         <p className="text-emerald-100 font-bold text-xs uppercase tracking-wider mb-1">
-                          Current Level
+                          {t.achievements.level}
                         </p>
                         <h2 className="text-3xl font-black">
                           Financial Guru{" "}
@@ -731,7 +757,7 @@ export default function ProfilePage() {
                           {new Intl.NumberFormat("id-ID").format(
                             achievementsData?.totalPoints || 0
                           )}{" "}
-                          Points
+                          {language === "id" ? "Poin" : "Points"}
                         </span>
                         <span>
                           {new Intl.NumberFormat("id-ID").format(
@@ -758,7 +784,7 @@ export default function ProfilePage() {
                   <div>
                     <h4 className="font-bold text-slate-700 dark:text-slate-300 mb-4 flex items-center gap-2">
                       <Medal className="w-5 h-5 text-emerald-500" />
-                      Badges Collection
+                      {t.achievements.badges}
                     </h4>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                       {achievementsData?.achievements?.map(
@@ -807,7 +833,9 @@ export default function ProfilePage() {
                       {(!achievementsData?.achievements ||
                         achievementsData.achievements.length === 0) && (
                         <div className="col-span-full p-8 text-center text-slate-500 border border-dashed rounded-2xl">
-                          No achievements found.
+                          {language === "id"
+                            ? "Belum ada pencapaian."
+                            : "No achievements found."}
                         </div>
                       )}
                     </div>
@@ -820,14 +848,14 @@ export default function ProfilePage() {
                 <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="font-black text-lg">Family Members</h3>
+                      <h3 className="font-black text-lg">{t.family.members}</h3>
                       <p className="text-sm text-slate-500">
-                        Manage your family group and permissions
+                        {t.family.subtitle}
                       </p>
                     </div>
                     <ResponsiveModal
-                      title="Invite Family Member"
-                      description="Add a new member to your financial circle."
+                      title={t.family.addMemberTitle}
+                      description={t.family.addMemberDesc}
                       trigger={
                         <Button className="rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-10 px-6">
                           <Plus className="w-4 h-4 mr-2" /> Invite Member
@@ -837,11 +865,11 @@ export default function ProfilePage() {
                       <div className="grid gap-5">
                         <div className="grid gap-2">
                           <Label htmlFor="i-name" className="font-bold ml-1">
-                            Full Name
+                            {t.family.nameLabel}
                           </Label>
                           <Input
                             id="i-name"
-                            placeholder="e.g. Sarah Smith"
+                            placeholder={t.family.namePlaceholder}
                             value={inviteForm.name}
                             onChange={(e) =>
                               setInviteForm({
@@ -854,12 +882,12 @@ export default function ProfilePage() {
                         </div>
                         <div className="grid gap-2">
                           <Label htmlFor="i-email" className="font-bold ml-1">
-                            Email
+                            {t.family.emailLabel}
                           </Label>
                           <Input
                             id="i-email"
                             type="email"
-                            placeholder="email@example.com"
+                            placeholder={t.family.emailPlaceholder}
                             value={inviteForm.email}
                             onChange={(e) =>
                               setInviteForm({
@@ -876,7 +904,7 @@ export default function ProfilePage() {
                               htmlFor="i-relation"
                               className="font-bold ml-1"
                             >
-                              Relation
+                              {t.family.relationLabel}
                             </Label>
                             <Select
                               value={inviteForm.relation}
@@ -885,20 +913,32 @@ export default function ProfilePage() {
                               }
                             >
                               <SelectTrigger className="rounded-2xl h-12">
-                                <SelectValue placeholder="Select" />
+                                <SelectValue
+                                  placeholder={t.family.relationPlaceholder}
+                                />
                               </SelectTrigger>
                               <SelectContent className="rounded-2xl">
-                                <SelectItem value="Spouse">Spouse</SelectItem>
-                                <SelectItem value="Child">Child</SelectItem>
-                                <SelectItem value="Parent">Parent</SelectItem>
-                                <SelectItem value="Sibling">Sibling</SelectItem>
-                                <SelectItem value="Other">Other</SelectItem>
+                                <SelectItem value="Spouse">
+                                  {t.family.relationSpouse}
+                                </SelectItem>
+                                <SelectItem value="Child">
+                                  {t.family.relationChild}
+                                </SelectItem>
+                                <SelectItem value="Parent">
+                                  {t.family.relationParent}
+                                </SelectItem>
+                                <SelectItem value="Sibling">
+                                  {t.family.relationSibling}
+                                </SelectItem>
+                                <SelectItem value="Other">
+                                  {t.family.relationOther}
+                                </SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
                           <div className="grid gap-2">
                             <Label htmlFor="i-role" className="font-bold ml-1">
-                              Role
+                              {t.family.roleLabel}
                             </Label>
                             <Select
                               value={inviteForm.role}
@@ -907,10 +947,14 @@ export default function ProfilePage() {
                               }
                             >
                               <SelectTrigger className="rounded-2xl h-12">
-                                <SelectValue placeholder="Select" />
+                                <SelectValue
+                                  placeholder={t.family.rolePlaceholder}
+                                />
                               </SelectTrigger>
                               <SelectContent className="rounded-2xl">
-                                <SelectItem value="MEMBER">Member</SelectItem>
+                                <SelectItem value="MEMBER">
+                                  {language === "id" ? "Anggota" : "Member"}
+                                </SelectItem>
                                 <SelectItem value="ADMIN">Admin</SelectItem>
                               </SelectContent>
                             </Select>
@@ -918,7 +962,7 @@ export default function ProfilePage() {
                         </div>
                         <div className="grid gap-2">
                           <Label htmlFor="i-limit" className="font-bold ml-1">
-                            Monthly Spend Limit
+                            {t.family.limitLabel}
                           </Label>
                           <Input
                             id="i-limit"
@@ -939,7 +983,13 @@ export default function ProfilePage() {
                           disabled={isInviting}
                           className="w-full rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-12 mt-2"
                         >
-                          {isInviting ? "Sending Invite..." : "Send Invitation"}
+                          {isInviting
+                            ? language === "id"
+                              ? "Mengirim Undangan..."
+                              : "Sending Invite..."
+                            : language === "id"
+                            ? "Kirim Undangan"
+                            : "Send Invitation"}
                         </Button>
                       </div>
                     </ResponsiveModal>
@@ -985,7 +1035,9 @@ export default function ProfilePage() {
                     {(!userProfile?.members ||
                       userProfile.members.length === 0) && (
                       <p className="text-center text-gray-500 py-10">
-                        No family members found.
+                        {language === "id"
+                          ? "Tidak ada anggota keluarga."
+                          : "No family members found."}
                       </p>
                     )}
                   </div>

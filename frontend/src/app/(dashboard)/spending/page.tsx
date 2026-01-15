@@ -114,13 +114,13 @@ export default function SpendingPage() {
         .toLowerCase()
         .includes(searchQuery.toLowerCase());
 
-      if (filterCategory === "All") return matchesSearch;
+      const isIncome = !!setup?.incomeSources?.includes(item.category);
+      const matchesCategory =
+        filterCategory === "All" || item.category === filterCategory;
 
-      const matchesCategory = item.category === filterCategory;
-
-      return matchesSearch && matchesCategory;
+      return matchesSearch && matchesCategory && !isIncome;
     });
-  }, [spending, searchQuery, filterCategory]);
+  }, [spending, searchQuery, filterCategory, setup]);
 
   const handleSave = async () => {
     const result = transactionSchema.safeParse(formData);
@@ -377,19 +377,19 @@ export default function SpendingPage() {
                 filteredTransactions.map((item, idx) => {
                   // Logic to determine icon and color based on category/amount
                   // If it's in incomeSources -> Income (+), otherwise Expense (-)
-                  const isIncome =
-                    setup?.incomeSources?.includes(item.category) ||
-                    (item.amount > 0 &&
-                      !setup?.needs?.includes(item.category) &&
-                      !setup?.wants?.includes(item.category) &&
-                      !setup?.savings?.includes(item.category));
+                  const isIncome = !!setup?.incomeSources?.includes(
+                    item.category
+                  );
+                  const isSavings = !!setup?.savings?.includes(item.category);
+                  const isAsset = !!setup?.accountAssets?.includes(
+                    item.category
+                  );
 
-                  const colorClass = isIncome
-                    ? "text-emerald-600"
-                    : "text-rose-600";
-                  const bgClass = isIncome
-                    ? "bg-emerald-50 dark:bg-emerald-950/20"
-                    : "bg-rose-50 dark:bg-rose-950/20";
+                  // Colors based on category type
+                  let typeColor = "text-rose-600 dark:text-rose-400";
+                  if (isIncome) typeColor = "text-emerald-600";
+                  if (isSavings) typeColor = "text-sky-600";
+                  if (isAsset) typeColor = "text-violet-600";
 
                   return (
                     <div
@@ -406,22 +406,46 @@ export default function SpendingPage() {
                         <h4 className="font-bold text-sm text-slate-800 dark:text-white leading-none mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors uppercase tracking-tight">
                           {item.description}
                         </h4>
-                        <p className="text-xs text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest leading-none mt-1">
-                          {item.category} •{" "}
-                          {format(new Date(item.date), "MMM dd, HH:mm")}
-                        </p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span
+                            className={cn(
+                              "text-[9px] font-black uppercase px-1.5 py-0.5 rounded",
+                              isIncome
+                                ? "bg-emerald-100 text-emerald-700"
+                                : isSavings
+                                ? "bg-sky-100 text-sky-700"
+                                : isAsset
+                                ? "bg-violet-100 text-violet-700"
+                                : "bg-rose-100 text-rose-700"
+                            )}
+                          >
+                            {isIncome
+                              ? translations[language].dashboard.summary
+                                  .badgeIncome
+                              : isSavings
+                              ? translations[language].dashboard.summary
+                                  .badgeSavings
+                              : isAsset
+                              ? translations[language].dashboard.summary
+                                  .badgeAsset
+                              : translations[language].dashboard.summary
+                                  .badgeSpending}
+                          </span>
+                          <p className="text-xs text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest leading-none">
+                            {item.category} •{" "}
+                            {format(new Date(item.date), "dd MMM")}
+                          </p>
+                        </div>
                       </div>
                       <div
                         className={cn(
-                          "font-black text-sm text-right flex items-center gap-4",
-                          isIncome
-                            ? "text-emerald-600"
-                            : "text-rose-600 dark:text-rose-400"
+                          "font-black text-sm text-right flex items-center gap-4 transition-colors duration-300",
+                          typeColor
                         )}
                       >
                         <div className="tabular-nums">
-                          {isIncome ? "+" : "-"} Rp{" "}
-                          {Math.abs(item.amount).toLocaleString("id-ID")}
+                          {item.amount > 0 ? "+" : "-"} Rp{" "}
+                          {Math.abs(item.amount).toLocaleString()}
                         </div>
 
                         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">

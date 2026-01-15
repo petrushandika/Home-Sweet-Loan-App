@@ -35,7 +35,16 @@ export class NotificationsService {
     userId: string,
     title: string,
     message: string,
-    type: 'INFO' | 'SUCCESS' | 'WARNING' | 'ERROR' | 'PAYMENT' | 'SYSTEM' = 'INFO',
+    type:
+      | 'INFO'
+      | 'SUCCESS'
+      | 'WARNING'
+      | 'ERROR'
+      | 'PAYMENT'
+      | 'SYSTEM'
+      | 'BUDGET'
+      | 'ASSET' = 'INFO',
+    metadata: any = {},
   ) {
     const notification = await this.prisma.notification.create({
       data: {
@@ -43,6 +52,7 @@ export class NotificationsService {
         title,
         message,
         type,
+        metadata,
       },
     });
 

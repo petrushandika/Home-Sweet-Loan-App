@@ -3,9 +3,14 @@ import { PrismaService } from '@/config/prisma.service';
 import { CreateBudgetDto } from './dto/create-budget.dto';
 import { UpdateBudgetDto } from './dto/update-budget.dto';
 
+import { NotificationsService } from '../notifications/notifications.service';
+
 @Injectable()
 export class BudgetsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private notifications: NotificationsService,
+  ) {}
 
   async findAll(userId: string, year?: number, month?: number) {
     const where: any = { userId };
@@ -91,16 +96,27 @@ export class BudgetsService {
   }
 
   async create(userId: string, createBudgetDto: CreateBudgetDto) {
-    return this.prisma.budget.create({
+    const budget = await this.prisma.budget.create({
       data: {
         userId,
         ...createBudgetDto,
       },
     });
+
+    // Log Activity
+    await this.notifications.create(
+      userId,
+      'Budget Created',
+      `Created budget plan for ${createBudgetDto.yearMonth}`,
+      'BUDGET',
+      { yearMonth: createBudgetDto.yearMonth },
+    );
+
+    return budget;
   }
 
   async update(userId: string, yearMonth: string, updateBudgetDto: UpdateBudgetDto) {
-    return this.prisma.budget.update({
+    const updated = await this.prisma.budget.update({
       where: {
         userId_yearMonth: {
           userId,
@@ -109,6 +125,31 @@ export class BudgetsService {
       },
       data: updateBudgetDto,
     });
+
+    // Log Activity based on what was updated
+    let activityTitle = 'Budget Updated';
+    let activityMsg = `Updated budget for ${yearMonth}`;
+
+    if (updateBudgetDto.income && Object.keys(updateBudgetDto.income).length > 0) {
+      activityTitle = 'Income Updated';
+      activityMsg = `Updated income sources for ${yearMonth}`;
+    } else if (updateBudgetDto.expenses && Object.keys(updateBudgetDto.expenses).length > 0) {
+      activityTitle = 'Budget Allocation';
+      activityMsg = `Updated expense allocations for ${yearMonth}`;
+    } else if (
+      updateBudgetDto.savingsAllocation &&
+      Object.keys(updateBudgetDto.savingsAllocation).length > 0
+    ) {
+      activityTitle = 'Savings Updated';
+      activityMsg = `Updated savings plan for ${yearMonth}`;
+    }
+
+    await this.notifications.create(userId, activityTitle, activityMsg, 'BUDGET', {
+      yearMonth,
+      update: updateBudgetDto,
+    });
+
+    return updated;
   }
 
   async remove(userId: string, yearMonth: string) {

@@ -3,9 +3,14 @@ import { PrismaService } from '@/config/prisma.service';
 import { CreateAssetDto } from './dto/create-asset.dto';
 import { UpdateAssetDto } from './dto/update-asset.dto';
 
+import { NotificationsService } from '../notifications/notifications.service';
+
 @Injectable()
 export class AssetsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private notifications: NotificationsService,
+  ) {}
 
   async findAll(userId: string) {
     const assets = await this.prisma.asset.findMany({
@@ -41,19 +46,41 @@ export class AssetsService {
   }
 
   async create(userId: string, data: CreateAssetDto) {
-    return (this.prisma.asset as any).create({
+    const asset = await (this.prisma.asset as any).create({
       data: {
         userId,
         ...data,
       },
     });
+
+    // Log Activity
+    await this.notifications.create(
+      userId,
+      'Asset Registered',
+      `Registered a new asset: ${data.description}`,
+      'ASSET',
+      { assetId: asset.id, value: data.value, type: data.type },
+    );
+
+    return asset;
   }
 
   async update(id: string, userId: string, data: UpdateAssetDto) {
-    return (this.prisma.asset as any).update({
+    const asset = await (this.prisma.asset as any).update({
       where: { id, userId },
       data,
     });
+
+    // Log Activity
+    await this.notifications.create(
+      userId,
+      'Asset Updated',
+      `Updated asset details: ${asset.description}`,
+      'ASSET',
+      { assetId: asset.id, value: asset.value, type: asset.type },
+    );
+
+    return asset;
   }
 
   async remove(id: string, userId: string) {
