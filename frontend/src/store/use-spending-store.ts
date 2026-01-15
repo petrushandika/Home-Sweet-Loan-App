@@ -43,7 +43,7 @@ export const useSpendingStore = create<SpendingStore>((set, get) => ({
       set({ isLoading: true, error: null });
     }
     try {
-      const data = await getSpending();
+      const data = await getSpending({ limit: 1000 });
       set({ spending: data.spending, isLoading: false });
     } catch (error: any) {
       set({ error: error.message, isLoading: false });

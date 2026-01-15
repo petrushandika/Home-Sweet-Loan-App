@@ -62,11 +62,53 @@ export default function SetupPage() {
     fetchSetup();
   }, []);
 
-  const handleSaveCategory = () => {
-    toast.success("Category Saved", {
-      description:
-        "Successfully added new category to your financial workspace.",
-    });
+  // State for Add Modal
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [addFormData, setAddFormData] = useState({
+    name: "",
+    type: "",
+  });
+
+  const handleSaveCategory = async () => {
+    if (!addFormData.name || !addFormData.type) {
+      toast.error("Incomplete", {
+        description: "Please fill in all fields.",
+      });
+      return;
+    }
+
+    // Map user-friendly types to backend store keys
+    // Backend Enum: accountSummary, incomeSources, needs, wants, savings, accountAssets
+    const categoryMap: Record<string, string> = {
+      account: "accountSummary", // Added account mapping
+      income: "incomeSources",
+      needs: "needs",
+      wants: "wants",
+      savings: "savings",
+      assets: "accountAssets",
+    };
+
+    const storeKey = categoryMap[addFormData.type];
+
+    if (!storeKey) {
+      toast.error("Invalid Type", {
+        description: "Please select a valid category type.",
+      });
+      return;
+    }
+
+    try {
+      await addItem(storeKey, addFormData.name);
+
+      setIsAddModalOpen(false);
+      setAddFormData({ name: "", type: "" });
+
+      toast.success("Item Added", {
+        description: `Successfully added ${addFormData.name} to ${addFormData.type}.`,
+      });
+    } catch (error: any) {
+      toast.error("Failed to add", { description: error.message });
+    }
   };
 
   const handleRemove = async (categoryId: string, itemName: string) => {
@@ -210,6 +252,8 @@ export default function SetupPage() {
         </div>
 
         <ResponsiveModal
+          open={isAddModalOpen}
+          onOpenChange={setIsAddModalOpen}
           title={t.modalTitle}
           description={t.modalDesc}
           trigger={
@@ -230,6 +274,10 @@ export default function SetupPage() {
                 id="name"
                 placeholder={t.form.namePlaceholder}
                 className="rounded-2xl border-border dark:bg-slate-900 focus-visible:ring-emerald-500 h-11"
+                value={addFormData.name}
+                onChange={(e) =>
+                  setAddFormData({ ...addFormData, name: e.target.value })
+                }
               />
             </div>
             <div className="grid gap-2">
@@ -239,11 +287,19 @@ export default function SetupPage() {
               >
                 {t.form.type}
               </Label>
-              <Select>
+              <Select
+                value={addFormData.type}
+                onValueChange={(val) =>
+                  setAddFormData({ ...addFormData, type: val })
+                }
+              >
                 <SelectTrigger className="rounded-2xl border-border dark:bg-slate-900 focus:ring-emerald-500 h-11">
                   <SelectValue placeholder={t.form.typePlaceholder} />
                 </SelectTrigger>
                 <SelectContent className="rounded-2xl border-border dark:bg-slate-900">
+                  <SelectItem value="account" className="cursor-pointer">
+                    Account (Wallet/Bank)
+                  </SelectItem>
                   <SelectItem value="income" className="cursor-pointer">
                     Income Source
                   </SelectItem>

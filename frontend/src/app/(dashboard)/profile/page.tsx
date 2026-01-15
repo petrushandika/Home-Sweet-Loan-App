@@ -27,21 +27,25 @@ import {
   Medal,
   Plus,
   Shield,
+  Loader2,
 } from "lucide-react";
 import { useLanguageStore, translations } from "@/store/use-language-store";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useTheme } from "next-themes";
+import { useAuthStore } from "@/store/use-auth-store";
 
 export default function ProfilePage() {
   const { language, setLanguage } = useLanguageStore();
   const { theme, setTheme } = useTheme();
+  const { user } = useAuthStore();
   const t = translations[language].dashboard.profile;
   const [mounted, setMounted] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("personal");
   const [avatar, setAvatar] = useState(
-    "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&h=200&q=80"
+    user?.avatarUrl ||
+      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&h=200&q=80"
   );
 
   // Mock states for form fields
@@ -53,6 +57,12 @@ export default function ProfilePage() {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (user?.avatarUrl) {
+      setAvatar(user.avatarUrl);
+    }
+  }, [user]);
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -307,7 +317,7 @@ export default function ProfilePage() {
                 </div>
                 <div className="text-center md:text-left space-y-1">
                   <h2 className="text-2xl font-black text-slate-900 dark:text-white transition-colors duration-300">
-                    User Petrus
+                    {user?.name || "User"}
                   </h2>
                   <p className="text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest text-xs transition-colors duration-300">
                     Verified Account • Basic Plan
@@ -337,7 +347,8 @@ export default function ProfilePage() {
                       <User className="absolute left-4 top-3.5 w-5 h-5 text-slate-400 transition-colors duration-300" />
                       <Input
                         className="h-12 pl-12 rounded-2xl border-border bg-slate-50/30 font-medium focus:ring-emerald-500 transition-all duration-300"
-                        placeholder="Petrus Handika"
+                        placeholder="Full Name"
+                        defaultValue={user?.name || ""}
                       />
                     </div>
                   </div>
@@ -347,7 +358,8 @@ export default function ProfilePage() {
                     </Label>
                     <Input
                       className="h-12 rounded-2xl border-border bg-slate-50/30 font-medium focus:ring-emerald-500 transition-all duration-300"
-                      placeholder="Petrus"
+                      placeholder="Display Name"
+                      defaultValue={user?.name?.split(" ")[0] || ""}
                     />
                   </div>
                   <div className="space-y-2">
@@ -358,7 +370,7 @@ export default function ProfilePage() {
                       <Mail className="absolute left-4 top-3.5 w-5 h-5 text-slate-400 transition-colors duration-300" />
                       <Input
                         className="h-12 pl-12 rounded-2xl border-border bg-slate-50/30 font-medium cursor-not-allowed opacity-70 transition-all duration-300"
-                        value="petrus@homesweetloan.com"
+                        value={user?.email || ""}
                         readOnly
                       />
                     </div>
