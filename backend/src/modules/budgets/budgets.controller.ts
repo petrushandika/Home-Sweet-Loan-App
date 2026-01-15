@@ -12,6 +12,7 @@ import { ResponseMessage } from '@/common/decorators/response-message.decorator'
 export class BudgetsController {
   constructor(private readonly budgetsService: BudgetsService) {}
 
+  @Get()
   @ResponseMessage('Budgets retrieved successfully')
   async findAll(
     @CurrentUser() user: any,

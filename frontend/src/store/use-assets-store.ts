@@ -143,10 +143,10 @@ const calculateSummary = (
 ): AssetsSummary => {
   const liquid = assets
     .filter((a) => a.type === "LIQUID")
-    .reduce((acc, curr) => acc + curr.value, 0);
+    .reduce((acc, curr) => acc + Number(curr.value), 0);
   const nonLiquid = assets
     .filter((a) => a.type === "NON_LIQUID")
-    .reduce((acc, curr) => acc + curr.value, 0);
+    .reduce((acc, curr) => acc + Number(curr.value), 0);
 
   const totalAssets = liquid + nonLiquid;
   const target = previousSummary?.target || 0;

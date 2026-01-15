@@ -12,6 +12,9 @@ import { ResponseMessage } from '@/common/decorators/response-message.decorator'
 export class SpendingController {
   constructor(private readonly spendingService: SpendingService) {}
 
+  @Get()
+  @ApiOperation({ summary: 'Get all spending records' })
+  @ApiResponse({ status: 200, description: 'Return all spending records' })
   @ResponseMessage('Spending records retrieved successfully')
   async findAll(@CurrentUser() user: any, @Query() filters: any) {
     return this.spendingService.findAll(user.id, filters);

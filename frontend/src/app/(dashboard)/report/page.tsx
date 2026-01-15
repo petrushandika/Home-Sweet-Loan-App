@@ -89,13 +89,13 @@ export default function ReportPage() {
       if (budgetData) {
         Object.entries(budgetData.expenses || {}).forEach(([name, amount]) => {
           if (!itemMetrics[name]) itemMetrics[name] = { budget: 0, actual: 0 };
-          itemMetrics[name].budget += amount;
+          itemMetrics[name].budget += Number(amount);
         });
         Object.entries(budgetData.savingsAllocation || {}).forEach(
           ([name, amount]) => {
             if (!itemMetrics[name])
               itemMetrics[name] = { budget: 0, actual: 0 };
-            itemMetrics[name].budget += amount;
+            itemMetrics[name].budget += Number(amount);
           }
         );
       }
@@ -104,7 +104,7 @@ export default function ReportPage() {
       spendingData.spending.forEach((s) => {
         const name = s.category; // Assuming category field holds item name
         if (!itemMetrics[name]) itemMetrics[name] = { budget: 0, actual: 0 };
-        itemMetrics[name].actual += s.amount;
+        itemMetrics[name].actual += Number(s.amount);
       });
 
       const processedBarData = Object.entries(itemMetrics)
@@ -129,11 +129,11 @@ export default function ReportPage() {
 
       spendingData.spending.forEach((s) => {
         const name = s.category;
-        if (setupData.needs.includes(name)) categoryTotals.Needs += s.amount;
-        else if (setupData.wants.includes(name))
-          categoryTotals.Wants += s.amount;
+        const amount = Number(s.amount);
+        if (setupData.needs.includes(name)) categoryTotals.Needs += amount;
+        else if (setupData.wants.includes(name)) categoryTotals.Wants += amount;
         else if (setupData.savings.includes(name))
-          categoryTotals.Savings += s.amount;
+          categoryTotals.Savings += amount;
       });
 
       const processedPieData = [

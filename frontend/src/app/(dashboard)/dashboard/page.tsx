@@ -55,6 +55,8 @@ import { getSpending, createSpending } from "@/lib/api/spending";
 import { getAssets } from "@/lib/api/assets";
 import { format } from "date-fns";
 
+import { useSetupStore } from "@/store/use-setup-store";
+
 const chartConfig = {
   income: {
     label: "Income",
@@ -72,6 +74,9 @@ export default function DashboardPage() {
   const { query: searchQuery } = useSearchStore();
   const [mounted, setMounted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Global Setup for Categories
+  const { setup, fetchSetup } = useSetupStore();
 
   // Data State
   const [summaryStats, setSummaryStats] = useState({
@@ -98,8 +103,28 @@ export default function DashboardPage() {
 
   useEffect(() => {
     setMounted(true);
+    fetchSetup();
     fetchDashboardData();
   }, []);
+
+  const categoryOptions = useMemo(() => {
+    if (!setup) return [];
+    return [
+      ...setup.incomeSources.map((s) => ({
+        label: s,
+        value: s,
+        type: "Income",
+      })),
+      ...setup.needs.map((n) => ({ label: n, value: n, type: "Needs" })),
+      ...setup.wants.map((w) => ({ label: w, value: w, type: "Wants" })),
+      ...setup.savings.map((s) => ({ label: s, value: s, type: "Savings" })),
+      ...setup.accountAssets.map((a) => ({
+        label: a,
+        value: a,
+        type: "Assets",
+      })),
+    ];
+  }, [setup]);
 
   const fetchDashboardData = async () => {
     try {
@@ -146,20 +171,20 @@ export default function DashboardPage() {
         limit: 1000,
       });
       const totalSpendingReal = currentMonthSpendingRes.spending.reduce(
-        (acc: number, curr: any) => acc + curr.amount,
+        (acc: number, curr: any) => acc + Number(curr.amount),
         0
       );
 
       const totalSavings = assetsRes.liquidAssets.reduce(
-        (acc: number, curr: any) => acc + curr.value,
+        (acc: number, curr: any) => acc + Number(curr.value),
         0
       );
 
       setSummaryStats({
-        income: totalIncome,
+        income: Number(totalIncome),
         spending: totalSpendingReal,
-        savings: assetsRes.summary.totalLiquidAssets,
-        netWorth: assetsRes.summary.totalAssets,
+        savings: Number(assetsRes.summary.totalLiquidAssets),
+        netWorth: Number(assetsRes.summary.totalAssets),
         incomeTrend: incomeTrend,
         spendingTrend: "+0%",
         savingsTrend: "+0%",
@@ -206,9 +231,14 @@ export default function DashboardPage() {
     }
 
     try {
+      const isIncome = setup?.incomeSources.includes(quickAddForm.category);
+      const finalAmount = isIncome
+        ? Math.abs(Number(quickAddForm.amount))
+        : -Math.abs(Number(quickAddForm.amount));
+
       await createSpending({
         description: quickAddForm.description,
-        amount: Number(quickAddForm.amount),
+        amount: finalAmount,
         category: quickAddForm.category,
         date: new Date(quickAddForm.date).toISOString(),
       });
@@ -333,18 +363,32 @@ export default function DashboardPage() {
                   >
                     {t.catLabel}
                   </Label>
-                  <Input
-                    id="category" // Simplified for MVP Quick Add - can be select if we fetch categories
-                    placeholder="Food, Transport..."
-                    className="rounded-2xl border-border dark:bg-slate-900 focus-visible:ring-emerald-500 h-11 transition-all duration-300"
+                  <Select
                     value={quickAddForm.category}
-                    onChange={(e) =>
-                      setQuickAddForm({
-                        ...quickAddForm,
-                        category: e.target.value,
-                      })
+                    onValueChange={(val) =>
+                      setQuickAddForm({ ...quickAddForm, category: val })
                     }
-                  />
+                  >
+                    <SelectTrigger className="rounded-2xl border-border dark:bg-slate-900 focus:ring-emerald-500 h-11 transition-all duration-300">
+                      <SelectValue placeholder="Select Category" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-2xl border-border dark:bg-slate-900 max-h-60">
+                      {categoryOptions.map((opt) => (
+                        <SelectItem
+                          key={`${opt.type}-${opt.value}`}
+                          value={opt.value}
+                          className="cursor-pointer"
+                        >
+                          <span className="flex items-center gap-2">
+                            <span className="text-[10px] uppercase font-black px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500">
+                              {opt.type}
+                            </span>
+                            {opt.label}
+                          </span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
               <div className="grid gap-2">

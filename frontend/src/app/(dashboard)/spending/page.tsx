@@ -95,12 +95,35 @@ export default function SpendingPage() {
       const matchesSearch = item.description
         .toLowerCase()
         .includes(searchQuery.toLowerCase());
-      // Mapping categories for filter
-      const matchesCategory =
-        filterCategory === "All" || item.category === filterCategory;
+
+      if (filterCategory === "All") return matchesSearch;
+      if (!setup) return matchesSearch;
+
+      let matchesCategory = false;
+
+      switch (filterCategory) {
+        case "Income":
+          matchesCategory = setup.incomeSources.includes(item.category);
+          break;
+        case "Needs":
+          matchesCategory = setup.needs.includes(item.category);
+          break;
+        case "Wants":
+          matchesCategory = setup.wants.includes(item.category);
+          break;
+        case "Savings":
+          matchesCategory = setup.savings.includes(item.category);
+          break;
+        case "Assets":
+          matchesCategory = setup.accountAssets.includes(item.category);
+          break;
+        default:
+          matchesCategory = item.category === filterCategory;
+      }
+
       return matchesSearch && matchesCategory;
     });
-  }, [spending, searchQuery, filterCategory]);
+  }, [spending, searchQuery, filterCategory, setup]);
 
   const handleSave = async () => {
     if (!formData.description || !formData.amount || !formData.category) {
@@ -111,9 +134,14 @@ export default function SpendingPage() {
     }
 
     try {
+      const isIncome = setup?.incomeSources.includes(formData.category);
+      const finalAmount = isIncome
+        ? Math.abs(Number(formData.amount))
+        : -Math.abs(Number(formData.amount));
+
       await addSpending({
         description: formData.description,
-        amount: Number(formData.amount),
+        amount: finalAmount,
         category: formData.category,
         date: formData.date,
       });
@@ -170,9 +198,14 @@ export default function SpendingPage() {
       return;
 
     try {
+      const isIncome = setup?.incomeSources.includes(formData.category);
+      const finalAmount = isIncome
+        ? Math.abs(Number(formData.amount))
+        : -Math.abs(Number(formData.amount));
+
       await updateSpending(editingTransaction.id, {
         description: formData.description,
-        amount: Number(formData.amount),
+        amount: finalAmount,
         category: formData.category,
         date: formData.date,
       });

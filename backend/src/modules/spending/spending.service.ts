@@ -9,6 +9,9 @@ export class SpendingService {
 
   async findAll(userId: string, filters?: any) {
     const where: any = { userId };
+    const limit = filters?.limit ? Number(filters.limit) : 50;
+    const page = filters?.page ? Number(filters.page) : 1;
+    const skip = (page - 1) * limit;
 
     if (filters?.startDate || filters?.endDate) {
       where.date = {};
@@ -27,8 +30,8 @@ export class SpendingService {
     const spending = await this.prisma.spending.findMany({
       where,
       orderBy: { date: 'desc' },
-      take: filters?.limit || 50,
-      skip: filters?.page ? (filters.page - 1) * (filters.limit || 50) : 0,
+      take: limit,
+      skip: skip,
     });
 
     const total = await this.prisma.spending.count({ where });
@@ -36,10 +39,10 @@ export class SpendingService {
     return {
       spending,
       pagination: {
-        page: filters?.page || 1,
-        limit: filters?.limit || 50,
+        page,
+        limit,
         total,
-        totalPages: Math.ceil(total / (filters?.limit || 50)),
+        totalPages: Math.ceil(total / limit),
       },
     };
   }

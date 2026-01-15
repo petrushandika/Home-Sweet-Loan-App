@@ -12,6 +12,7 @@ import { ResponseMessage } from '@/common/decorators/response-message.decorator'
 export class AssetsController {
   constructor(private readonly assetsService: AssetsService) {}
 
+  @Get()
   @ResponseMessage('Assets retrieved successfully')
   async findAll(@CurrentUser() user: any) {
     return this.assetsService.findAll(user.id);
