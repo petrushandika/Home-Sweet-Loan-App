@@ -338,12 +338,12 @@ export default function BudgetingPage() {
                       </p>
                       <div className="space-y-3">
                         {setup?.incomeSources?.map((source) => (
-                          <div key={source} className="flex flex-col gap-1">
-                            <span className="text-xs font-bold text-slate-600 dark:text-slate-400">
+                          <div key={source} className="flex flex-col gap-1.5">
+                            <span className="text-xs font-bold text-slate-600 dark:text-slate-400 pl-1">
                               {source}
                             </span>
-                            <div className="flex items-center gap-1 bg-white dark:bg-slate-900 rounded-lg px-2 py-1 border border-emerald-100 dark:border-emerald-800">
-                              <span className="text-sm font-black text-slate-400">
+                            <div className="flex items-center gap-1 bg-white dark:bg-slate-900 rounded-xl px-3 h-10 border border-emerald-100 dark:border-emerald-800 focus-within:ring-2 focus-within:ring-emerald-500/20 transition-all w-full">
+                              <span className="text-xs font-black text-slate-400 mr-1">
                                 Rp
                               </span>
                               <input
@@ -354,7 +354,7 @@ export default function BudgetingPage() {
                                 onBlur={(e) =>
                                   handleUpdateIncome(source, e.target.value)
                                 }
-                                className="bg-transparent border-none focus:ring-0 text-sm font-black text-slate-800 dark:text-white w-full tabular-nums outline-none"
+                                className="bg-transparent border-none focus:ring-0 text-sm font-black text-slate-800 dark:text-white w-full tabular-nums outline-none p-0 h-full"
                               />
                             </div>
                           </div>
@@ -459,8 +459,8 @@ export default function BudgetingPage() {
                                   <span className="text-[10px] font-black text-slate-400 tabular-nums">
                                     Rp {spent.toLocaleString()} /
                                   </span>
-                                  <div className="flex items-center bg-slate-50 dark:bg-slate-800 rounded-xl px-3 py-1.5 border border-slate-100 dark:border-slate-800 group-hover:border-slate-200 dark:group-hover:border-slate-700 transition-all">
-                                    <span className="text-[10px] font-black text-slate-500 mr-1">
+                                  <div className="flex items-center bg-slate-50 dark:bg-slate-800 rounded-xl px-3 h-10 border border-slate-100 dark:border-slate-800 group-hover:border-slate-200 dark:group-hover:border-slate-700 transition-all w-32 sm:w-40">
+                                    <span className="text-xs font-black text-slate-500 mr-1">
                                       Rp
                                     </span>
                                     <input
@@ -473,7 +473,7 @@ export default function BudgetingPage() {
                                           e.target.value
                                         )
                                       }
-                                      className="bg-transparent border-none focus:ring-0 text-[10px] font-black text-slate-700 dark:text-slate-200 w-24 tabular-nums text-right outline-none"
+                                      className="bg-transparent border-none focus:ring-0 text-sm font-black text-slate-700 dark:text-slate-200 w-full tabular-nums text-right outline-none p-0 h-full"
                                     />
                                   </div>
                                 </div>

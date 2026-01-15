@@ -49,6 +49,7 @@ import {
   UserSettings,
 } from "@/lib/api/users";
 import { getAchievements, AchievementProgress } from "@/lib/api/achievements";
+import { inviteMember, InviteMemberRequest } from "@/lib/api/members";
 import { format } from "date-fns";
 
 export default function ProfilePage() {
@@ -79,6 +80,15 @@ export default function ProfilePage() {
     newPassword: "",
     confirmPassword: "",
   });
+
+  const [inviteForm, setInviteForm] = useState<InviteMemberRequest>({
+    name: "",
+    email: "",
+    role: "MEMBER",
+    relation: "Other",
+    monthlyLimit: 0,
+  });
+  const [isInviting, setIsInviting] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -177,6 +187,33 @@ export default function ProfilePage() {
     } catch (error: any) {
       setUserSettings(prevSettings); // Rollback
       toast.error("Failed to update settings");
+    }
+  };
+
+  const handleInvite = async () => {
+    if (!inviteForm.name || !inviteForm.email) {
+      toast.error("Please fill in required fields");
+      return;
+    }
+    setIsInviting(true);
+    try {
+      await inviteMember({
+        ...inviteForm,
+        monthlyLimit: Number(inviteForm.monthlyLimit),
+      });
+      toast.success("Invitation sent successfully");
+      setInviteForm({
+        name: "",
+        email: "",
+        role: "MEMBER",
+        relation: "Other",
+        monthlyLimit: 0,
+      });
+      fetchData(); // Refresh members list
+    } catch (error: any) {
+      toast.error("Failed to invite member", { description: error.message });
+    } finally {
+      setIsInviting(false);
     }
   };
 
@@ -766,12 +803,124 @@ export default function ProfilePage() {
                         Manage your family group and permissions
                       </p>
                     </div>
-                    <Button
-                      variant="outline"
-                      className="rounded-full border-emerald-200 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 font-bold"
+                    <ResponsiveModal
+                      title="Invite Family Member"
+                      description="Add a new member to your financial circle."
+                      trigger={
+                        <Button className="rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-10 px-6">
+                          <Plus className="w-4 h-4 mr-2" /> Invite Member
+                        </Button>
+                      }
                     >
-                      <Plus className="w-4 h-4 mr-2" /> Invite Member
-                    </Button>
+                      <div className="grid gap-5">
+                        <div className="grid gap-2">
+                          <Label htmlFor="i-name" className="font-bold ml-1">
+                            Full Name
+                          </Label>
+                          <Input
+                            id="i-name"
+                            placeholder="e.g. Sarah Smith"
+                            value={inviteForm.name}
+                            onChange={(e) =>
+                              setInviteForm({
+                                ...inviteForm,
+                                name: e.target.value,
+                              })
+                            }
+                            className="rounded-2xl h-11"
+                          />
+                        </div>
+                        <div className="grid gap-2">
+                          <Label htmlFor="i-email" className="font-bold ml-1">
+                            Email
+                          </Label>
+                          <Input
+                            id="i-email"
+                            type="email"
+                            placeholder="email@example.com"
+                            value={inviteForm.email}
+                            onChange={(e) =>
+                              setInviteForm({
+                                ...inviteForm,
+                                email: e.target.value,
+                              })
+                            }
+                            className="rounded-2xl h-11"
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="grid gap-2">
+                            <Label
+                              htmlFor="i-relation"
+                              className="font-bold ml-1"
+                            >
+                              Relation
+                            </Label>
+                            <Select
+                              value={inviteForm.relation}
+                              onValueChange={(val) =>
+                                setInviteForm({ ...inviteForm, relation: val })
+                              }
+                            >
+                              <SelectTrigger className="rounded-2xl h-11">
+                                <SelectValue placeholder="Select" />
+                              </SelectTrigger>
+                              <SelectContent className="rounded-2xl">
+                                <SelectItem value="Spouse">Spouse</SelectItem>
+                                <SelectItem value="Child">Child</SelectItem>
+                                <SelectItem value="Parent">Parent</SelectItem>
+                                <SelectItem value="Sibling">Sibling</SelectItem>
+                                <SelectItem value="Other">Other</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="grid gap-2">
+                            <Label htmlFor="i-role" className="font-bold ml-1">
+                              Role
+                            </Label>
+                            <Select
+                              value={inviteForm.role}
+                              onValueChange={(val) =>
+                                setInviteForm({ ...inviteForm, role: val })
+                              }
+                            >
+                              <SelectTrigger className="rounded-2xl h-11">
+                                <SelectValue placeholder="Select" />
+                              </SelectTrigger>
+                              <SelectContent className="rounded-2xl">
+                                <SelectItem value="MEMBER">Member</SelectItem>
+                                <SelectItem value="ADMIN">Admin</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                        <div className="grid gap-2">
+                          <Label htmlFor="i-limit" className="font-bold ml-1">
+                            Monthly Spend Limit
+                          </Label>
+                          <Input
+                            id="i-limit"
+                            type="number"
+                            placeholder="0"
+                            value={inviteForm.monthlyLimit}
+                            onChange={(e) =>
+                              setInviteForm({
+                                ...inviteForm,
+                                monthlyLimit: Number(e.target.value),
+                              })
+                            }
+                            className="rounded-2xl h-11"
+                          />
+                        </div>
+                        <Button
+                          onClick={handleInvite}
+                          disabled={isInviting}
+                          className="w-full rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-12 mt-2"
+                        >
+                          {isInviting ? "Sending Invite..." : "Send Invitation"}
+                        </Button>
+                      </div>
+                    </ResponsiveModal>
                   </div>
                   <div className="grid gap-4">
                     {userProfile?.members?.map((groupMember: any) =>

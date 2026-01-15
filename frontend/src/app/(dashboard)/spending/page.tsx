@@ -46,6 +46,7 @@ import { SetupConfig } from "@/lib/api/setup";
 import { Spending } from "@/lib/api/spending";
 import { Loader2 } from "lucide-react";
 import { format } from "date-fns";
+import { TransactionIcon } from "@/components/transaction-icon";
 
 export default function SpendingPage() {
   const { language } = useLanguageStore();
@@ -391,17 +392,11 @@ export default function SpendingPage() {
                       key={item.id}
                       className="flex items-center group cursor-pointer border-b border-slate-50 dark:border-slate-800 pb-4 last:border-0 last:pb-0"
                     >
-                      <div
-                        className={cn(
-                          "w-12 h-12 rounded-2xl flex items-center justify-center mr-4 transition-all border border-transparent group-hover:border-slate-200 dark:group-hover:border-slate-700 shrink-0",
-                          bgClass
-                        )}
-                      >
-                        {isIncome ? (
-                          <TrendingUp className={cn("w-6 h-6", colorClass)} />
-                        ) : (
-                          <TrendingDown className={cn("w-6 h-6", colorClass)} />
-                        )}
+                      <div className="mr-4 shrink-0">
+                        <TransactionIcon
+                          category={item.category}
+                          isIncome={isIncome}
+                        />
                       </div>
                       <div className="flex-1">
                         <h4 className="font-bold text-sm text-slate-800 dark:text-white leading-none mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors uppercase tracking-tight">

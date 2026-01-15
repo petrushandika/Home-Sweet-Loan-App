@@ -56,6 +56,7 @@ import { getAssets } from "@/lib/api/assets";
 import { format } from "date-fns";
 
 import { useSetupStore } from "@/store/use-setup-store";
+import { TransactionIcon } from "@/components/transaction-icon";
 
 const chartConfig = {
   income: {
@@ -569,32 +570,42 @@ export default function DashboardPage() {
                 <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
               </div>
             ) : filteredActivity.length > 0 ? (
-              filteredActivity.map((item, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-center group cursor-pointer border-b border-slate-50 dark:border-slate-800 pb-4 last:border-0 last:pb-0 transition-all duration-300"
-                >
+              filteredActivity.map((item, idx) => {
+                const isIncome = item.amount > 0;
+
+                return (
                   <div
-                    className={cn(
-                      "w-12 h-12 rounded-2xl flex items-center justify-center mr-4 transition-all border border-transparent group-hover:border-slate-200 dark:group-hover:border-slate-700 bg-slate-50 dark:bg-slate-800"
-                    )}
+                    key={idx}
+                    className="flex items-center group cursor-pointer border-b border-slate-50 dark:border-slate-800 pb-4 last:border-0 last:pb-0 transition-all duration-300"
                   >
-                    {/* Simplified icon logic for MVP */}
-                    <TrendingDown className={cn("w-6 h-6 text-slate-500")} />
+                    <div className="mr-4 shrink-0">
+                      <TransactionIcon
+                        category={item.category}
+                        isIncome={isIncome}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-bold text-sm text-slate-800 dark:text-white leading-none mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors uppercase tracking-tight">
+                        {item.description}
+                      </h4>
+                      <p className="text-xs text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest leading-none mt-1">
+                        {item.category} •{" "}
+                        {format(new Date(item.date), "dd MMM")}
+                      </p>
+                    </div>
+                    <div
+                      className={cn(
+                        "font-black text-sm text-right transition-colors duration-300",
+                        isIncome
+                          ? "text-emerald-600"
+                          : "text-slate-700 dark:text-slate-300"
+                      )}
+                    >
+                      {isIncome ? "+" : "-"} {fmt(Math.abs(item.amount))}
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <h4 className="font-bold text-sm text-slate-800 dark:text-white leading-none mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors uppercase tracking-tight">
-                      {item.description}
-                    </h4>
-                    <p className="text-xs text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest leading-none mt-1">
-                      {item.category} • {format(new Date(item.date), "dd MMM")}
-                    </p>
-                  </div>
-                  <div className="font-black text-sm text-right transition-colors duration-300 text-slate-700 dark:text-slate-300">
-                    {fmt(item.amount)}
-                  </div>
-                </div>
-              ))
+                );
+              })
             ) : (
               <div className="h-40 flex flex-col items-center justify-center text-slate-400 italic">
                 <p>No activity found</p>
