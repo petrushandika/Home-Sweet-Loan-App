@@ -11,12 +11,22 @@ import { ResponseMessage } from '@/common/decorators/response-message.decorator'
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
+  @Post()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Initiate a new payment' })
   @ResponseMessage('Payment initiated successfully')
-  async initiatePayment(
-    @CurrentUser() user: User,
-    @Body() body: { plan: string; amount: number }
-  ) {
+  async initiatePayment(@CurrentUser() user: User, @Body() body: { plan: string; amount: number }) {
     return this.paymentsService.createTransaction(user, body.plan, body.amount);
+  }
+
+  @Post('check-status')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Manual check of transaction status' })
+  @ResponseMessage('Transaction status checked')
+  async checkStatus(@Body() body: { orderId: string }) {
+    return this.paymentsService.checkTransactionStatus(body.orderId);
   }
 
   @Post('notification')
