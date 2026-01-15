@@ -61,7 +61,6 @@ export default function BudgetingPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [setup, setSetup] = useState<SetupConfig | null>(null);
   const [currentBudget, setCurrentBudget] = useState<Budget | null>(null);
-  const [incomeValue, setIncomeValue] = useState<string>("");
   const [selectedMonth, setSelectedMonth] = useState<string>("current");
   const [spentByItem, setSpentByItem] = useState<Record<string, number>>({});
 
@@ -98,14 +97,6 @@ export default function BudgetingPage() {
         aggregated[s.category] = (aggregated[s.category] || 0) + s.amount;
       });
       setSpentByItem(aggregated);
-
-      if (budgetData && budgetData.income) {
-        const totalIncome = Object.values(budgetData.income).reduce(
-          (a, b) => a + b,
-          0
-        );
-        setIncomeValue(totalIncome.toString());
-      }
     } catch (error: any) {
       toast.error("Failed to fetch data", {
         description: error.message,
@@ -116,13 +107,6 @@ export default function BudgetingPage() {
   };
 
   const handleInitialize = async () => {
-    if (!incomeValue || isNaN(Number(incomeValue))) {
-      toast.error("Invalid Input", {
-        description: "Please enter a valid income amount.",
-      });
-      return;
-    }
-
     try {
       const now = new Date();
       let year = now.getFullYear();
@@ -138,9 +122,19 @@ export default function BudgetingPage() {
 
       const yearMonth = `${year}-${month.toString().padStart(2, "0")}`;
 
+      // Initialize income with setup sources (default 0)
+      const initialIncome: Record<string, number> = {};
+      if (setup?.incomeSources) {
+        setup.incomeSources.forEach((source) => {
+          initialIncome[source] = 0;
+        });
+      } else {
+        initialIncome["Primary Income"] = 0;
+      }
+
       const newBudget = await createBudget({
         yearMonth,
-        income: { "Primary Income": Number(incomeValue) },
+        income: initialIncome,
         expenses: {},
         savingsAllocation: {},
       });
@@ -156,15 +150,19 @@ export default function BudgetingPage() {
     }
   };
 
-  const handleUpdateIncome = async (newValue: string) => {
+  const handleUpdateIncome = async (source: string, newValue: string) => {
     if (!currentBudget || isNaN(Number(newValue))) return;
 
     try {
+      const updatedIncome = {
+        ...currentBudget.income,
+        [source]: Number(newValue),
+      };
+
       const updated = await updateBudget(currentBudget.yearMonth, {
-        income: { "Primary Income": Number(newValue) },
+        income: updatedIncome,
       });
       setCurrentBudget(updated);
-      setIncomeValue(newValue);
     } catch (error: any) {
       toast.error("Failed to update income", { description: error.message });
     }
@@ -323,26 +321,6 @@ export default function BudgetingPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="grid gap-2">
-                <Label
-                  htmlFor="total-income"
-                  className="text-slate-700 dark:text-slate-300 font-bold ml-1"
-                >
-                  {t.incomeLabel}
-                </Label>
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">
-                    Rp
-                  </span>
-                  <Input
-                    id="total-income"
-                    placeholder="0"
-                    value={incomeValue}
-                    onChange={(e) => setIncomeValue(e.target.value)}
-                    className="rounded-2xl border-border dark:bg-slate-900 focus-visible:ring-emerald-500 pl-11 h-11"
-                  />
-                </div>
-              </div>
               <div className="p-5 bg-emerald-50 dark:bg-emerald-950/20 rounded-2xl border border-emerald-100 dark:border-emerald-800 flex gap-4 animate-smooth-in transition-colors">
                 <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center shrink-0 border border-emerald-100 dark:border-emerald-700 shadow-sm transition-colors">
                   <Sparkles className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
@@ -406,20 +384,43 @@ export default function BudgetingPage() {
                 <>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                     <div className="p-4 bg-emerald-50 dark:bg-emerald-950/20 rounded-2xl border border-emerald-100 dark:border-emerald-800">
-                      <p className="text-[10px] font-black uppercase text-emerald-600 dark:text-emerald-400 mb-1">
-                        Total Income
+                      <p className="text-[10px] font-black uppercase text-emerald-600 dark:text-emerald-400 mb-2">
+                        Income Sources
                       </p>
-                      <div className="flex items-center gap-1">
-                        <span className="text-xl font-black text-slate-800 dark:text-white leading-none">
-                          Rp
+                      <div className="space-y-3">
+                        {setup?.incomeSources?.map((source) => (
+                          <div key={source} className="flex flex-col gap-1">
+                            <span className="text-xs font-bold text-slate-600 dark:text-slate-400">
+                              {source}
+                            </span>
+                            <div className="flex items-center gap-1 bg-white dark:bg-slate-900 rounded-lg px-2 py-1 border border-emerald-100 dark:border-emerald-800">
+                              <span className="text-sm font-black text-slate-400">
+                                Rp
+                              </span>
+                              <input
+                                type="number"
+                                defaultValue={
+                                  currentBudget.income?.[source] || 0
+                                }
+                                onBlur={(e) =>
+                                  handleUpdateIncome(source, e.target.value)
+                                }
+                                className="bg-transparent border-none focus:ring-0 text-sm font-black text-slate-800 dark:text-white w-full tabular-nums outline-none"
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="mt-4 pt-4 border-t border-emerald-100 dark:border-emerald-800 flex justify-between items-center">
+                        <span className="text-xs font-bold text-emerald-700 dark:text-emerald-300">
+                          Total Projected
                         </span>
-                        <input
-                          type="number"
-                          value={incomeValue}
-                          onChange={(e) => setIncomeValue(e.target.value)}
-                          onBlur={(e) => handleUpdateIncome(e.target.value)}
-                          className="bg-transparent border-none focus:ring-0 text-xl font-black text-slate-800 dark:text-white w-full tabular-nums outline-none"
-                        />
+                        <span className="text-lg font-black text-emerald-700 dark:text-emerald-300">
+                          Rp{" "}
+                          {Object.values(currentBudget.income || {})
+                            .reduce((a, b) => a + b, 0)
+                            .toLocaleString()}
+                        </span>
                       </div>
                     </div>
                     <div className="p-4 bg-orange-50 dark:bg-orange-950/20 rounded-2xl border border-orange-100 dark:border-orange-800">
