@@ -100,19 +100,17 @@ export default function SetupPage() {
     });
   };
 
-  const handleRemove = async (categoryTitle: string, itemName: string) => {
+  const handleRemove = async (categoryId: string, itemName: string) => {
     try {
-      await deleteItem(categoryTitle, itemName);
+      const result = await deleteItem(categoryId, itemName);
 
       setCategoryItems((prev) => ({
         ...prev,
-        [categoryTitle]: prev[categoryTitle].filter(
-          (item) => item !== itemName
-        ),
+        [categoryId]: result.items,
       }));
 
       toast.success("Item Removed", {
-        description: `${itemName} has been deleted from ${categoryTitle}.`,
+        description: `${itemName} has been deleted from this category.`,
       });
     } catch (error: any) {
       toast.error("Failed to remove item", {
@@ -121,8 +119,8 @@ export default function SetupPage() {
     }
   };
 
-  const handleAddItem = async (categoryTitle: string) => {
-    const newItem = newItemValue[categoryTitle]?.trim();
+  const handleAddItem = async (categoryId: string) => {
+    const newItem = newItemValue[categoryId]?.trim();
 
     if (!newItem) {
       toast.error("Invalid Input", {
@@ -132,19 +130,19 @@ export default function SetupPage() {
     }
 
     try {
-      await addItem(categoryTitle, newItem);
+      const result = await addItem(categoryId, newItem);
 
       setCategoryItems((prev) => ({
         ...prev,
-        [categoryTitle]: [...(prev[categoryTitle] || []), newItem],
+        [categoryId]: result.items,
       }));
 
       // Reset input and hide
-      setNewItemValue((prev) => ({ ...prev, [categoryTitle]: "" }));
-      setShowAddInput((prev) => ({ ...prev, [categoryTitle]: false }));
+      setNewItemValue((prev) => ({ ...prev, [categoryId]: "" }));
+      setShowAddInput((prev) => ({ ...prev, [categoryId]: false }));
 
       toast.success("Item Added", {
-        description: `${newItem} has been added to ${categoryTitle}.`,
+        description: `${newItem} has been added to this category.`,
       });
     } catch (error: any) {
       toast.error("Failed to add item", {
