@@ -4,6 +4,7 @@ import { SetupService } from './setup.service';
 import { UpdateSetupDto } from './dto/update-setup.dto';
 import { AddItemDto } from './dto/add-item.dto';
 import { DeleteItemDto } from './dto/delete-item.dto';
+import { UpdateItemDto } from './dto/update-item.dto';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { ResponseMessage } from '@/common/decorators/response-message.decorator';
 
@@ -50,6 +51,17 @@ export class SetupController {
       success: true,
       data: result,
       message: `Item "${result.itemName}" deleted from ${result.category} successfully`,
+    };
+  }
+
+  @Post('items/update')
+  @ApiOperation({ summary: 'Update item in a category' })
+  async updateItem(@CurrentUser() user: any, @Body() updateItemDto: UpdateItemDto) {
+    const result = await this.setupService.updateItem(user.id, updateItemDto);
+    return {
+      success: true,
+      data: result,
+      message: `Item "${result.oldItemName}" renamed to "${result.newItemName}" in ${result.category} successfully`,
     };
   }
 }

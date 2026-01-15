@@ -11,6 +11,9 @@ import {
   Coins,
   Briefcase,
   X,
+  Edit2,
+  Check,
+  Trash2,
 } from "lucide-react";
 import { ResponsiveModal } from "@/components/responsive-modal";
 import { Input } from "@/components/ui/input";
@@ -27,6 +30,7 @@ import { useLanguageStore, translations } from "@/store/use-language-store";
 import {
   addItem,
   deleteItem,
+  updateItem,
   getSetup,
   SetupConfig,
   CATEGORY_DISPLAY_MAP,
@@ -63,6 +67,13 @@ export default function SetupPage() {
   const [newItemValue, setNewItemValue] = useState<{ [key: string]: string }>(
     {}
   );
+
+  // State for editing item
+  const [editingItem, setEditingItem] = useState<{
+    categoryId: string;
+    oldName: string;
+    newName: string;
+  } | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -146,6 +157,33 @@ export default function SetupPage() {
       });
     } catch (error: any) {
       toast.error("Failed to add item", {
+        description: error.message,
+      });
+    }
+  };
+
+  const handleEditItem = async (categoryId: string) => {
+    if (!editingItem || !editingItem.newName.trim()) return;
+
+    try {
+      const result = await updateItem(
+        categoryId,
+        editingItem.oldName,
+        editingItem.newName.trim()
+      );
+
+      setCategoryItems((prev) => ({
+        ...prev,
+        [categoryId]: result.items,
+      }));
+
+      setEditingItem(null);
+
+      toast.success("Item Updated", {
+        description: `${editingItem.oldName} has been renamed to ${editingItem.newName}.`,
+      });
+    } catch (error: any) {
+      toast.error("Failed to update item", {
         description: error.message,
       });
     }
@@ -356,17 +394,74 @@ export default function SetupPage() {
                           key={index}
                           className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-slate-200 dark:hover:border-slate-700 transition-all group"
                         >
-                          <span className="font-bold text-slate-700 dark:text-slate-300 flex-1">
-                            {itemName}
-                          </span>
-                          <Button
-                            onClick={() => handleRemove(item.id, itemName)}
-                            variant="ghost"
-                            size="sm"
-                            className="text-rose-500 font-bold hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-xl cursor-pointer opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
-                          >
-                            <X className="w-4 h-4" />
-                          </Button>
+                          {editingItem?.categoryId === item.id &&
+                          editingItem?.oldName === itemName ? (
+                            <div className="flex items-center gap-2 flex-1">
+                              <Input
+                                value={editingItem.newName}
+                                onChange={(e) =>
+                                  setEditingItem({
+                                    ...editingItem,
+                                    newName: e.target.value,
+                                  })
+                                }
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter")
+                                    handleEditItem(item.id);
+                                  if (e.key === "Escape") setEditingItem(null);
+                                }}
+                                className="h-9 rounded-xl border-emerald-200 focus-visible:ring-emerald-500 flex-1"
+                                autoFocus
+                              />
+                              <Button
+                                onClick={() => handleEditItem(item.id)}
+                                size="sm"
+                                className="h-9 w-9 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl p-0"
+                              >
+                                <Check className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                onClick={() => setEditingItem(null)}
+                                variant="ghost"
+                                size="sm"
+                                className="h-9 w-9 text-slate-400 hover:bg-slate-100 rounded-xl p-0"
+                              >
+                                <X className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          ) : (
+                            <>
+                              <span className="font-bold text-slate-700 dark:text-slate-300 flex-1">
+                                {itemName}
+                              </span>
+                              <div className="flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                                <Button
+                                  onClick={() =>
+                                    setEditingItem({
+                                      categoryId: item.id,
+                                      oldName: itemName,
+                                      newName: itemName,
+                                    })
+                                  }
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-8 w-8 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 rounded-lg p-0"
+                                >
+                                  <Edit2 className="w-3.5 h-3.5" />
+                                </Button>
+                                <Button
+                                  onClick={() =>
+                                    handleRemove(item.id, itemName)
+                                  }
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-8 w-8 text-rose-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg p-0"
+                                >
+                                  <X className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            </>
+                          )}
                         </div>
                       ))
                     )}

@@ -1,13 +1,12 @@
-
-import axios from 'axios'
+import axios from "axios";
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api",
   withCredentials: true,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
-})
+});
 
 // Add a response interceptor to handle errors globally if needed
 api.interceptors.response.use(
@@ -15,10 +14,13 @@ api.interceptors.response.use(
   (error) => {
     // Handle unauthorized errors (e.g., redirect to login if 401)
     if (error.response?.status === 401) {
-      // Logic for session expiration
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("token");
+        window.location.href = "/auth/login";
+      }
     }
-    return Promise.reject(error)
+    return Promise.reject(error);
   }
-)
+);
 
-export default api
+export default api;

@@ -4,7 +4,7 @@
  */
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
 // Category mapping from frontend display names to backend enum values
 export const CATEGORY_MAP: Record<string, string> = {
@@ -65,10 +65,12 @@ export interface ApiError {
   };
 }
 
+import api from "@/lib/api";
+
 /**
  * Get authentication token from localStorage
  */
-const getAuthToken = (): string | null => {
+export const getAuthToken = (): string | null => {
   if (typeof window === "undefined") return null;
   return localStorage.getItem("token");
 };
@@ -77,23 +79,13 @@ const getAuthToken = (): string | null => {
  * Get user's setup configuration
  */
 export const getSetup = async (): Promise<SetupConfig> => {
-  const token = getAuthToken();
-
-  const response = await fetch(`${API_BASE_URL}/setup`, {
-    method: "GET",
+  const response = await api.get("/setup", {
     headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
+      Authorization: `Bearer ${getAuthToken()}`,
     },
   });
 
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.error?.message || "Failed to fetch setup");
-  }
-
-  return data.data;
+  return response.data.data;
 };
 
 /**
@@ -102,24 +94,13 @@ export const getSetup = async (): Promise<SetupConfig> => {
 export const updateSetup = async (
   setupData: Partial<SetupConfig>
 ): Promise<SetupConfig> => {
-  const token = getAuthToken();
-
-  const response = await fetch(`${API_BASE_URL}/setup`, {
-    method: "PUT",
+  const response = await api.put("/setup", setupData, {
     headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
+      Authorization: `Bearer ${getAuthToken()}`,
     },
-    body: JSON.stringify(setupData),
   });
 
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.error?.message || "Failed to update setup");
-  }
-
-  return data.data;
+  return response.data.data;
 };
 
 /**
@@ -129,28 +110,17 @@ export const addItem = async (
   category: string,
   itemName: string
 ): Promise<{ category: string; itemName: string; items: string[] }> => {
-  const token = getAuthToken();
-
-  const response = await fetch(`${API_BASE_URL}/setup/items`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ category, itemName }),
-  });
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    // Handle specific error cases
-    if (response.status === 409) {
-      throw new Error(`"${itemName}" already exists in this category`);
+  const response = await api.post(
+    "/setup/items",
+    { category, itemName },
+    {
+      headers: {
+        Authorization: `Bearer ${getAuthToken()}`,
+      },
     }
-    throw new Error(data.error?.message || "Failed to add item");
-  }
+  );
 
-  return data.data;
+  return response.data.data;
 };
 
 /**
@@ -160,28 +130,40 @@ export const deleteItem = async (
   category: string,
   itemName: string
 ): Promise<{ category: string; itemName: string; items: string[] }> => {
-  const token = getAuthToken();
-
-  const response = await fetch(`${API_BASE_URL}/setup/items`, {
-    method: "DELETE",
+  const response = await api.delete("/setup/items", {
+    data: { category, itemName },
     headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
+      Authorization: `Bearer ${getAuthToken()}`,
     },
-    body: JSON.stringify({ category, itemName }),
   });
 
-  const data = await response.json();
+  return response.data.data;
+};
 
-  if (!response.ok) {
-    // Handle specific error cases
-    if (response.status === 404) {
-      throw new Error(`"${itemName}" not found in this category`);
+/**
+ * Update an item name in a category
+ */
+export const updateItem = async (
+  category: string,
+  oldItemName: string,
+  newItemName: string
+): Promise<{
+  category: string;
+  oldItemName: string;
+  newItemName: string;
+  items: string[];
+}> => {
+  const response = await api.post(
+    "/setup/items/update",
+    { category, oldItemName, newItemName },
+    {
+      headers: {
+        Authorization: `Bearer ${getAuthToken()}`,
+      },
     }
-    throw new Error(data.error?.message || "Failed to delete item");
-  }
+  );
 
-  return data.data;
+  return response.data.data;
 };
 
 /**

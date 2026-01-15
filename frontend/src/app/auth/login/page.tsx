@@ -65,9 +65,10 @@ export default function LoginPage() {
 
     try {
       const response = await api.post("/auth/login", formData);
-      const { data } = response.data;
+      const { user, accessToken } = response.data;
 
-      setUser(data);
+      localStorage.setItem("token", accessToken);
+      setUser(user);
       toast.success("Welcome back!", {
         description: "You have been logged in successfully.",
       });

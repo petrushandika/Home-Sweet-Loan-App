@@ -1,4 +1,15 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, Get, UseGuards, Req, Res, UnauthorizedException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  HttpCode,
+  HttpStatus,
+  Get,
+  UseGuards,
+  Req,
+  Res,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
@@ -55,7 +66,7 @@ export class AuthController {
   async login(@Body() loginDto: LoginDto, @Res({ passthrough: true }) res) {
     const result = await this.authService.login(loginDto);
     this.setCookies(res, result.accessToken, result.refreshToken);
-    return result.user;
+    return result;
   }
 
   @Public()
@@ -125,7 +136,7 @@ export class AuthController {
   async googleLoginCallback(@Req() req, @Res() res) {
     const result = await this.authService.validateSocialUser(req.user);
     this.setCookies(res, result.accessToken, result.refreshToken);
-    res.redirect(`${process.env.FRONTEND_URL}/auth/callback`);
+    res.redirect(`${process.env.FRONTEND_URL}/auth/callback?token=${result.accessToken}`);
   }
 
   @Public()
@@ -143,7 +154,7 @@ export class AuthController {
   async facebookLoginCallback(@Req() req, @Res() res) {
     const result = await this.authService.validateSocialUser(req.user);
     this.setCookies(res, result.accessToken, result.refreshToken);
-    res.redirect(`${process.env.FRONTEND_URL}/auth/callback`);
+    res.redirect(`${process.env.FRONTEND_URL}/auth/callback?token=${result.accessToken}`);
   }
 
   @Post('logout')
@@ -153,12 +164,12 @@ export class AuthController {
   async logout(@Req() req, @Res({ passthrough: true }) res) {
     const userId = req.user?.id;
     if (userId) {
-        await this.authService.logout(userId);
+      await this.authService.logout(userId);
     }
-    
+
     res.clearCookie('access_token');
     res.clearCookie('refresh_token');
-    
+
     return null;
   }
 
@@ -168,7 +179,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Refresh access token' })
   async refresh(@Req() req, @Res({ passthrough: true }) res) {
     const refreshToken = req.cookies['refresh_token'];
-    
+
     if (!refreshToken) throw new UnauthorizedException('Refresh token not found');
 
     // Basic decoding to get payload (simulating Strategy extraction)
@@ -181,12 +192,12 @@ export class AuthController {
 
     const tokens = await this.authService.refreshTokens(payload.sub, refreshToken);
     this.setCookies(res, tokens.accessToken, tokens.refreshToken);
-    
+
     return {
-        success: true,
-        statusCode: 200,
-        message: 'Tokens refreshed successfully',
-        data: null,
+      success: true,
+      statusCode: 200,
+      message: 'Tokens refreshed successfully',
+      data: null,
     };
   }
   @Post('change-password')
