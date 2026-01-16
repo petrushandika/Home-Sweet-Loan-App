@@ -66,32 +66,24 @@ export function ChatbotWidget() {
         message: input,
       })
 
-      console.log('🔍 Full Response:', response)
-      console.log('📦 Response Data:', response.data)
-
       // Handle nested response structure from NestJS interceptor
       const responseData = response.data.data || response.data
-      console.log('📝 Extracted Data:', responseData)
 
       if (response.data.success) {
         // Extract message from nested structure
         const messageContent = responseData.data?.message || responseData.message
-        console.log('💬 Message Content:', messageContent)
         
         const aiMessage: Message = {
           role: "assistant",
           content: messageContent,
           timestamp: new Date(),
         }
-        console.log('✅ Success! Message:', aiMessage.content)
         setMessages((prev) => [...prev, aiMessage])
       } else {
-        console.error('❌ Response not successful:', response.data)
         throw new Error(response.data.message)
       }
     } catch (error: any) {
       console.error("AI Chat Error:", error)
-      console.error("Error Response:", error.response?.data)
       toast.error("Failed to get AI response. Please try again.")
       
       const errorMessage: Message = {
@@ -168,7 +160,41 @@ export function ChatbotWidget() {
                                 ? "bg-emerald-600 text-white rounded-tr-none"
                                 : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-border rounded-tl-none"
                         )}>
-                            <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+                            <div className="text-sm leading-relaxed">
+                                {message.content.split('\n').map((line, i) => {
+                                    // Handle numbered lists (1. 2. 3.)
+                                    if (/^\d+\.\s/.test(line)) {
+                                        return (
+                                            <div key={i} className="flex gap-2 mb-2">
+                                                <span className="font-bold shrink-0">{line.match(/^\d+\./)?.[0]}</span>
+                                                <span>{line.replace(/^\d+\.\s/, '')}</span>
+                                            </div>
+                                        )
+                                    }
+                                    // Handle bullet points (- or •)
+                                    if (/^[-•]\s/.test(line)) {
+                                        return (
+                                            <div key={i} className="flex gap-2 mb-1.5 ml-2">
+                                                <span className="text-emerald-500 shrink-0">•</span>
+                                                <span>{line.replace(/^[-•]\s/, '')}</span>
+                                            </div>
+                                        )
+                                    }
+                                    // Handle bold text (**text**)
+                                    const boldFormatted = line.split(/(\*\*.*?\*\*)/).map((part, j) => {
+                                        if (part.startsWith('**') && part.endsWith('**')) {
+                                            return <strong key={j}>{part.slice(2, -2)}</strong>
+                                        }
+                                        return part
+                                    })
+                                    // Regular paragraphs
+                                    return line.trim() ? (
+                                        <p key={i} className="mb-2 last:mb-0">{boldFormatted}</p>
+                                    ) : (
+                                        <br key={i} />
+                                    )
+                                })}
+                            </div>
                             <p className={cn(
                                 "text-[10px] mt-1.5 font-medium",
                                 message.role === "user" ? "text-emerald-100" : "text-slate-400"

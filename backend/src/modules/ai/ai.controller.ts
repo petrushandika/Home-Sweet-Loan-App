@@ -13,8 +13,6 @@ export class AiController {
     const userId = req.user.id;
     const { message } = body;
 
-    console.log('🤖 AI Chat Request:', { userId, message });
-
     if (!message || message.trim().length === 0) {
       return {
         success: false,
@@ -24,13 +22,11 @@ export class AiController {
 
     try {
       const response = await this.aiService.chat(userId, message);
-      console.log('✅ AI Response:', response);
       return {
         success: true,
         data: response,
       };
     } catch (error) {
-      console.error('❌ AI Error:', error);
       return {
         success: false,
         message: error.message || 'Failed to get AI response',
