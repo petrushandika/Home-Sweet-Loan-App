@@ -69,6 +69,24 @@ export default function AssetsPage() {
   const [editingAsset, setEditingAsset] = useState<Asset | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
+  // Privacy State - Hide/Show Amounts
+  const [hiddenAmounts, setHiddenAmounts] = useState(false);
+
+  // Load hidden preference from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('assets-hidden-amounts');
+    if (saved === 'true') {
+      setHiddenAmounts(true);
+    }
+  }, []);
+
+  // Toggle visibility
+  const toggleAmountsVisibility = () => {
+    const newValue = !hiddenAmounts;
+    setHiddenAmounts(newValue);
+    localStorage.setItem('assets-hidden-amounts', String(newValue));
+  };
+
   useEffect(() => {
     setMounted(true);
     fetchSetup();
@@ -317,7 +335,8 @@ export default function AssetsPage() {
         </ResponsiveModal>
       </div>
 
-      <div className="grid gap-6 grid-cols-1 md:grid-cols-3">
+      {/* Summary Cards */}
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-3 animate-in fade-in slide-in-from-bottom-4 duration-700">
         <AssetMiniCard
           title={t.liquid}
           amount={`Rp ${(summary?.totalLiquidAssets || 0).toLocaleString()}`}
@@ -325,6 +344,7 @@ export default function AssetsPage() {
           color="text-emerald-600"
           bg="bg-emerald-50 dark:bg-emerald-950/20"
           border="border-emerald-100 dark:border-emerald-800"
+          isHidden={hiddenAmounts}
         />
         <AssetMiniCard
           title={t.nonLiquid}
@@ -333,6 +353,7 @@ export default function AssetsPage() {
           color="text-blue-600"
           bg="bg-blue-50 dark:bg-blue-950/20"
           border="border-blue-100 dark:border-blue-800"
+          isHidden={hiddenAmounts}
         />
         <AssetMiniCard
           title={t.total}
@@ -341,23 +362,39 @@ export default function AssetsPage() {
           color="text-violet-600"
           bg="bg-violet-50 dark:bg-violet-950/20"
           border="border-violet-100 dark:border-violet-800"
+          isHidden={hiddenAmounts}
         />
       </div>
 
       <Card className="border-border rounded-3xl bg-white dark:bg-slate-900 overflow-hidden border transition-all duration-500 hover:shadow-sm">
         <CardHeader className="p-6 md:px-10 md:pt-8 md:pb-4 border-b border-border/50">
-          <div className="flex items-center gap-5">
-            <div className="w-14 h-14 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-800 flex items-center justify-center transition-transform duration-300 group-hover:scale-110 shrink-0">
-              <PiggyBank className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
+          <div className="flex items-center justify-between gap-5">
+            <div className="flex items-center gap-5">
+              <div className="w-14 h-14 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-800 flex items-center justify-center transition-transform duration-300 group-hover:scale-110 shrink-0">
+                <PiggyBank className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
+              </div>
+              <div>
+                <CardTitle className="text-2xl font-bold text-slate-800 dark:text-white transition-colors duration-300">
+                  {t.breakdown}
+                </CardTitle>
+                <CardDescription className="text-slate-500 dark:text-slate-400 font-medium tracking-tight transition-colors duration-300">
+                  {t.breakdownDesc}
+                </CardDescription>
+              </div>
             </div>
-            <div>
-              <CardTitle className="text-2xl font-bold text-slate-800 dark:text-white transition-colors duration-300">
-                {t.breakdown}
-              </CardTitle>
-              <CardDescription className="text-slate-500 dark:text-slate-400 font-medium tracking-tight transition-colors duration-300">
-                {t.breakdownDesc}
-              </CardDescription>
-            </div>
+            {/* Hide/Show Toggle */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleAmountsVisibility}
+              className="h-10 w-10 rounded-full text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/20 transition-colors shrink-0"
+            >
+              {hiddenAmounts ? (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+              )}
+            </Button>
           </div>
         </CardHeader>
         <CardContent className="p-6 md:px-10 md:pt-6 md:pb-8 space-y-5">
@@ -402,23 +439,31 @@ export default function AssetsPage() {
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="text-right">
-                      <div className="flex items-center bg-slate-50 dark:bg-slate-800 rounded-xl px-3 py-1.5 border border-slate-100 dark:border-slate-800 group-hover:border-slate-200 dark:group-hover:border-slate-700 transition-all">
-                        <span className="text-xs font-black text-slate-500 mr-1 tabular-nums">
-                          Rp
-                        </span>
-                        <input
-                          type="text"
-                          defaultValue={item.value}
-                          onInput={(e) => {
-                            e.currentTarget.value =
-                              e.currentTarget.value.replace(/[^0-9]/g, "");
-                          }}
-                          onBlur={(e) =>
-                            handleUpdateValue(item.id, e.target.value)
-                          }
-                          className="bg-transparent border-none outline-none w-24 text-right font-bold text-slate-700 dark:text-slate-300 text-sm"
-                        />
-                      </div>
+                      {hiddenAmounts ? (
+                        <div className="flex items-center bg-slate-50 dark:bg-slate-800 rounded-xl px-3 py-1.5 border border-slate-100 dark:border-slate-800">
+                          <span className="text-sm font-black text-slate-400 tabular-nums">
+                            ••••••
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center bg-slate-50 dark:bg-slate-800 rounded-xl px-3 py-1.5 border border-slate-100 dark:border-slate-800 group-hover:border-slate-200 dark:group-hover:border-slate-700 transition-all">
+                          <span className="text-xs font-black text-slate-500 mr-1 tabular-nums">
+                            Rp
+                          </span>
+                          <input
+                            type="text"
+                            defaultValue={item.value}
+                            onInput={(e) => {
+                              e.currentTarget.value =
+                                e.currentTarget.value.replace(/[^0-9]/g, "");
+                            }}
+                            onBlur={(e) =>
+                              handleUpdateValue(item.id, e.target.value)
+                            }
+                            className="bg-transparent border-none outline-none w-24 text-right font-bold text-slate-700 dark:text-slate-300 text-sm"
+                          />
+                        </div>
+                      )}
                     </div>
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <Button
@@ -593,6 +638,7 @@ function AssetMiniCard({
   color,
   bg,
   border,
+  isHidden,
 }: {
   title: string;
   amount: string;
@@ -600,6 +646,7 @@ function AssetMiniCard({
   color: string;
   bg: string;
   border: string;
+  isHidden?: boolean;
 }) {
   return (
     <Card
@@ -628,7 +675,7 @@ function AssetMiniCard({
         </span>
       </div>
       <div className="text-2xl font-black text-slate-900 dark:text-white tracking-tight relative z-10">
-        {amount}
+        {isHidden ? "••••••" : amount}
       </div>
     </Card>
   );

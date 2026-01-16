@@ -3,7 +3,16 @@ import { PrismaService } from '@/config/prisma.service';
 import { CreateBudgetDto } from './dto/create-budget.dto';
 import { UpdateBudgetDto } from './dto/update-budget.dto';
 
+
 import { NotificationsService } from '../notifications/notifications.service';
+
+// Helper function to format yearMonth (2026-01) to readable date (1 January 2026)
+function formatYearMonth(yearMonth: string): string {
+  const [year, month] = yearMonth.split('-');
+  const date = new Date(parseInt(year), parseInt(month) - 1, 1);
+  const monthName = date.toLocaleString('en-US', { month: 'long' });
+  return `1 ${monthName} ${year}`;
+}
 
 @Injectable()
 export class BudgetsService {
@@ -128,20 +137,20 @@ export class BudgetsService {
 
     // Log Activity based on what was updated
     let activityTitle = 'Budget Updated';
-    let activityMsg = `Updated budget for ${yearMonth}`;
+    let activityMsg = `Updated budget for ${formatYearMonth(yearMonth)}`;
 
     if (updateBudgetDto.income && Object.keys(updateBudgetDto.income).length > 0) {
       activityTitle = 'Income Updated';
-      activityMsg = `Updated income sources for ${yearMonth}`;
+      activityMsg = `Updated income sources for ${formatYearMonth(yearMonth)}`;
     } else if (updateBudgetDto.expenses && Object.keys(updateBudgetDto.expenses).length > 0) {
       activityTitle = 'Budget Allocation';
-      activityMsg = `Updated expense allocations for ${yearMonth}`;
+      activityMsg = `Updated expense allocations for ${formatYearMonth(yearMonth)}`;
     } else if (
       updateBudgetDto.savingsAllocation &&
       Object.keys(updateBudgetDto.savingsAllocation).length > 0
     ) {
       activityTitle = 'Savings Updated';
-      activityMsg = `Updated savings plan for ${yearMonth}`;
+      activityMsg = `Updated savings plan for ${formatYearMonth(yearMonth)}`;
     }
 
     // Extract the specific value being updated for the notification

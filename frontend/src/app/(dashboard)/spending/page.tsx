@@ -432,7 +432,7 @@ export default function SpendingPage() {
                           </span>
                           <p className="text-xs text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest leading-none">
                             {item.category} •{" "}
-                            {format(new Date(item.date), "dd MMM")}
+                            {format(new Date(item.date), "dd MMMM yyyy")}
                           </p>
                         </div>
                       </div>

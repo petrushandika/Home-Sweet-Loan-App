@@ -45,6 +45,24 @@ export default function BudgetingPage() {
   const [selectedMonth, setSelectedMonth] = useState<string>("current");
   const [spentByItem, setSpentByItem] = useState<Record<string, number>>({});
 
+  // Privacy State - Hide/Show Amounts
+  const [hiddenAmounts, setHiddenAmounts] = useState(false);
+
+  // Load hidden preference from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('budgeting-hidden-amounts');
+    if (saved === 'true') {
+      setHiddenAmounts(true);
+    }
+  }, []);
+
+  // Toggle visibility
+  const toggleAmountsVisibility = () => {
+    const newValue = !hiddenAmounts;
+    setHiddenAmounts(newValue);
+    localStorage.setItem('budgeting-hidden-amounts', String(newValue));
+  };
+
   // Global Stores
   const { setup, fetchSetup } = useSetupStore();
   const {
@@ -297,7 +315,8 @@ export default function BudgetingPage() {
       <div className="grid gap-8 grid-cols-1 xl:grid-cols-12">
         <Card className="xl:col-span-8 border-border shadow-none rounded-[2rem] bg-white dark:bg-slate-900 overflow-hidden border transition-colors duration-300">
           <CardHeader className="p-4 md:px-10 md:pt-8 md:pb-6">
-            <div className="flex items-center gap-4 md:gap-5 mb-2 md:mb-4">
+            <div className="flex items-center justify-between gap-4 md:gap-5 mb-2 md:mb-4">
+              <div className="flex items-center gap-4 md:gap-5">
               <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-800 flex items-center justify-center transition-colors shrink-0">
                 <Wallet className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
               </div>
@@ -309,6 +328,20 @@ export default function BudgetingPage() {
                   {t.planCardDesc}
                 </CardDescription>
               </div>
+              </div>
+              {/* Hide/Show Toggle */}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleAmountsVisibility}
+                className="h-10 w-10 rounded-full text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/20 transition-colors shrink-0"
+              >
+                {hiddenAmounts ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                )}
+              </Button>
             </div>
           </CardHeader>
           <CardContent className="px-6 pb-6 md:px-10 md:pb-8 pt-0">
@@ -345,26 +378,34 @@ export default function BudgetingPage() {
                             <span className="text-xs font-bold text-slate-600 dark:text-slate-400 pl-1">
                               {source}
                             </span>
-                            <div className="flex items-center gap-1 bg-white dark:bg-slate-900 rounded-xl px-3 h-10 border border-emerald-100 dark:border-emerald-800 focus-within:ring-2 focus-within:ring-emerald-500/20 transition-all w-full">
-                              <span className="text-xs font-black text-slate-400 mr-1">
-                                Rp
-                              </span>
-                              <input
-                                type="number"
-                                defaultValue={
-                                  currentBudget.income?.[source] || 0
-                                }
-                                onBlur={(e) =>
-                                  handleUpdateIncome(source, e.target.value)
-                                }
-                                onKeyDown={(e) => {
-                                  if (e.key === "Enter") {
-                                    e.currentTarget.blur();
+                            {hiddenAmounts ? (
+                              <div className="flex items-center gap-1 bg-white dark:bg-slate-900 rounded-xl px-3 h-10 border border-emerald-100 dark:border-emerald-800 w-full">
+                                <span className="text-sm font-black text-slate-400 tabular-nums">
+                                  ••••••
+                                </span>
+                              </div>
+                            ) : (
+                              <div className="flex items-center gap-1 bg-white dark:bg-slate-900 rounded-xl px-3 h-10 border border-emerald-100 dark:border-emerald-800 focus-within:ring-2 focus-within:ring-emerald-500/20 transition-all w-full">
+                                <span className="text-xs font-black text-slate-400 mr-1">
+                                  Rp
+                                </span>
+                                <input
+                                  type="number"
+                                  defaultValue={
+                                    currentBudget.income?.[source] || 0
                                   }
-                                }}
-                                className="bg-transparent border-none focus:ring-0 text-sm font-black text-slate-800 dark:text-white w-full tabular-nums outline-none p-0 h-full"
-                              />
-                            </div>
+                                  onBlur={(e) =>
+                                    handleUpdateIncome(source, e.target.value)
+                                  }
+                                  onKeyDown={(e) => {
+                                    if (e.key === "Enter") {
+                                      e.currentTarget.blur();
+                                    }
+                                  }}
+                                  className="bg-transparent border-none focus:ring-0 text-sm font-black text-slate-800 dark:text-white w-full tabular-nums outline-none p-0 h-full"
+                                />
+                              </div>
+                            )}
                           </div>
                         ))}
                       </div>
@@ -373,10 +414,16 @@ export default function BudgetingPage() {
                           {t.totalProjected}
                         </span>
                         <span className="text-lg font-black text-emerald-700 dark:text-emerald-300">
-                          Rp{" "}
-                          {(Object.values(currentBudget.income || {}) as number[])
-                            .reduce((a: number, b: number) => a + b, 0)
-                            .toLocaleString()}
+                          {hiddenAmounts ? (
+                            "••••••"
+                          ) : (
+                            <>
+                              Rp{" "}
+                              {(Object.values(currentBudget.income || {}) as number[])
+                                .reduce((a: number, b: number) => a + b, 0)
+                                .toLocaleString()}
+                            </>
+                          )}
                         </span>
                       </div>
                     </div>
@@ -385,10 +432,16 @@ export default function BudgetingPage() {
                         {t.remaining}
                       </p>
                       <p className="text-xl font-black text-slate-800 dark:text-white leading-none">
-                        Rp{" "}
-                        {(
-                          currentBudget.summary?.nonAllocated || 0
-                        ).toLocaleString()}
+                        {hiddenAmounts ? (
+                          "••••••"
+                        ) : (
+                          <>
+                            Rp{" "}
+                            {(
+                              currentBudget.summary?.nonAllocated || 0
+                            ).toLocaleString()}
+                          </>
+                        )}
                       </p>
                     </div>
                   </div>
@@ -465,30 +518,38 @@ export default function BudgetingPage() {
                                 </div>
                                 <div className="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto">
                                   <span className="text-[10px] font-black text-slate-400 tabular-nums">
-                                    Rp {spent.toLocaleString()} /
+                                    {hiddenAmounts ? "Rp ••••••" : `Rp ${spent.toLocaleString()}`} /
                                   </span>
-                                  <div className="flex items-center bg-slate-50 dark:bg-slate-800 rounded-xl px-3 h-10 border border-slate-100 dark:border-slate-800 group-hover:border-slate-200 dark:group-hover:border-slate-700 transition-all w-full sm:w-40 flex-1 sm:flex-none">
-                                    <span className="text-xs font-black text-slate-500 mr-1">
-                                      Rp
-                                    </span>
-                                    <input
-                                      type="number"
-                                      defaultValue={allocated}
-                                      onBlur={(e) =>
-                                        handleUpdateAllocation(
-                                          cat.title,
-                                          itemName,
-                                          e.target.value
-                                        )
-                                      }
-                                      onKeyDown={(e) => {
-                                        if (e.key === "Enter") {
-                                          e.currentTarget.blur();
+                                  {hiddenAmounts ? (
+                                    <div className="flex items-center bg-slate-50 dark:bg-slate-800 rounded-xl px-3 h-10 border border-slate-100 dark:border-slate-800 w-full sm:w-40">
+                                      <span className="text-sm font-black text-slate-400 tabular-nums">
+                                        ••••••
+                                      </span>
+                                    </div>
+                                  ) : (
+                                    <div className="flex items-center bg-slate-50 dark:bg-slate-800 rounded-xl px-3 h-10 border border-slate-100 dark:border-slate-800 group-hover:border-slate-200 dark:group-hover:border-slate-700 transition-all w-full sm:w-40 flex-1 sm:flex-none">
+                                      <span className="text-xs font-black text-slate-500 mr-1">
+                                        Rp
+                                      </span>
+                                      <input
+                                        type="number"
+                                        defaultValue={allocated}
+                                        onBlur={(e) =>
+                                          handleUpdateAllocation(
+                                            cat.title,
+                                            itemName,
+                                            e.target.value
+                                          )
                                         }
-                                      }}
-                                      className="bg-transparent border-none focus:ring-0 text-sm font-black text-slate-700 dark:text-slate-200 w-full tabular-nums text-right outline-none p-0 h-full"
-                                    />
-                                  </div>
+                                        onKeyDown={(e) => {
+                                          if (e.key === "Enter") {
+                                            e.currentTarget.blur();
+                                          }
+                                        }}
+                                        className="bg-transparent border-none focus:ring-0 text-sm font-black text-slate-700 dark:text-slate-200 w-full tabular-nums text-right outline-none p-0 h-full"
+                                      />
+                                    </div>
+                                  )}
                                 </div>
                               </div>
                               <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">

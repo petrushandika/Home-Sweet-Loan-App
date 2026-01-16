@@ -117,6 +117,41 @@ export default function DashboardPage() {
   const [rawBudgets, setRawBudgets] = useState<any[]>([]);
   const [allTransactions, setAllTransactions] = useState<any[]>([]);
 
+  // Privacy State - Hide/Show Cards
+  const [hiddenCards, setHiddenCards] = useState<{
+    income: boolean;
+    spending: boolean;
+    savings: boolean;
+    netWorth: boolean;
+  }>({
+    income: false,
+    spending: false,
+    savings: false,
+    netWorth: false,
+  });
+
+  // Load hidden cards preference from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('dashboard-hidden-cards');
+    if (saved) {
+      try {
+        setHiddenCards(JSON.parse(saved));
+      } catch (e) {
+        console.error('Failed to parse hidden cards preference');
+      }
+    }
+  }, []);
+
+  // Save hidden cards preference to localStorage
+  const toggleCardVisibility = (cardKey: 'income' | 'spending' | 'savings' | 'netWorth') => {
+    const newHiddenCards = {
+      ...hiddenCards,
+      [cardKey]: !hiddenCards[cardKey],
+    };
+    setHiddenCards(newHiddenCards);
+    localStorage.setItem('dashboard-hidden-cards', JSON.stringify(newHiddenCards));
+  };
+
   useEffect(() => {
     setMounted(true);
     fetchSetup();
@@ -695,6 +730,8 @@ export default function DashboardPage() {
           iconBg="bg-emerald-100 dark:bg-emerald-900/30"
           isLoading={isLoading}
           breakdown={summaryStats.incomeBreakdown}
+          isHidden={hiddenCards.income}
+          onToggleVisibility={() => toggleCardVisibility('income')}
         />
         <StatsCard
           title={t.spending}
@@ -707,6 +744,8 @@ export default function DashboardPage() {
           textColor="text-rose-600"
           iconBg="bg-rose-100 dark:bg-rose-900/30"
           isLoading={isLoading}
+          isHidden={hiddenCards.spending}
+          onToggleVisibility={() => toggleCardVisibility('spending')}
         />
         <StatsCard
           title={t.savings}
@@ -720,6 +759,8 @@ export default function DashboardPage() {
           iconBg="bg-sky-100 dark:bg-sky-900/30"
           subtitle={`${t.target}: Liquid Assets`}
           isLoading={isLoading}
+          isHidden={hiddenCards.savings}
+          onToggleVisibility={() => toggleCardVisibility('savings')}
         />
         <StatsCard
           title={t.networth}
@@ -732,6 +773,8 @@ export default function DashboardPage() {
           textColor="text-violet-600"
           iconBg="bg-violet-100 dark:bg-violet-900/30"
           isLoading={isLoading}
+          isHidden={hiddenCards.netWorth}
+          onToggleVisibility={() => toggleCardVisibility('netWorth')}
         />
       </div>
 
@@ -799,7 +842,37 @@ export default function DashboardPage() {
                       axisLine={false}
                       tick={{ fill: "#64748b", fontSize: 12, fontWeight: 500 }}
                     />
-                    <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+                    <ChartTooltip 
+                      content={({ active, payload }) => {
+                        if (!active || !payload || payload.length === 0) return null;
+                        
+                        return (
+                          <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 shadow-lg">
+                            <div className="space-y-1.5">
+                              {payload.map((entry: any, index: number) => {
+                                const isIncome = entry.dataKey === 'income';
+                                const isHidden = isIncome ? hiddenCards.income : hiddenCards.spending;
+                                
+                                return (
+                                  <div key={index} className="flex items-center gap-2">
+                                    <div 
+                                      className="w-3 h-3 rounded-sm" 
+                                      style={{ backgroundColor: entry.color }}
+                                    />
+                                    <span className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                                      {entry.name}:
+                                    </span>
+                                    <span className="text-xs font-bold text-slate-900 dark:text-white tabular-nums">
+                                      {isHidden ? "••••••" : `Rp ${entry.value?.toLocaleString()}`}
+                                    </span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        );
+                      }}
+                    />
                     <Bar
                       dataKey="income"
                       fill="#10b981"
@@ -917,7 +990,7 @@ export default function DashboardPage() {
                         </span>
                         <p className="text-xs text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest leading-none">
                           {item.category} •{" "}
-                          {format(new Date(item.date), "dd MMM")}
+                          {format(new Date(item.date), "dd MMMM yyyy")}
                         </p>
                       </div>
                     </div>
@@ -959,6 +1032,8 @@ function StatsCard({
   subtitle,
   isLoading,
   breakdown,
+  isHidden,
+  onToggleVisibility,
 }: any) {
   return (
     <Card
@@ -984,45 +1059,63 @@ function StatsCard({
             <Icon className={cn("w-5.5 h-5.5", textColor)} />
           </div>
 
-          {/* Income Breakdown Info Button */}
-          {breakdown && breakdown.length > 0 && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 rounded-full text-slate-400 hover:text-emerald-600 hover:bg-white/50 dark:hover:bg-slate-800/50 transition-colors"
-                >
-                  <Info className="w-4 h-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-64 rounded-2xl p-2">
-                <DropdownMenuLabel className="text-xs font-bold text-slate-500 uppercase tracking-wider px-2 py-1.5">
-                  Income Sources
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator className="-mx-1 my-1" />
-                <div className="max-h-[200px] overflow-y-auto emerald-scrollbar">
-                  {breakdown.map((item: any, idx: number) => (
-                    <DropdownMenuItem
-                      key={idx}
-                      className="flex justify-between items-center py-2.5 px-2 rounded-xl cursor-pointer focus:bg-slate-50 dark:focus:bg-slate-800"
-                    >
-                      <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                        {item.label}
-                      </span>
-                      <span className="text-sm font-bold text-emerald-600 tabular-nums">
-                        {new Intl.NumberFormat("id-ID", {
-                          style: "currency",
-                          currency: "IDR",
-                          maximumFractionDigits: 0,
-                        }).format(item.amount)}
-                      </span>
-                    </DropdownMenuItem>
-                  ))}
-                </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
+          <div className="flex items-center gap-1">
+            {/* Hide/Show Toggle */}
+            {onToggleVisibility && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onToggleVisibility}
+                className="h-8 w-8 rounded-full text-slate-400 hover:text-emerald-600 hover:bg-white/50 dark:hover:bg-slate-800/50 transition-colors"
+              >
+                {isHidden ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                )}
+              </Button>
+            )}
+
+            {/* Income Breakdown Info Button */}
+            {breakdown && breakdown.length > 0 && !isHidden && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 rounded-full text-slate-400 hover:text-emerald-600 hover:bg-white/50 dark:hover:bg-slate-800/50 transition-colors"
+                  >
+                    <Info className="w-4 h-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-64 rounded-2xl p-2">
+                  <DropdownMenuLabel className="text-xs font-bold text-slate-500 uppercase tracking-wider px-2 py-1.5">
+                    Income Sources
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator className="-mx-1 my-1" />
+                  <div className="max-h-[200px] overflow-y-auto emerald-scrollbar">
+                    {breakdown.map((item: any, idx: number) => (
+                      <DropdownMenuItem
+                        key={idx}
+                        className="flex justify-between items-center py-2.5 px-2 rounded-xl cursor-pointer focus:bg-slate-50 dark:focus:bg-slate-800"
+                      >
+                        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                          {item.label}
+                        </span>
+                        <span className="text-sm font-bold text-emerald-600 tabular-nums">
+                          {new Intl.NumberFormat("id-ID", {
+                            style: "currency",
+                            currency: "IDR",
+                            maximumFractionDigits: 0,
+                          }).format(item.amount)}
+                        </span>
+                      </DropdownMenuItem>
+                    ))}
+                  </div>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+          </div>
 
           {/* Trend Badge - Optional (Hidden if Breakdown exists or just default hidden as before) */}
           {/* {!breakdown && <div className={cn(...) }>{trend}</div>} */}
@@ -1034,12 +1127,16 @@ function StatsCard({
       <CardContent className="p-5 md:p-6 pt-0 relative z-10">
         {isLoading ? (
           <div className="h-8 w-24 bg-slate-200 dark:bg-slate-800 rounded animate-pulse" />
+        ) : isHidden ? (
+          <div className="text-xl sm:text-2xl font-black text-slate-400 dark:text-slate-600 tracking-tight">
+            ••••••
+          </div>
         ) : (
           <div className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
             {amount}
           </div>
         )}
-        {subtitle && (
+        {subtitle && !isHidden && (
           <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 mt-1.5 uppercase tracking-wide">
             {subtitle}
           </p>
