@@ -15,7 +15,12 @@ import {
   ArrowRight,
   Sparkles,
   Loader2,
+  TrendingUp,
+  Target,
+  Zap,
 } from "lucide-react";
+import api from "@/lib/api";
+import { cn } from "@/lib/utils";
 import { ResponsiveModal } from "@/components/responsive-modal";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
@@ -57,6 +62,9 @@ export default function ReportPage() {
 
   const [barData, setBarData] = useState<any[]>([]);
   const [pieData, setPieData] = useState<any[]>([]);
+  const [aiInsight, setAiInsight] = useState<string | null>(null);
+  const [potentialSavings, setPotentialSavings] = useState<string>("Rp 0");
+  const [adviceType, setAdviceType] = useState<string>("Strategic");
 
   useEffect(() => {
     setMounted(true);
@@ -159,14 +167,109 @@ export default function ReportPage() {
     }, 500);
   };
 
-  const handleSimulateAI = () => {
-    setIsGenerating(true);
-    setTimeout(() => {
-      setIsGenerating(false);
-      toast.success("AI Analysis Complete", {
-        description: "We've generated new insights for your budget.",
+  const handleSimulateAI = async () => {
+    if (pieData.length === 0 && barData.length === 0) {
+      toast.error("No data to analyze", {
+        description: "Please add some transactions for this month first."
       });
-    }, 2000);
+      return;
+    }
+    
+    setIsGenerating(true);
+    try {
+      const monthName = translations[langKey].months[parseInt(selectedMonthIndex)];
+      const contextSummary = `
+        Analysis for ${monthName}:
+        - ${pieData.map(d => `${d.name}: Rp ${d.value.toLocaleString()}`).join(', ')}
+        - Top 5 Categories: ${barData.map(d => d.fullName).join(', ')}
+      `;
+
+      const prompt = `Analyze my financial report for ${monthName} and provide a World-Class Strategic Insight. 
+      Data Context: ${contextSummary}. 
+      
+      Format your response with:
+      ### [Strategic Title]
+      [A detailed but punchy 2-3 sentence analysis]
+      
+      * **Action Item 1**: [Description]
+      * **Action Item 2**: [Description]
+      
+      End with a "Strategic Question" to make me think.
+      Keep it professional, high-authority, and tactical.`;
+
+      const response = await api.post("/ai/chat", { message: prompt });
+      
+      const responseData = response.data.data || response.data;
+      
+      if (response.data.success) {
+        const message = responseData.data?.message || responseData.message;
+        
+        if (!message) throw new Error("No message in response");
+        
+        setAiInsight(message);
+        
+        // Extract a "potential savings" number if possible or use a dynamic one
+        const matches = message.match(/Rp\s?[\d.]+/g);
+        if (matches && matches.length > 0) {
+          setPotentialSavings(matches[0]);
+        } else {
+          setPotentialSavings("Optimized");
+        }
+        
+        setAdviceType(message.toLowerCase().includes('lifestyle') ? 'Lifestyle' : 'Wealth Scaling');
+        
+        toast.success("AI Analysis Complete", {
+          description: "We've generated new strategic insights for your report.",
+        });
+      } else {
+        throw new Error(response.data.message || "Request failed");
+      }
+    } catch (error) {
+      console.error("AI Insight Error:", error);
+      toast.error("Failed to generate AI insights");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const renderContent = (content: string) => {
+    return content.split('\n').map((line, i) => {
+      const trimmedLine = line.trim();
+      if (trimmedLine.startsWith('###')) {
+        return (
+          <h3 key={i} className="text-lg font-bold text-indigo-700 dark:text-indigo-400 mt-4 mb-2 first:mt-0 flex items-center gap-2">
+            <span className="w-1 h-4 bg-indigo-500 rounded-full" />
+            {trimmedLine.replace(/^###\s+/, '')}
+          </h3>
+        )
+      }
+      if (/^[*•-]\s/.test(trimmedLine)) {
+        const text = trimmedLine.replace(/^[*•-]\s/, '');
+        const boldFormatted = text.split(/(\*\*.*?\*\*)/).map((part, j) => {
+          if (part.startsWith('**') && part.endsWith('**')) {
+            return <strong key={j} className="text-slate-900 dark:text-slate-100 font-bold">{part.slice(2, -2)}</strong>
+          }
+          return part
+        })
+        return (
+          <div key={i} className="flex gap-2 mb-2 ml-2">
+            <span className="text-indigo-500 shrink-0">•</span>
+            <span className="flex-1 text-slate-700 dark:text-slate-300 text-sm">{boldFormatted}</span>
+          </div>
+        )
+      }
+      const boldFormatted = line.split(/(\*\*.*?\*\*)/).map((part, j) => {
+        if (part.startsWith('**') && part.endsWith('**')) {
+          return <strong key={j} className="font-bold text-slate-900 dark:text-slate-100">{part.slice(2, -2)}</strong>
+        }
+        return part
+      })
+      return trimmedLine ? (
+        <p key={i} className="mb-3 last:mb-0 text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+          {boldFormatted}
+        </p>
+      ) : <div key={i} className="h-2" />;
+    });
   };
 
   if (!mounted) return null;
@@ -358,41 +461,63 @@ export default function ReportPage() {
           </Card>
         }
       >
-        <div className="space-y-4">
-          <div className="p-5 bg-indigo-50 dark:bg-indigo-950/20 rounded-2xl border border-indigo-100 dark:border-indigo-800 italic text-indigo-900 dark:text-indigo-200 font-medium leading-relaxed">
-            "We noticed that you spend 15% more on weekends. Try setting a
-            specific weekend budget to increase your monthly savings by Rp
-            400.000."
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800">
-              <p className="text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 mb-1">
-                Potential Savings
-              </p>
-              <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
-                Rp 1.2M / mo
-              </p>
+        <div className="space-y-6">
+          {!aiInsight ? (
+            <div className="p-8 bg-indigo-50/50 dark:bg-indigo-950/10 rounded-2xl border border-dashed border-indigo-200 dark:border-indigo-800 flex flex-col items-center justify-center text-center space-y-4">
+              <div className="w-16 h-16 rounded-full bg-white dark:bg-slate-900 flex items-center justify-center shadow-sm">
+                <Sparkles className="w-8 h-8 text-indigo-500 animate-pulse" />
+              </div>
+              <div>
+                <p className="font-bold text-slate-800 dark:text-white">Ready to Analyze</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-[240px]">
+                  Click the button below to let our AI strategist analyze your {translations[langKey].months[parseInt(selectedMonthIndex)]} data.
+                </p>
+              </div>
             </div>
-            <div className="p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800">
-              <p className="text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 mb-1">
-                Advice Type
-              </p>
-              <p className="text-lg font-bold text-indigo-600 dark:text-indigo-400">
-                Lifestyle
-              </p>
-            </div>
-          </div>
+          ) : (
+            <>
+              <div className="p-5 bg-linear-to-br from-indigo-50 to-white dark:from-indigo-950/20 dark:to-slate-900 rounded-2xl border border-indigo-100 dark:border-indigo-800 shadow-sm">
+                {renderContent(aiInsight)}
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800 group hover:border-emerald-200 dark:hover:border-emerald-800 transition-colors">
+                  <div className="flex items-center gap-2 mb-2">
+                    <TrendingUp className="w-3.5 h-3.5 text-emerald-500" />
+                    <p className="text-[10px] font-black uppercase text-slate-400 dark:text-slate-500">
+                      Potential Efficiency
+                    </p>
+                  </div>
+                  <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
+                    {potentialSavings}
+                  </p>
+                </div>
+                <div className="p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800 group hover:border-indigo-200 dark:hover:border-indigo-800 transition-colors">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Target className="w-3.5 h-3.5 text-indigo-500" />
+                    <p className="text-[10px] font-black uppercase text-slate-400 dark:text-slate-500">
+                      Strategy Focus
+                    </p>
+                  </div>
+                  <p className="text-lg font-bold text-indigo-600 dark:text-indigo-400">
+                    {adviceType}
+                  </p>
+                </div>
+              </div>
+            </>
+          )}
+
           <Button
             onClick={handleSimulateAI}
             disabled={isGenerating}
-            className="w-full rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold h-12 shadow-lg shadow-indigo-100 dark:shadow-none mt-4 border-none"
+            className="w-full rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold h-14 shadow-lg shadow-indigo-200/50 dark:shadow-none mt-2 border-none transition-all active:scale-95 group overflow-hidden relative"
           >
+            <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
             {isGenerating ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
             ) : (
-              <Sparkles className="mr-2 h-4 w-4" />
+              <Zap className="mr-2 h-5 w-5 fill-current" />
             )}
-            {isGenerating ? t.analyzing : t.refreshBtn}
+            {isGenerating ? t.analyzing : aiInsight ? "Regenerate Analysis" : t.refreshBtn}
           </Button>
         </div>
       </ResponsiveModal>

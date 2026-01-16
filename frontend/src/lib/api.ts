@@ -8,6 +8,22 @@ const api = axios.create({
   },
 });
 
+// Add a request interceptor to inject the token
+api.interceptors.request.use(
+  (config) => {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("token");
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 // Add a response interceptor to handle errors globally if needed
 api.interceptors.response.use(
   (response) => response,

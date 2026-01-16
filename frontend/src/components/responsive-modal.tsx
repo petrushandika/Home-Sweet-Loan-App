@@ -133,11 +133,11 @@ export function ResponsiveModal({
         {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
         <DialogContent
           className={cn(
-            "sm:max-w-[500px] rounded-3xl border-border bg-card shadow-2xl animate-smooth-in",
+            "sm:max-w-[500px] max-h-[85vh] flex flex-col rounded-3xl border-border bg-card shadow-2xl animate-smooth-in overflow-hidden",
             className
           )}
         >
-          <DialogHeader>
+          <DialogHeader className="shrink-0 p-6 pb-2">
             <DialogTitle className="text-2xl font-bold text-foreground">
               {title}
             </DialogTitle>
@@ -147,7 +147,9 @@ export function ResponsiveModal({
               </DialogDescription>
             )}
           </DialogHeader>
-          <div className="py-4">{children}</div>
+          <div className="flex-1 overflow-y-auto px-6 pb-6 pt-2 emerald-scrollbar">
+            {children}
+          </div>
         </DialogContent>
       </Dialog>
     );
