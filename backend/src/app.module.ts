@@ -15,6 +15,7 @@ import { PaymentsModule } from './modules/payments/payments.module';
 import { SubscriptionsModule } from './modules/subscriptions/subscriptions.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { ChatModule } from './modules/chat/chat.module';
+import { AiModule } from './modules/ai/ai.module';
 
 import { AchievementsModule } from './modules/achievements/achievements.module';
 import { MembersModule } from './modules/members/members.module';
@@ -62,6 +63,7 @@ import { MembersModule } from './modules/members/members.module';
     SubscriptionsModule,
     NotificationsModule,
     ChatModule,
+    AiModule,
     AchievementsModule,
     MembersModule,
   ],
