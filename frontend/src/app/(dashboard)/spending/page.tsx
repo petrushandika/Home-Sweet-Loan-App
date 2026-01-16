@@ -506,7 +506,7 @@ export default function SpendingPage() {
             </Button>
             <Button
               onClick={handleUpdate}
-              className="flex-[2] rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-12 shadow-lg shadow-emerald-100 dark:shadow-none border-none cursor-pointer"
+              className="flex-1 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-12 shadow-lg shadow-emerald-100 dark:shadow-none border-none cursor-pointer"
             >
               Save Changes
             </Button>

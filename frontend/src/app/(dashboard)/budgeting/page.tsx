@@ -367,7 +367,7 @@ export default function BudgetingPage() {
                 </div>
               ) : (
                 <>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                  <div className="flex flex-col gap-4 mb-6">
                     <div className="p-4 bg-emerald-50 dark:bg-emerald-950/20 rounded-2xl border border-emerald-100 dark:border-emerald-800">
                       <p className="text-[10px] font-black uppercase text-emerald-600 dark:text-emerald-400 mb-2">
                         {t.incomeSources}
